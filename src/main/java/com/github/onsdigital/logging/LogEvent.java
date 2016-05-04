@@ -13,9 +13,9 @@ import java.util.Map;
 /**
  * Created by dave on 5/4/16.
  */
-public class LogEvent {
+public abstract class LogEvent {
 
-    private static final Logger LOG = LoggerFactory.getLogger("com.github.onsdigital.logging");
+    private static Logger LOG = null;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     protected String eventDescription;
@@ -42,6 +42,14 @@ public class LogEvent {
     }
 
     public void log() {
+        if (LOG == null) {
+            LOG = LoggerFactory.getLogger(getLoggerName());
+        }
         LOG.info(toJson());
     }
+
+    /**
+     * @return the name of the logger that should be used for this implementation of {@link LogEvent}.
+     */
+    public abstract String getLoggerName();
 }
