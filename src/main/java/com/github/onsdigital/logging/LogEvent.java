@@ -27,6 +27,9 @@ public class LogEvent {
     public LogEvent(String eventDescription) {
         this.eventDescription = eventDescription;
         this.parameters = new HashMap<>();
+        this.timestamp = DATE_FORMAT.format(new Date());
+        this.requestId = LoggingThread.get(LoggingThread.REQUEST_ID_KEY);
+        this.remoteHost = LoggingThread.get(LoggingThread.REMOTE_HOST);
     }
 
     public LogEvent addParameter(String key, Object value) {
@@ -34,10 +37,11 @@ public class LogEvent {
         return this;
     }
 
-    public void logIt() {
-        this.requestId = LoggingThread.get(LoggingThread.REQUEST_ID_KEY);
-        this.remoteHost = LoggingThread.get(LoggingThread.REMOTE_HOST);
-        this.timestamp = DATE_FORMAT.format(new Date());
-        LOG.info(new Gson().toJson(this));
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
+
+    public void log() {
+        LOG.info(toJson());
     }
 }
