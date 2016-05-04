@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by dave on 5/3/16.
  */
-public final class ThreadContextUtil {
+public final class LoggingThread {
 
     public static final String REQUEST_ID_KEY = "request-id";
     public static final String REMOTE_HOST = "host";

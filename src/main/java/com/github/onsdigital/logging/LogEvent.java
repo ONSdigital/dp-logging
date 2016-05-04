@@ -1,32 +1,45 @@
 package com.github.onsdigital.logging;
 
+import com.github.onsdigital.logging.util.LoggingThread;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Type for each of
+ * Created by dave on 5/4/16.
  */
-public enum LogEvent implements Loggable{
+public abstract class LogEvent {
 
-    LOGIN_SUCCESS("Login success"),
-    LOGIN_AUTH_FAILURE("Login authentication failure"),
-    PASSWORD_CHANGE_REQUIRED("Login password change required.");
+    private static final Logger LOG = LoggerFactory.getLogger("com.github.onsdigital.logging");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    private final LogBuilder builder;
-    private final String name;
+    protected String eventDescription;
+    protected String requestId;
+    protected String remoteHost;
+    protected String timestamp;
+    protected Map<String, Object> parameters;
 
-    /**
-     * Create a LogEvent enum.
-     *
-     * @param name a human readable name of the logging event.
-     */
-    LogEvent(String name) {
-        this.name = name;
-        this.builder = new LogBuilder(this);
+    LogEvent(String eventDescription) {
+        this.eventDescription = eventDescription;
+        this.parameters = new HashMap<>();
     }
 
-    public LogBuilder getBuilder() {
-        return builder;
+    public Map<String, Object> addParameter(String key, Object value) {
+        parameters.put(key, value);
+        return parameters;
     }
 
-    public String getName() {
-        return name;
+    public abstract String getEventDescription();
+
+    public void logIt() {
+        this.requestId = LoggingThread.get(LoggingThread.REQUEST_ID_KEY);
+        this.remoteHost = LoggingThread.get(LoggingThread.REMOTE_HOST);
+        this.timestamp = DATE_FORMAT.format(new Date());
+        LOG.info(new Gson().toJson(this));
     }
 }
