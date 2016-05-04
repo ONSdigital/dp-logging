@@ -34,8 +34,6 @@ public abstract class LogEvent {
         return parameters;
     }
 
-    public abstract String getEventDescription();
-
     public void logIt() {
         this.requestId = LoggingThread.get(LoggingThread.REQUEST_ID_KEY);
         this.remoteHost = LoggingThread.get(LoggingThread.REMOTE_HOST);
