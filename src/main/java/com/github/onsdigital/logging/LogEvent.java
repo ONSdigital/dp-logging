@@ -24,7 +24,7 @@ public abstract class LogEvent {
     protected String timestamp;
     protected Map<String, Object> parameters;
 
-    LogEvent(String eventDescription) {
+    public LogEvent(String eventDescription) {
         this.eventDescription = eventDescription;
         this.parameters = new HashMap<>();
     }
