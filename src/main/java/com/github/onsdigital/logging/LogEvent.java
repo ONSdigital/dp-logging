@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by dave on 5/4/16.
  */
-public abstract class LogEvent {
+public class LogEvent {
 
     private static final Logger LOG = LoggerFactory.getLogger("com.github.onsdigital.logging");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -29,9 +29,9 @@ public abstract class LogEvent {
         this.parameters = new HashMap<>();
     }
 
-    public Map<String, Object> addParameter(String key, Object value) {
+    public LogEvent addParameter(String key, Object value) {
         parameters.put(key, value);
-        return parameters;
+        return this;
     }
 
     public void logIt() {
