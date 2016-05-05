@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dave on 5/3/16.
+ * Provides a {@link ThreadLocal} {@link Map} for convenient storage of logging information.
  */
 public final class LoggingThread {
 

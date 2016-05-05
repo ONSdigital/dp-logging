@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class LogEvent {
 
-    private static Logger LOG = null;
+/*    private static Logger LOG = null;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     protected String eventDescription;
@@ -48,8 +48,8 @@ public abstract class LogEvent {
         LOG.info(toJson());
     }
 
-    /**
+    *//**
      * @return the name of the logger that should be used for this implementation of {@link LogEvent}.
-     */
-    public abstract String getLoggerName();
+     *//*
+    public abstract String getLoggerName();*/
 }
