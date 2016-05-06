@@ -9,6 +9,8 @@ import org.slf4j.MDC;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
@@ -22,40 +24,43 @@ public abstract class LogMessageBuilder {
     protected static Logger LOG = null;
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    protected String eventDescription;
-    protected String requestId;
-    protected String remoteHost;
-    protected String timestamp;
-    protected String logLevel;
+    protected Map<String, Object> jsonMap = new HashMap<>();
+    protected Map<String, Object> parameters = new HashMap<>();
 
     public LogMessageBuilder(String eventDescription) {
-        this.logLevel = Level.INFO.levelStr;
-        this.eventDescription = eventDescription;
-        this.timestamp = DATE_FORMAT.format(new Date());
-        this.requestId = MDC.get(REQUEST_ID_KEY);
-        this.remoteHost = MDC.get(REMOTE_HOST);
-        this.logLevel = Level.INFO.levelStr;
+        jsonMap.put("logLevel", Level.INFO.levelStr);
+        jsonMap.put("eventDescription", eventDescription);
+        jsonMap.put("timestamp", DATE_FORMAT.format(new Date()));
+        jsonMap.put("requestId", MDC.get(REQUEST_ID_KEY));
+        jsonMap.put("remoteHost", MDC.get(REMOTE_HOST));
+        jsonMap.put("parameters", parameters);
     }
 
     public LogMessageBuilder(String eventDescription, Level logLevel) {
-        this.logLevel = logLevel.levelStr;
-        this.eventDescription = eventDescription;
-        this.timestamp = DATE_FORMAT.format(new Date());
-        this.requestId = MDC.get(REQUEST_ID_KEY);
-        this.remoteHost = MDC.get(REMOTE_HOST);
-        this.logLevel = logLevel.levelStr;
+        jsonMap.put("logLevel", logLevel.levelStr);
+        jsonMap.put("eventDescription", eventDescription);
+        jsonMap.put("timestamp", DATE_FORMAT.format(new Date()));
+        jsonMap.put("requestId", MDC.get(REQUEST_ID_KEY));
+        jsonMap.put("remoteHost", MDC.get(REMOTE_HOST));
+
     }
 
     public String toJson() {
-        return new Gson().toJson(this);
+        jsonMap.put("parameters", parameters);
+        return new Gson().toJson(jsonMap);
     }
 
     public String getLogLevel() {
-        return logLevel;
+        return (String) jsonMap.get("logLevel");
     }
 
     public DateFormat getDataFormat() {
         return DATE_FORMAT;
+    }
+
+    public LogMessageBuilder addParameter(String key, Object value) {
+        parameters.put(key, value);
+        return this;
     }
 
     public void log() {
@@ -63,7 +68,7 @@ public abstract class LogMessageBuilder {
             LOG = getLogger(getLoggerName());
         }
 
-        switch (Level.toLevel(logLevel).levelInt) {
+        switch (Level.toLevel(getLogLevel()).levelInt) {
             case Level.ERROR_INT:
                 LOG.error(toJson());
                 break;
