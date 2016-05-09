@@ -45,6 +45,11 @@ public abstract class LogMessageBuilder {
 
     }
 
+    public LogMessageBuilder addMessage(String message) {
+        this.jsonMap.put("message", message);
+        return this;
+    }
+
     public String toJson() {
         jsonMap.put("parameters", parameters);
         return new Gson().toJson(jsonMap);
