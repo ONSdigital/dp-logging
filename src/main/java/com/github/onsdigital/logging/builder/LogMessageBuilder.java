@@ -1,19 +1,12 @@
 package com.github.onsdigital.logging.builder;
 
 import ch.qos.logback.classic.Level;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST;
-import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -24,39 +17,28 @@ public abstract class LogMessageBuilder {
     protected static Logger LOG = null;
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    protected Map<String, Object> jsonMap = new HashMap<>();
-    protected Map<String, Object> parameters = new HashMap<>();
+    private String description;
+    private LogParameters parameters;
+    private Level logLevel;
 
     public LogMessageBuilder(String eventDescription) {
-        jsonMap.put("logLevel", Level.INFO.levelStr);
-        jsonMap.put("eventDescription", eventDescription);
-        jsonMap.put("timestamp", DATE_FORMAT.format(new Date()));
-        jsonMap.put("requestId", MDC.get(REQUEST_ID_KEY));
-        jsonMap.put("remoteHost", MDC.get(REMOTE_HOST));
-        jsonMap.put("parameters", parameters);
+        this(eventDescription, Level.INFO);
     }
 
-    public LogMessageBuilder(String eventDescription, Level logLevel) {
-        jsonMap.put("logLevel", logLevel.levelStr);
-        jsonMap.put("eventDescription", eventDescription);
-        jsonMap.put("timestamp", DATE_FORMAT.format(new Date()));
-        jsonMap.put("requestId", MDC.get(REQUEST_ID_KEY));
-        jsonMap.put("remoteHost", MDC.get(REMOTE_HOST));
+    public LogMessageBuilder(String description, Level logLevel) {
+        this.description = description;
+        this.logLevel = logLevel;
+        this.parameters = new LogParameters();
 
     }
 
     public LogMessageBuilder addMessage(String message) {
-        this.jsonMap.put("message", message);
+        this.parameters.getParameters().put("message", message);
         return this;
     }
 
-    public String toJson() {
-        jsonMap.put("parameters", parameters);
-        return new Gson().toJson(jsonMap);
-    }
-
     public String getLogLevel() {
-        return (String) jsonMap.get("logLevel");
+        return this.logLevel.levelStr;
     }
 
     public DateFormat getDataFormat() {
@@ -64,7 +46,7 @@ public abstract class LogMessageBuilder {
     }
 
     public LogMessageBuilder addParameter(String key, Object value) {
-        parameters.put(key, value);
+        this.parameters.getParameters().put(key, value.toString());
         return this;
     }
 
@@ -75,19 +57,19 @@ public abstract class LogMessageBuilder {
 
         switch (Level.toLevel(getLogLevel()).levelInt) {
             case Level.ERROR_INT:
-                LOG.error(toJson());
+                LOG.error(this.description, this.parameters);
                 break;
             case Level.WARN_INT:
-                LOG.warn(toJson());
+                LOG.warn(this.description, this.parameters);
                 break;
             case Level.INFO_INT:
-                LOG.info(toJson());
+                LOG.info(this.description, this.parameters);
                 break;
             case Level.DEBUG_INT:
-                LOG.debug(toJson());
+                LOG.debug(this.description, this.parameters);
                 break;
             case Level.TRACE_INT:
-                LOG.trace(toJson());
+                LOG.trace(this.description, this.parameters);
         }
     }
 
