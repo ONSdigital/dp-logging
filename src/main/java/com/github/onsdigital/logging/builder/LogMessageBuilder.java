@@ -17,9 +17,9 @@ public abstract class LogMessageBuilder {
     protected static Logger LOG = null;
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    private String description;
-    private LogParameters parameters;
-    private Level logLevel;
+    protected String description;
+    protected LogParameters parameters;
+    protected Level logLevel;
 
     public LogMessageBuilder(String eventDescription) {
         this(eventDescription, Level.INFO);
