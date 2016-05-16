@@ -12,13 +12,13 @@ import java.util.Map;
  */
 public class LogParameters {
 
-    private Map<String, String> parameters;
+    private Map<String, Object> parameters;
 
     public LogParameters() {
         this.parameters = new LinkedHashMap<>();
     }
 
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return parameters;
     }
 }

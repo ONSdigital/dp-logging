@@ -1,4 +1,4 @@
-package com.github.onsdigital.logging.layouts;
+package com.github.onsdigital.logging.layouts.model;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.github.onsdigital.logging.builder.LogParameters;
@@ -26,7 +26,7 @@ public class JsonLogItem {
     private String requestId;
     private String remoteHost;
     private String description;
-    private Map<String, String> parameters;
+    private Map<String, Object> parameters;
 
     public JsonLogItem(ILoggingEvent event) {
         this.timestamp = DATE_FORMAT.format(new Date());

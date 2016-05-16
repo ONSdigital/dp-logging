@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.builder;
 
 import ch.qos.logback.classic.Level;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 import java.text.DateFormat;
@@ -16,6 +17,10 @@ public abstract class LogMessageBuilder {
 
     protected static Logger LOG = null;
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private static final String ERROR_CONTENT_KEY = "errorContext";
+    private static final String ERROR_CLASS_KEY = "class";
+    private static final String STACK_TRACE_KEY = "stackTrace";
+    private static final String MSG_KEY = "stackTrace";
 
     protected String description;
     protected LogParameters parameters;
@@ -36,19 +41,13 @@ public abstract class LogMessageBuilder {
         this.description = description;
         this.logLevel = Level.INFO;
         this.parameters = new LogParameters();
-        addParameter("errorContext", description);
-        addParameter("class", t.getClass().getName());
-        addParameter("stackTrace", t);
-
-        StringBuilder stackTrace = new StringBuilder();
-        for (StackTraceElement element : t.getStackTrace()) {
-            stackTrace.append("\n\t").append(element.toString());
-        }
-        addParameter("stackTrace", stackTrace.toString());
+        addParameter(ERROR_CONTENT_KEY, description);
+        addParameter(ERROR_CLASS_KEY, t.getClass().getName());
+        this.parameters.getParameters().put(STACK_TRACE_KEY, ExceptionUtils.getStackTrace(t));
     }
 
     public LogMessageBuilder addMessage(String message) {
-        this.parameters.getParameters().put("message", message);
+        this.parameters.getParameters().put(MSG_KEY, message);
         return this;
     }
 

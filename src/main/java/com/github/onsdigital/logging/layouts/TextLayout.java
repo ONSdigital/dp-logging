@@ -54,7 +54,7 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
         if (event.getArgumentArray().length > 0) {
             for (Object arg : event.getArgumentArray()) {
                 if (arg instanceof LogParameters) {
-                    Map<String, String> params = ((LogParameters) arg).getParameters();
+                    Map<String, Object> params = ((LogParameters) arg).getParameters();
                     sb.append(" parameters=[").append(params.toString()).append(" ]");
                     break;
                 }
