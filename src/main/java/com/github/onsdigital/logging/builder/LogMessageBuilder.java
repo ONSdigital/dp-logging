@@ -32,6 +32,21 @@ public abstract class LogMessageBuilder {
 
     }
 
+    public LogMessageBuilder(Throwable t, String description) {
+        this.description = description;
+        this.logLevel = Level.INFO;
+        this.parameters = new LogParameters();
+        addParameter("errorContext", description);
+        addParameter("class", t.getClass().getName());
+        addParameter("stackTrace", t);
+
+        StringBuilder stackTrace = new StringBuilder();
+        for (StackTraceElement element : t.getStackTrace()) {
+            stackTrace.append("\n\t").append(element.toString());
+        }
+        addParameter("stackTrace", stackTrace.toString());
+    }
+
     public LogMessageBuilder addMessage(String message) {
         this.parameters.getParameters().put("message", message);
         return this;
