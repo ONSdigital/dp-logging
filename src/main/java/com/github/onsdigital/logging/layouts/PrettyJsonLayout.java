@@ -12,6 +12,6 @@ public class PrettyJsonLayout extends JsonLayout {
 
     @Override
     public String doLayout(ILoggingEvent event) {
-        return new PrettyJsonLogItem(event).asJson() + CoreConstants.LINE_SEPARATOR;
+        return new PrettyJsonLogItem(event).asJson();
     }
 }

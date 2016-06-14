@@ -16,11 +16,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 public abstract class LogMessageBuilder {
 
     protected static Logger LOG = null;
-    protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    private static final String ERROR_CONTENT_KEY = "errorContext";
-    private static final String ERROR_CLASS_KEY = "class";
-    private static final String STACK_TRACE_KEY = "stackTrace";
-    private static final String MSG_KEY = "stackTrace";
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    public static final String ERROR_CONTENT_KEY = "errorContext";
+    public static final String ERROR_CLASS_KEY = "class";
+    public static final String STACK_TRACE_KEY = "stackTrace";
+    public static final String MSG_KEY = "message";
 
     protected String description;
     protected LogParameters parameters;
@@ -37,9 +37,14 @@ public abstract class LogMessageBuilder {
 
     }
 
+    public LogMessageBuilder(Throwable t, Level level, String description) {
+        this(t, description);
+        this.logLevel = level;
+    }
+
     public LogMessageBuilder(Throwable t, String description) {
         this.description = description;
-        this.logLevel = Level.INFO;
+        this.logLevel = Level.ERROR;
         this.parameters = new LogParameters();
         addParameter(ERROR_CONTENT_KEY, description);
         addParameter(ERROR_CLASS_KEY, t.getClass().getName());
