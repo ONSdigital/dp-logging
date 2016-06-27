@@ -4,12 +4,16 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import com.github.onsdigital.logging.builder.LogParameters;
+import com.github.onsdigital.logging.layouts.style.Beautifier;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
+import static com.github.onsdigital.logging.layouts.style.Beautifier.tertiaryColour;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleDate;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleKeyValue;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleLogLevel;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleLoggerName;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleMessage;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.styleThreadName;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST_KEY;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 
@@ -18,31 +22,33 @@ import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
  */
 public class TextLayout extends LayoutBase<ILoggingEvent> {
 
-    protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private static final String SINGLE_SPACE = " ";
+    private static final String DIVIDER = " | ";
 
     @Override
     public String doLayout(ILoggingEvent event) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[ONS] ")
-                .append(DATE_FORMAT.format(new Date()))
-                .append(" ")
-                .append(event.getLevel())
-                .append(" [")
-                .append(event.getThreadName())
-                .append("] ")
-                .append(event.getLoggerName())
-                .append(" - ")
-                .append(event.getFormattedMessage());
+        sb.append(tertiaryColour(event, "[dp-logging]"))
+                .append(SINGLE_SPACE)
+                .append(styleLogLevel(event))
+                .append(SINGLE_SPACE)
+                .append(styleDate(event))
+                .append(SINGLE_SPACE)
+                .append(styleThreadName(event))
+                .append(SINGLE_SPACE)
+                .append(styleLoggerName(event))
+                .append(SINGLE_SPACE)
+                .append(styleMessage(event));
 
         String requestId = event.getMDCPropertyMap().get(REQUEST_ID_KEY);
         String remoteHost = event.getMDCPropertyMap().get(REMOTE_HOST_KEY);
 
         if (StringUtils.isNotEmpty(requestId)) {
-            sb.append(" | ").append(REQUEST_ID_KEY).append("=").append(requestId);
+            sb.append(tertiaryColour(event, DIVIDER)).append(styleKeyValue(event, REQUEST_ID_KEY, requestId));
         }
 
         if (StringUtils.isNotEmpty(remoteHost)) {
-            sb.append(" | ").append(REMOTE_HOST_KEY).append("=").append(remoteHost);
+            sb.append(tertiaryColour(event, DIVIDER)).append(styleKeyValue(event, REMOTE_HOST_KEY, remoteHost));
         }
 
         appendParameters(sb, event);
@@ -54,8 +60,8 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
         if (event.getArgumentArray().length > 0) {
             for (Object arg : event.getArgumentArray()) {
                 if (arg instanceof LogParameters) {
-                    Map<String, Object> params = ((LogParameters) arg).getParameters();
-                    sb.append(" parameters=[").append(params.toString()).append(" ]");
+                    sb.append(SINGLE_SPACE);
+                    sb.append(Beautifier.beautifyParameters(event, (LogParameters) arg));
                     break;
                 }
             }

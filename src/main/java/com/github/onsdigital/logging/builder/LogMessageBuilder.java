@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -22,9 +25,17 @@ public abstract class LogMessageBuilder {
     public static final String STACK_TRACE_KEY = "stackTrace";
     public static final String MSG_KEY = "message";
 
+    private static final ExecutorService logThreadPool = Executors.newFixedThreadPool(20);
+    private static Function<ExecutorService, Thread> showDownTask = (executorService -> new Thread(() -> executorService
+            .shutdown()));
+
     protected String description;
     protected LogParameters parameters;
     protected Level logLevel;
+
+    static {
+        Runtime.getRuntime().addShutdownHook(showDownTask.apply(logThreadPool));
+    }
 
     public LogMessageBuilder(String eventDescription) {
         this(eventDescription, Level.INFO);
@@ -65,31 +76,33 @@ public abstract class LogMessageBuilder {
     }
 
     public LogMessageBuilder addParameter(String key, Object value) {
-        this.parameters.getParameters().put(key, value.toString());
+        this.parameters.getParameters().put(key, value);
         return this;
     }
 
     public void log() {
-        if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
-            LOG = getLogger(getLoggerName());
-        }
+        logThreadPool.submit(() -> {
+            if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
+                LOG = getLogger(getLoggerName());
+            }
 
-        switch (Level.toLevel(getLogLevel()).levelInt) {
-            case Level.ERROR_INT:
-                LOG.error(this.description, this.parameters);
-                break;
-            case Level.WARN_INT:
-                LOG.warn(this.description, this.parameters);
-                break;
-            case Level.INFO_INT:
-                LOG.info(this.description, this.parameters);
-                break;
-            case Level.DEBUG_INT:
-                LOG.debug(this.description, this.parameters);
-                break;
-            case Level.TRACE_INT:
-                LOG.trace(this.description, this.parameters);
-        }
+            switch (Level.toLevel(getLogLevel()).levelInt) {
+                case Level.ERROR_INT:
+                    LOG.error(this.description, this.parameters);
+                    break;
+                case Level.WARN_INT:
+                    LOG.warn(this.description, this.parameters);
+                    break;
+                case Level.INFO_INT:
+                    LOG.info(this.description, this.parameters);
+                    break;
+                case Level.DEBUG_INT:
+                    LOG.debug(this.description, this.parameters);
+                    break;
+                case Level.TRACE_INT:
+                    LOG.trace(this.description, this.parameters);
+            }
+        });
     }
 
     public abstract String getLoggerName();

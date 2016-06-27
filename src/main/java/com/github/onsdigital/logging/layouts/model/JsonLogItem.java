@@ -1,11 +1,11 @@
 package com.github.onsdigital.logging.layouts.model;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.CoreConstants;
 import com.github.onsdigital.logging.builder.LogParameters;
-import com.google.gson.Gson;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.MDC;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -28,8 +28,10 @@ public class JsonLogItem {
     protected String remoteHost;
     protected String description;
     protected Map<String, Object> parameters;
+    protected transient ILoggingEvent event;
 
     public JsonLogItem(ILoggingEvent event) {
+        this.event = event;
         this.timestamp = DATE_FORMAT.format(new Date());
         this.level = event.getLevel().levelStr;
         this.loggerName = event.getLoggerName();
@@ -50,6 +52,42 @@ public class JsonLogItem {
     }
 
     public String asJson() {
-        return new Gson().toJson(this) + CoreConstants.LINE_SEPARATOR;
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public String getLoggerName() {
+        return loggerName;
+    }
+
+    public String getThreadName() {
+        return threadName;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public String getRemoteHost() {
+        return remoteHost;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 }
