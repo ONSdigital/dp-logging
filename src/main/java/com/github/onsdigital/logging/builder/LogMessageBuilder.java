@@ -4,9 +4,11 @@ import ch.qos.logback.classic.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
+import org.slf4j.MDC;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -32,6 +34,7 @@ public abstract class LogMessageBuilder {
     protected String description;
     protected LogParameters parameters;
     protected Level logLevel;
+    private Map<String, String> contextMap;
 
     static {
         Runtime.getRuntime().addShutdownHook(showDownTask.apply(logThreadPool));
@@ -81,11 +84,14 @@ public abstract class LogMessageBuilder {
     }
 
     public void log() {
+        // Obtain a copy of the thread context so it can be set in the content of the new thread.
+        this.contextMap = MDC.getCopyOfContextMap();
+
         logThreadPool.submit(() -> {
             if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
                 LOG = getLogger(getLoggerName());
             }
-
+            MDC.setContextMap(contextMap);
             switch (Level.toLevel(getLogLevel()).levelInt) {
                 case Level.ERROR_INT:
                     LOG.error(this.description, this.parameters);
