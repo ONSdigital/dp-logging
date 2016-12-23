@@ -1,12 +1,9 @@
 package com.github.onsdigital.logging.builder;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.text.DateFormat;
@@ -92,9 +89,6 @@ public abstract class LogMessageBuilder {
 
         logThreadPool.submit(() -> {
             if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
-                LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-                StatusPrinter.print(context);
-
                 LOG = getLogger(getLoggerName());
             }
             if (this.contextMap != null) {
