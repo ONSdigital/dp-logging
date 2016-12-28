@@ -3,6 +3,7 @@ package com.github.onsdigital.logging.layouts.model;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.github.onsdigital.logging.builder.LogParameters;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.MDC;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 /**
  * POJO representing a json log item.
  */
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class JsonLogItem {
 
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
