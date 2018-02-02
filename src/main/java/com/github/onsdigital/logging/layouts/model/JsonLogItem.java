@@ -20,7 +20,7 @@ import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 /**
  * POJO representing a json log item.
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonPropertyOrder({"time", "level", "name", "thread", "request", "host"})
 public class JsonLogItem {
 
