@@ -9,7 +9,7 @@ import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
 /**
- * Apply colours to the logging output. To enable coloured logging set env var <i>colour_logging_enabled=true</i> by
+ * Apply colours to the logging output. To enable coloured logging set env var <i>DP_COLOURED_LOGGING=true</i> by
  * default it is disabled.
  */
 public class Colourizer {
@@ -19,7 +19,7 @@ public class Colourizer {
     private static final String SECONDARY_COLOUR_KEY = "{0}.secondary.colour";
     private static final String TERTIARY_COLOUR_KEY = "tertiary.colour";
     private static final String QUATERNARY_COLOUR_KEY = "quaternary.colour";
-    private static final String COLOUR_LOGGING_ENABLED_KEY = "colour_logging_enabled";
+    private static final String COLOUR_LOGGING_ENABLED_KEY = "DP_COLOURED_LOGGING";
     private static final String LOGGING_COLOUR_CONFIG_PATH = "/colour_logging_configuration.properties";
     protected static final String START_TAG = "\033[";
     protected static final String END_TAG = "\033[0m";

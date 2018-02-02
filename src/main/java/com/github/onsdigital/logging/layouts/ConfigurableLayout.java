@@ -9,7 +9,7 @@ import static java.lang.System.getenv;
 
 /**
  * Layout which uses environment variable to determined which Layout to use. Simply set an the env var
- * <b>logging_format</b> to one for the following:
+ * <b>DP_LOGGING_FORMAT</b> to one for the following:
  * formats:
  * <ul>
  * <li><b>json</b></li>
@@ -17,12 +17,12 @@ import static java.lang.System.getenv;
  * <li><b>text</b></li>
  * </ul>
  * <p>
- * Simply create an env var <i>logging_format=</i> to one of the above. The default is text if no var is set or the
+ * Simply create an env var <i>DP_LOGGING_FORMAT=</i> to one of the above. The default is text if no var is set or the
  * value is not valid.
  */
 public class ConfigurableLayout extends LayoutBase<ILoggingEvent> {
 
-    private static final String LOGGING_FORMAT_ENV_KEY = "logging_format";
+    private static final String LOGGING_FORMAT_ENV_KEY = "DP_LOGGING_FORMAT";
     private static final String TEXT_FORMAT = "text";
     private static final String JSON_FORMAT = "json";
     private static final String PRETTY_JSON_FORMAT = "pretty_json";
