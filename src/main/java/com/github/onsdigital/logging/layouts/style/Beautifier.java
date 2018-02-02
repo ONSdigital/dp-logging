@@ -3,6 +3,7 @@ package com.github.onsdigital.logging.layouts.style;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.github.onsdigital.logging.builder.LogParameters;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,10 +89,12 @@ public class Beautifier {
         Map.Entry<String, Object> entry = null;
         while (iterator.hasNext()) {
             entry = iterator.next();
-            result.append(c.secondaryColour(entry.getKey()))
-                    .append(c.tertiaryColour("="))
-                    .append(c.secondaryColour(entry.getValue().toString()))
-                    .append(iterator.hasNext() ? c.primaryColour(", ") : "");
+            if (entry.getValue() != null && !StringUtils.isEmpty(entry.getValue().toString())) {
+                result.append(c.secondaryColour(entry.getKey()))
+                        .append(c.tertiaryColour("="))
+                        .append(c.secondaryColour(entry.getValue().toString()))
+                        .append(iterator.hasNext() ? c.primaryColour(", ") : "");
+            }
         }
         result.append(c.primaryColour("}"));
         return result.toString();
