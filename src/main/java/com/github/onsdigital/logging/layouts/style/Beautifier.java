@@ -54,7 +54,7 @@ public class Beautifier {
     }
 
     public static String styleMessage(ILoggingEvent e) {
-        return getColourizer(e.getLevel()).primaryColour(": " + e.getFormattedMessage() + " |");
+        return getColourizer(e.getLevel()).primaryColour(": " + e.getFormattedMessage());
     }
 
     public static String styleKeyValue(ILoggingEvent e, String key, String value) {
@@ -81,18 +81,19 @@ public class Beautifier {
             return "";
         }
 
-        Colourizer cc = getColourizer(e.getLevel());
-        StringBuilder result = new StringBuilder(cc.primaryColour(PARAMS_KEY));
+        Colourizer c = getColourizer(e.getLevel());
+        StringBuilder result = new StringBuilder(c.primaryColour(PARAMS_KEY));
 
         Iterator<Map.Entry<String, Object>> iterator = p.getParameters().entrySet().iterator();
         Map.Entry<String, Object> entry = null;
         while (iterator.hasNext()) {
             entry = iterator.next();
-            result.append(cc.secondaryColour(entry.getKey() + "="))
-                    .append(cc.tertiaryColour(entry.getValue().toString()))
-                    .append(iterator.hasNext() ? cc.primaryColour(", ") : "");
+            result.append(c.secondaryColour(entry.getKey()))
+                    .append(c.tertiaryColour("="))
+                    .append(c.secondaryColour(entry.getValue().toString()))
+                    .append(iterator.hasNext() ? c.primaryColour(", ") : "");
         }
-        result.append(cc.primaryColour("}"));
+        result.append(c.primaryColour("}"));
         return result.toString();
     }
 

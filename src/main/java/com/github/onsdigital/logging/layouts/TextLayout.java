@@ -45,11 +45,11 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
         String remoteHost = event.getMDCPropertyMap().get(REMOTE_HOST_KEY);
 
         if (StringUtils.isNotEmpty(requestId)) {
-            sb.append(namespace(event, DIVIDER)).append(styleKeyValue(event, REQUEST_ID_KEY, requestId));
+            sb.append(namespace(event, SINGLE_SPACE)).append(styleKeyValue(event, REQUEST_ID_KEY, requestId));
         }
 
         if (StringUtils.isNotEmpty(remoteHost)) {
-            sb.append(namespace(event, DIVIDER)).append(styleKeyValue(event, REMOTE_HOST_KEY, remoteHost));
+            sb.append(namespace(event, SINGLE_SPACE)).append(styleKeyValue(event, REMOTE_HOST_KEY, remoteHost));
         }
 
         appendParameters(sb, event);
