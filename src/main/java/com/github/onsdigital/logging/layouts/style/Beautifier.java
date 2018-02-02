@@ -19,50 +19,50 @@ public class Beautifier {
     protected static final String END_TAG = "\033[0m";
     protected static final String PARAMS_KEY = "parameters={";
 
-    protected static final ColourConfiguration ERROR_CONFIG;
-    protected static final ColourConfiguration WARN_CONFIG;
-    protected static final ColourConfiguration INFO_CONFIG;
-    protected static final ColourConfiguration DEBUG_CONFIG;
-    protected static final ColourConfiguration TRACE_CONFIG;
+    protected static final Colourizer ERROR_CONFIG;
+    protected static final Colourizer WARN_CONFIG;
+    protected static final Colourizer INFO_CONFIG;
+    protected static final Colourizer DEBUG_CONFIG;
+    protected static final Colourizer TRACE_CONFIG;
 
     static {
-        ERROR_CONFIG = new ColourConfiguration(Level.ERROR);
-        WARN_CONFIG = new ColourConfiguration(Level.WARN);
-        INFO_CONFIG = new ColourConfiguration(Level.INFO);
-        DEBUG_CONFIG = new ColourConfiguration(Level.DEBUG);
-        TRACE_CONFIG = new ColourConfiguration(Level.TRACE);
+        ERROR_CONFIG = new Colourizer(Level.ERROR);
+        WARN_CONFIG = new Colourizer(Level.WARN);
+        INFO_CONFIG = new Colourizer(Level.INFO);
+        DEBUG_CONFIG = new Colourizer(Level.DEBUG);
+        TRACE_CONFIG = new Colourizer(Level.TRACE);
     }
 
     public static String namespace(ILoggingEvent e, String logMessage) {
-        return getColourConfig(e.getLevel()).quaternaryColour(logMessage);
+        return getColourizer(e.getLevel()).quaternaryColour(logMessage);
     }
 
     public static String styleLogLevel(ILoggingEvent e) {
-        return getColourConfig(e.getLevel()).primaryColour(e.getLevel().levelStr);
+        return getColourizer(e.getLevel()).primaryColour(e.getLevel().levelStr);
     }
 
     public static String styleThreadName(ILoggingEvent e) {
-        return getColourConfig(e.getLevel()).quaternaryColour("[" + e.getThreadName() + "]");
+        return getColourizer(e.getLevel()).quaternaryColour("[" + e.getThreadName() + "]");
     }
 
     public static String styleLoggerName(ILoggingEvent e) {
-        return getColourConfig(e.getLevel()).quaternaryColour(e.getLoggerName());
+        return getColourizer(e.getLevel()).quaternaryColour(e.getLoggerName());
     }
 
     public static String styleDate(ILoggingEvent e) {
-        return getColourConfig(e.getLevel()).primaryColour(DATE_FORMAT.format(new Date()));
+        return getColourizer(e.getLevel()).primaryColour(DATE_FORMAT.format(new Date()));
     }
 
     public static String styleMessage(ILoggingEvent e) {
-        return getColourConfig(e.getLevel()).primaryColour(": " + e.getFormattedMessage() + " |");
+        return getColourizer(e.getLevel()).primaryColour(": " + e.getFormattedMessage() + " |");
     }
 
     public static String styleKeyValue(ILoggingEvent e, String key, String value) {
-        ColourConfiguration cc = getColourConfig(e.getLevel());
-        return cc.primaryColour(key) + cc.tertiaryColour("=") + cc.secondaryColour(value);
+        Colourizer c = getColourizer(e.getLevel());
+        return c.primaryColour(key) + c.tertiaryColour("=") + c.secondaryColour(value);
     }
 
-    private static ColourConfiguration getColourConfig(Level level) {
+    private static Colourizer getColourizer(Level level) {
         if (Level.ERROR.equals(level)) {
             return ERROR_CONFIG;
         } else if (Level.WARN.equals(level)) {
@@ -81,7 +81,7 @@ public class Beautifier {
             return "";
         }
 
-        ColourConfiguration cc = getColourConfig(e.getLevel());
+        Colourizer cc = getColourizer(e.getLevel());
         StringBuilder result = new StringBuilder(cc.primaryColour(PARAMS_KEY));
 
         Iterator<Map.Entry<String, Object>> iterator = p.getParameters().entrySet().iterator();
@@ -97,6 +97,6 @@ public class Beautifier {
     }
 
     public static String beautifyJson(ILoggingEvent e, String json) {
-        return getColourConfig(e.getLevel()).primaryColour(json);
+        return getColourizer(e.getLevel()).primaryColour(json);
     }
 }

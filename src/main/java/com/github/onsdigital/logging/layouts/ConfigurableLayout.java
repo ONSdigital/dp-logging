@@ -8,7 +8,17 @@ import static java.lang.System.getenv;
 
 
 /**
- * Created by dave on 01/02/2018.
+ * Layout which uses environment variable to determined which Layout to use. Simply set an the env var
+ * <b>logging_format</b> to one for the following:
+ * formats:
+ * <ul>
+ * <li><b>json</b></li>
+ * <li><b>pretty_json</b></li>
+ * <li><b>text</b></li>
+ * </ul>
+ * <p>
+ * Simply create an env var <i>logging_format=</i> to one of the above. The default is text if no var is set or the
+ * value is not valid.
  */
 public class ConfigurableLayout extends LayoutBase<ILoggingEvent> {
 

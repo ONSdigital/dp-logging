@@ -9,9 +9,10 @@ import static java.lang.System.getenv;
 import static java.text.MessageFormat.format;
 
 /**
- * Created by dave on 6/17/16.
+ * Apply colours to the logging output. To enable coloured logging set env var <i>colour_logging_enabled=true</i> by
+ * default it is disabled.
  */
-public class ColourConfiguration {
+public class Colourizer {
 
     protected static final String DEFAULT_COLOUR = "39m";
     private static final String PRIMARY_COLOUR_KEY = "{0}.primary.colour";
@@ -37,7 +38,7 @@ public class ColourConfiguration {
 
     public static void loadColours() {
         if (colourLoggingEnabled && colourLoggingProperties == null) {
-            try (InputStream inputStream = ColourConfiguration.class
+            try (InputStream inputStream = Colourizer.class
                     .getResourceAsStream(LOGGING_COLOUR_CONFIG_PATH)) {
                 colourLoggingProperties = new Properties();
                 colourLoggingProperties.load(inputStream);
@@ -50,7 +51,7 @@ public class ColourConfiguration {
         }
     }
 
-    public ColourConfiguration(Level level) {
+    public Colourizer(Level level) {
         if (colourLoggingEnabled == null) {
             colourLoggingEnabled = Boolean.valueOf(getenv(COLOUR_LOGGING_ENABLED_KEY));
         }

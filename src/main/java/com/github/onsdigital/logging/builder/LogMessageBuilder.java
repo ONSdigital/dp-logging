@@ -113,30 +113,5 @@ public abstract class LogMessageBuilder {
         });
     }
 
-    public void log1() {
-        if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
-            LOG = getLogger(getLoggerName());
-        }
-        if (this.contextMap != null) {
-            MDC.setContextMap(contextMap);
-        }
-        switch (Level.toLevel(getLogLevel()).levelInt) {
-            case Level.ERROR_INT:
-                LOG.error(this.description, this.parameters);
-                break;
-            case Level.WARN_INT:
-                LOG.warn(this.description, this.parameters);
-                break;
-            case Level.INFO_INT:
-                LOG.info(this.description, this.parameters);
-                break;
-            case Level.DEBUG_INT:
-                LOG.debug(this.description, this.parameters);
-                break;
-            case Level.TRACE_INT:
-                LOG.trace(this.description, this.parameters);
-        }
-    }
-
     public abstract String getLoggerName();
 }
