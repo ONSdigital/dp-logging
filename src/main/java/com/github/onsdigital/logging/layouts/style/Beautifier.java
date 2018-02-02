@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.github.onsdigital.logging.layouts.style.ColourConfiguration.getColourLoggingEnabled;
-
 /**
  *
  */
@@ -19,6 +17,8 @@ public class Beautifier {
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     protected static final String START_TAG = "\033[";
     protected static final String END_TAG = "\033[0m";
+    protected static final String PARAMS_KEY = "parameters={";
+
     protected static final ColourConfiguration ERROR_CONFIG;
     protected static final ColourConfiguration WARN_CONFIG;
     protected static final ColourConfiguration INFO_CONFIG;
@@ -33,45 +33,36 @@ public class Beautifier {
         TRACE_CONFIG = new ColourConfiguration(Level.TRACE);
     }
 
-    public static String tertiaryColour(ILoggingEvent event, String logMessage) {
-        return beautify(getColourMapping(event.getLevel()).getQuaternaryColour(), logMessage);
+    public static String namespace(ILoggingEvent e, String logMessage) {
+        return getColourConfig(e.getLevel()).quaternaryColour(logMessage);
     }
 
-    public static String styleLogLevel(ILoggingEvent event) {
-        return beautify(getColourMapping(event.getLevel()).getPrimaryColour(), event.getLevel().levelStr);
+    public static String styleLogLevel(ILoggingEvent e) {
+        return getColourConfig(e.getLevel()).primaryColour(e.getLevel().levelStr);
     }
 
-    public static String styleThreadName(ILoggingEvent event) {
-        return beautify(getColourMapping(event.getLevel()).getQuaternaryColour(), "[" + event.getThreadName() + "]");
+    public static String styleThreadName(ILoggingEvent e) {
+        return getColourConfig(e.getLevel()).quaternaryColour("[" + e.getThreadName() + "]");
     }
 
-    public static String styleLoggerName(ILoggingEvent event) {
-        return beautify(getColourMapping(event.getLevel()).getQuaternaryColour(), event.getLoggerName());
+    public static String styleLoggerName(ILoggingEvent e) {
+        return getColourConfig(e.getLevel()).quaternaryColour(e.getLoggerName());
     }
 
-    public static String styleDate(ILoggingEvent event) {
-        return beautify(getColourMapping(event.getLevel()).getPrimaryColour(), DATE_FORMAT.format(new Date()));
+    public static String styleDate(ILoggingEvent e) {
+        return getColourConfig(e.getLevel()).primaryColour(DATE_FORMAT.format(new Date()));
     }
 
-    public static String styleMessage(ILoggingEvent event) {
-        return beautify(getColourMapping(event.getLevel()).getPrimaryColour(), ": " + event.getFormattedMessage() +
-                " |");
+    public static String styleMessage(ILoggingEvent e) {
+        return getColourConfig(e.getLevel()).primaryColour(": " + e.getFormattedMessage() + " |");
     }
 
-    public static String styleKeyValue(ILoggingEvent event, String key, String value) {
-        return beautify(getColourMapping(event.getLevel()).getPrimaryColour(), key)
-                + beautify(getColourMapping(event.getLevel()).getTertiaryColour(), "=")
-                + beautify(getColourMapping(event.getLevel()).getSecondaryColour(), value);
+    public static String styleKeyValue(ILoggingEvent e, String key, String value) {
+        ColourConfiguration cc = getColourConfig(e.getLevel());
+        return cc.primaryColour(key) + cc.tertiaryColour("=") + cc.secondaryColour(value);
     }
 
-    public static String beautify(String colourCode, String logMessage) {
-        if (!getColourLoggingEnabled()) {
-            return logMessage;
-        }
-        return START_TAG + colourCode + logMessage + END_TAG;
-    }
-
-    private static ColourConfiguration getColourMapping(Level level) {
+    private static ColourConfiguration getColourConfig(Level level) {
         if (Level.ERROR.equals(level)) {
             return ERROR_CONFIG;
         } else if (Level.WARN.equals(level)) {
@@ -85,32 +76,27 @@ public class Beautifier {
         }
     }
 
-    public static String beautifyParameters(ILoggingEvent event, LogParameters parameters) {
-        if (parameters == null || parameters.getParameters() == null || parameters.getParameters().isEmpty()) {
+    public static String beautifyParameters(ILoggingEvent e, LogParameters p) {
+        if (p == null || p.getParameters() == null || p.getParameters().isEmpty()) {
             return "";
         }
 
-        ColourConfiguration configuration = getColourMapping(event.getLevel());
-        StringBuilder result = new StringBuilder(applyColour(configuration.getPrimaryColour(), "parameters={ "));
+        ColourConfiguration cc = getColourConfig(e.getLevel());
+        StringBuilder result = new StringBuilder(cc.primaryColour(PARAMS_KEY));
 
-        Iterator<Map.Entry<String, Object>> iterator = parameters.getParameters().entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> iterator = p.getParameters().entrySet().iterator();
         Map.Entry<String, Object> entry = null;
         while (iterator.hasNext()) {
             entry = iterator.next();
-            result.append(START_TAG)
-                    .append(applyColour(configuration.getPrimaryColour(), entry.getKey() + "="))
-                    .append(applyColour(configuration.getSecondaryColour(), entry.getValue().toString()))
-                    .append(iterator.hasNext() ? applyColour(configuration.getSecondaryColour(), ", ") : "");
+            result.append(cc.secondaryColour(entry.getKey() + "="))
+                    .append(cc.tertiaryColour(entry.getValue().toString()))
+                    .append(iterator.hasNext() ? cc.primaryColour(", ") : "");
         }
-        result.append(applyColour(configuration.getPrimaryColour(), " }"));
+        result.append(cc.primaryColour("}"));
         return result.toString();
     }
 
-    public static String beautifyJson(ILoggingEvent event, String json) {
-        return beautify(getColourMapping(event.getLevel()).getPrimaryColour(), json);
-    }
-
-    private static String applyColour(String colour, String message) {
-        return START_TAG + colour + message + END_TAG;
+    public static String beautifyJson(ILoggingEvent e, String json) {
+        return getColourConfig(e.getLevel()).primaryColour(json);
     }
 }

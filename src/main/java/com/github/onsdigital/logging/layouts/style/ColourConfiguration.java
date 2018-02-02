@@ -3,8 +3,10 @@ package com.github.onsdigital.logging.layouts.style;
 import ch.qos.logback.classic.Level;
 
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.Properties;
+
+import static java.lang.System.getenv;
+import static java.text.MessageFormat.format;
 
 /**
  * Created by dave on 6/17/16.
@@ -18,6 +20,10 @@ public class ColourConfiguration {
     private static final String QUATERNARY_COLOUR_KEY = "quaternary.colour";
     private static final String COLOUR_LOGGING_ENABLED_KEY = "colour_logging_enabled";
     private static final String LOGGING_COLOUR_CONFIG_PATH = "/colour_logging_configuration.properties";
+    protected static final String START_TAG = "\033[";
+    protected static final String END_TAG = "\033[0m";
+
+    static final String APPLY_COLOUR_FMT = "{0}{1}{2}{3}";
 
     private static Boolean colourLoggingEnabled = null;
     private static Properties colourLoggingProperties = null;
@@ -26,8 +32,8 @@ public class ColourConfiguration {
     private static String TERTIARY_COLOUR;
     private static String QUATERNARY_COLOUR;
 
-    final String primaryColour;
-    final String secondaryColour;
+    private final String primaryColour;
+    private final String secondaryColour;
 
     public static void loadColours() {
         if (colourLoggingEnabled && colourLoggingProperties == null) {
@@ -46,15 +52,15 @@ public class ColourConfiguration {
 
     public ColourConfiguration(Level level) {
         if (colourLoggingEnabled == null) {
-            colourLoggingEnabled = Boolean.valueOf(System.getProperty(COLOUR_LOGGING_ENABLED_KEY, Boolean.FALSE.toString()));
+            colourLoggingEnabled = Boolean.valueOf(getenv(COLOUR_LOGGING_ENABLED_KEY));
         }
 
         if (colourLoggingEnabled) {
             loadColours();
-            this.primaryColour = colourLoggingProperties.getProperty(MessageFormat.format(PRIMARY_COLOUR_KEY,
+            this.primaryColour = colourLoggingProperties.getProperty(format(PRIMARY_COLOUR_KEY,
                     level.levelStr.toLowerCase()), DEFAULT_COLOUR);
 
-            this.secondaryColour = colourLoggingProperties.getProperty(MessageFormat.format(SECONDARY_COLOUR_KEY,
+            this.secondaryColour = colourLoggingProperties.getProperty(format(SECONDARY_COLOUR_KEY,
                     level.levelStr.toLowerCase()), DEFAULT_COLOUR);
         } else {
             this.primaryColour = DEFAULT_COLOUR;
@@ -62,20 +68,32 @@ public class ColourConfiguration {
         }
     }
 
-    public String getPrimaryColour() {
-        return primaryColour;
+    public String primaryColour(String message) {
+        if (colourLoggingEnabled) {
+            return format(APPLY_COLOUR_FMT, START_TAG, primaryColour, message, END_TAG);
+        }
+        return message;
     }
 
-    public String getSecondaryColour() {
-        return secondaryColour;
+    public String secondaryColour(String message) {
+        if (colourLoggingEnabled) {
+            return format(APPLY_COLOUR_FMT, START_TAG, secondaryColour, message, END_TAG);
+        }
+        return message;
     }
 
-    public String getTertiaryColour() {
-        return TERTIARY_COLOUR;
+    public String tertiaryColour(String message) {
+        if (colourLoggingEnabled) {
+            return format(APPLY_COLOUR_FMT, START_TAG, TERTIARY_COLOUR, message, END_TAG);
+        }
+        return message;
     }
 
-    public String getQuaternaryColour() {
-        return QUATERNARY_COLOUR;
+    public String quaternaryColour(String message) {
+        if (colourLoggingEnabled) {
+            return format(APPLY_COLOUR_FMT, START_TAG, QUATERNARY_COLOUR, message, END_TAG);
+        }
+        return message;
     }
 
     public static Boolean getColourLoggingEnabled() {

@@ -7,13 +7,13 @@ import com.github.onsdigital.logging.builder.LogParameters;
 import com.github.onsdigital.logging.layouts.style.Beautifier;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.github.onsdigital.logging.layouts.style.Beautifier.tertiaryColour;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleDate;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleKeyValue;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleLogLevel;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleLoggerName;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleMessage;
 import static com.github.onsdigital.logging.layouts.style.Beautifier.styleThreadName;
+import static com.github.onsdigital.logging.layouts.style.Beautifier.namespace;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST_KEY;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 
@@ -27,8 +27,9 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
 
     @Override
     public String doLayout(ILoggingEvent event) {
+
         StringBuilder sb = new StringBuilder();
-        sb.append(tertiaryColour(event, "[dp-logging]"))
+        sb.append(namespace(event, "[dp-logging]"))
                 .append(SINGLE_SPACE)
                 .append(styleLogLevel(event))
                 .append(SINGLE_SPACE)
@@ -44,11 +45,11 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
         String remoteHost = event.getMDCPropertyMap().get(REMOTE_HOST_KEY);
 
         if (StringUtils.isNotEmpty(requestId)) {
-            sb.append(tertiaryColour(event, DIVIDER)).append(styleKeyValue(event, REQUEST_ID_KEY, requestId));
+            sb.append(namespace(event, DIVIDER)).append(styleKeyValue(event, REQUEST_ID_KEY, requestId));
         }
 
         if (StringUtils.isNotEmpty(remoteHost)) {
-            sb.append(tertiaryColour(event, DIVIDER)).append(styleKeyValue(event, REMOTE_HOST_KEY, remoteHost));
+            sb.append(namespace(event, DIVIDER)).append(styleKeyValue(event, REMOTE_HOST_KEY, remoteHost));
         }
 
         appendParameters(sb, event);
