@@ -4,12 +4,12 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import com.github.onsdigital.logging.builder.LogParameters;
-import com.github.onsdigital.logging.layouts.style.Styler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.github.onsdigital.logging.layouts.style.Styler.addColour;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST_KEY;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 import static java.text.MessageFormat.format;
@@ -25,17 +25,13 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
     @Override
     public String doLayout(ILoggingEvent event) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[dp-logging]")
+        sb.append(format("[{0}]", event.getLoggerName()))
                 .append(SINGLE_SPACE)
-                .append(event.getLevel().levelStr)
-                .append(SINGLE_SPACE)
-                .append(format("[{0}]", event.getThreadName()))
+                .append(addColour(event.getLevel().levelStr, event.getLevel().levelStr))
                 .append(SINGLE_SPACE)
                 .append(DATE_FORMAT.format(new Date()))
                 .append(SINGLE_SPACE)
-                .append(event.getLoggerName())
-                .append(SINGLE_SPACE)
-                .append(event.getFormattedMessage());
+                .append(addColour(event.getLevel().levelStr, event.getFormattedMessage()));
 
         String requestId = event.getMDCPropertyMap().get(REQUEST_ID_KEY);
         String remoteHost = event.getMDCPropertyMap().get(REMOTE_HOST_KEY);
@@ -49,8 +45,9 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
         }
 
         appendParameters(sb, event);
+        sb.append(SINGLE_SPACE).append(format("[{0}]", event.getThreadName()));
         sb.append(CoreConstants.LINE_SEPARATOR);
-        return Styler.addColour(event.getLevel().levelStr, sb.toString());
+        return sb.toString();
     }
 
     private void appendParameters(StringBuilder sb, ILoggingEvent event) {
@@ -59,7 +56,7 @@ public class TextLayout extends LayoutBase<ILoggingEvent> {
                 if (arg instanceof LogParameters) {
                     sb.append(SINGLE_SPACE);
                     LogParameters lp = (LogParameters) arg;
-                    sb.append(lp.getParameters());
+                    sb.append(addColour(event.getLevel().levelStr, lp.getParameters().toString()));
                     break;
                 }
             }
