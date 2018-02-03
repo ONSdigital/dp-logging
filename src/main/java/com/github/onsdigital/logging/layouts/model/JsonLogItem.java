@@ -2,14 +2,11 @@ package com.github.onsdigital.logging.layouts.model;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.github.onsdigital.logging.builder.LogParameters;
-import com.github.onsdigital.logging.layouts.style.Beautifier;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.MDC;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -65,14 +62,6 @@ public class JsonLogItem {
                     break;
                 }
             }
-        }
-    }
-
-    public String asJson() {
-        try {
-            return Beautifier.beautifyJson(this.event, new ObjectMapper().writeValueAsString(this));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

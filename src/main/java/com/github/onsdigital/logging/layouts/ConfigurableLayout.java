@@ -23,7 +23,6 @@ import static java.lang.System.getenv;
 public class ConfigurableLayout extends LayoutBase<ILoggingEvent> {
 
     private static final String LOGGING_FORMAT_ENV_KEY = "DP_LOGGING_FORMAT";
-    private static final String TEXT_FORMAT = "text";
     private static final String JSON_FORMAT = "json";
     private static final String PRETTY_JSON_FORMAT = "pretty_json";
 
@@ -36,6 +35,7 @@ public class ConfigurableLayout extends LayoutBase<ILoggingEvent> {
         } else if (PRETTY_JSON_FORMAT.equals(format)) {
             this.layout = new PrettyJsonLayout();
         } else {
+            // default to text layout.
             this.layout = new TextLayout();
         }
     }
