@@ -2,14 +2,12 @@ package com.github.onsdigital.logging.layouts;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.LayoutBase;
 import com.github.onsdigital.logging.builder.LogParameters;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.github.onsdigital.logging.layouts.style.Styler.addColour;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REMOTE_HOST_KEY;
 import static com.github.onsdigital.logging.util.RequestLogUtil.REQUEST_ID_KEY;
 import static java.text.MessageFormat.format;
@@ -17,7 +15,7 @@ import static java.text.MessageFormat.format;
 /**
  * Created by dave on 5/10/16.
  */
-public class TextLayout extends LayoutBase<ILoggingEvent> {
+public class TextLayout extends AbstractDPLayout {
 
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private static final String SINGLE_SPACE = " ";

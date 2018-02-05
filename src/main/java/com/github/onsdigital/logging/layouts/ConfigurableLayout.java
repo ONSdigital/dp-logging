@@ -2,7 +2,6 @@ package com.github.onsdigital.logging.layouts;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.LayoutBase;
 
 import static java.lang.System.getenv;
 
@@ -20,7 +19,7 @@ import static java.lang.System.getenv;
  * Simply create an env var <i>DP_LOGGING_FORMAT=</i> to one of the above. The default is text if no var is set or the
  * value is not valid.
  */
-public class ConfigurableLayout extends LayoutBase<ILoggingEvent> {
+public class ConfigurableLayout extends AbstractDPLayout {
 
     private static final String LOGGING_FORMAT_ENV_KEY = "DP_LOGGING_FORMAT";
     private static final String JSON_FORMAT = "json";

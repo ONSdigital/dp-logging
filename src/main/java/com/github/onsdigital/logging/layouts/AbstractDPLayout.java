@@ -1,7 +1,9 @@
-package com.github.onsdigital.logging.layouts.style;
+package com.github.onsdigital.logging.layouts;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
+import ch.qos.logback.core.LayoutBase;
 import com.github.onsdigital.logging.layouts.model.JsonLogItem;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
@@ -11,9 +13,9 @@ import java.io.IOException;
 import static java.text.MessageFormat.format;
 
 /**
- * Created by dave on 03/02/2018.
+ * Created by dave on 05/02/2018.
  */
-public class Styler {
+public abstract class AbstractDPLayout extends LayoutBase<ILoggingEvent> {
 
     private static final String DEBUG_COLOUR = "92;1m";
     private static final String INFO_COLOUR = "35;1m";
@@ -38,7 +40,7 @@ public class Styler {
      * @param message the logging message.
      * @return the message styled or unstyled depending on the configuration.
      */
-    public static String addColour(String level, String message) {
+    protected String addColour(String level, String message) {
         if (!COLOUR_LOGGING_ENABLED) {
             return message;
         }
@@ -60,14 +62,14 @@ public class Styler {
     /**
      * Convert the message item to a JSON string.
      */
-    public static String toJson(JsonLogItem item) throws IOException {
+    protected String toJson(JsonLogItem item) throws IOException {
         return addColour(item.getLevel(), OBJECT_MAPPER.writeValueAsString(item)) + CoreConstants.LINE_SEPARATOR;
     }
 
     /**
      * Convert the message item to a formatted JSON string.
      */
-    public static String toPrettyJson(JsonLogItem item) throws IOException {
+    protected String toPrettyJson(JsonLogItem item) throws IOException {
         return addColour(item.getLevel(), PRETTY_OBJECT_WRITER.writeValueAsString(item)) + CoreConstants.LINE_SEPARATOR;
     }
 }
