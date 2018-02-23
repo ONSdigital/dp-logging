@@ -170,6 +170,9 @@ public abstract class LogMessageBuilder {
         }
         this.parameters.getParameters().clear();
         this.parameters = null;
+        this.description = null;
+        this.contextMap = null;
+        this.logLevel = null;
     }
 
     public abstract String getLoggerName();
