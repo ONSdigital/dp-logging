@@ -113,5 +113,58 @@ public abstract class LogMessageBuilder {
         });
     }
 
+    public void logExec() {
+        // Obtain a copy of the thread context so it can be set in the content of the new thread.
+        this.contextMap = MDC.getCopyOfContextMap();
+
+        logThreadPool.execute(() -> {
+            if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
+                LOG = getLogger(getLoggerName());
+            }
+            if (this.contextMap != null) {
+                MDC.setContextMap(contextMap);
+            }
+            switch (Level.toLevel(getLogLevel()).levelInt) {
+                case Level.ERROR_INT:
+                    LOG.error(this.description, this.parameters);
+                    break;
+                case Level.WARN_INT:
+                    LOG.warn(this.description, this.parameters);
+                    break;
+                case Level.INFO_INT:
+                    LOG.info(this.description, this.parameters);
+                    break;
+                case Level.DEBUG_INT:
+                    LOG.debug(this.description, this.parameters);
+                    break;
+                case Level.TRACE_INT:
+                    LOG.trace(this.description, this.parameters);
+            }
+        });
+    }
+
+    public void logSync() {
+        if (LOG == null || !StringUtils.equalsIgnoreCase(LOG.getName(), getLoggerName())) {
+            LOG = getLogger(getLoggerName());
+        }
+
+        switch (Level.toLevel(getLogLevel()).levelInt) {
+            case Level.ERROR_INT:
+                LOG.error(this.description, this.parameters);
+                break;
+            case Level.WARN_INT:
+                LOG.warn(this.description, this.parameters);
+                break;
+            case Level.INFO_INT:
+                LOG.info(this.description, this.parameters);
+                break;
+            case Level.DEBUG_INT:
+                LOG.debug(this.description, this.parameters);
+                break;
+            case Level.TRACE_INT:
+                LOG.trace(this.description, this.parameters);
+        }
+    }
+
     public abstract String getLoggerName();
 }
