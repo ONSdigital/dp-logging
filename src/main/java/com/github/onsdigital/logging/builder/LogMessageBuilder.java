@@ -89,10 +89,6 @@ public abstract class LogMessageBuilder {
             case Level.TRACE_INT:
                 LOG.trace(this.description, this.parameters);
         }
-        this.parameters.getParameters().clear();
-        this.parameters = null;
-        this.description = null;
-        this.logLevel = null;
     }
 
     public abstract String getLoggerName();
