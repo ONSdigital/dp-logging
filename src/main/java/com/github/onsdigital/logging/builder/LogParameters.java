@@ -13,6 +13,7 @@ import java.util.Map;
 public class LogParameters {
 
     private Map<String, Object> parameters;
+    private String namespace;
 
     public LogParameters() {
         this.parameters = new LinkedHashMap<>();
@@ -20,5 +21,13 @@ public class LogParameters {
 
     public Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getNamespace() {
+        return this.namespace;
     }
 }

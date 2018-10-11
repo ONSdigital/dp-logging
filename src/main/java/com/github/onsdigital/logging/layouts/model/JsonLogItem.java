@@ -23,6 +23,9 @@ public class JsonLogItem {
 
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
+    @JsonProperty("namespace")
+    protected String namespace;
+
     @JsonProperty("time")
     protected String timestamp;
 
@@ -58,7 +61,9 @@ public class JsonLogItem {
         if (event.getArgumentArray().length > 0) {
             for (Object arg : event.getArgumentArray()) {
                 if (arg instanceof LogParameters) {
-                    this.parameters = ((LogParameters) arg).getParameters();
+                    LogParameters lp = (LogParameters) arg;
+                    this.namespace = lp.getNamespace();
+                    this.parameters = lp.getParameters();
                     break;
                 }
             }

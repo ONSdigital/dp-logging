@@ -22,6 +22,7 @@ public abstract class LogMessageBuilder {
     public static final String STACK_TRACE_KEY = "stackTrace";
     public static final String MSG_KEY = "message";
 
+    protected String namespace;
     protected String description;
     protected LogParameters parameters;
     protected Level logLevel;
@@ -34,7 +35,6 @@ public abstract class LogMessageBuilder {
         this.description = description;
         this.logLevel = logLevel;
         this.parameters = new LogParameters();
-
     }
 
     public LogMessageBuilder(Throwable t, Level level, String description) {
@@ -67,6 +67,12 @@ public abstract class LogMessageBuilder {
     public LogMessageBuilder addParameter(String key, Object value) {
         parameters.getParameters().put(key, value);
         return this;
+    }
+
+    public void setNamespace(String namespace) {
+        if (StringUtils.isNotEmpty(namespace)) {
+            this.parameters.setNamespace(namespace);
+        }
     }
 
     public void log() {
