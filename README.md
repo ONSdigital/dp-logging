@@ -91,20 +91,20 @@ Outputs:
 The default is standard plain text logging:
 
 ```
-[com.test.logger.example] INFO mylogger 2018-10-15T11:33:58.151+0100 Rick Sanchez {catchPhrase=Wubba lubba dub dub!} [main]
+namespace=mylogger namespace=mylogger package=com.test.logger.example level=INFO timestamp=2018-10-15T13:52:43.437+0100 thread=main message=Rick Sanchez parameters={catchPhrase=Wubba lubba dub dub!}
 ```
 
 You can also enable json logging:
  
  ```json
- {"time":"2018-10-15T11:33:40.633+0100","level":"INFO","name":"com.test.logger.example","thread":"main","namespace":"mylogger","description":"Rick Sanchez","parameters":{"catchPhrase":"Wubba lubba dub dub!"}}
+ {"time":"2018-10-15T13:52:16.838+0100","level":"INFO","name":"com.test.logger.example","thread":"main","namespace":"mylogger","description":"Rick Sanchez","parameters":{"catchPhrase":"Wubba lubba dub dub!"}}
  ```
  
  or pretty json logging
  
  ```json
 {
-  "time" : "2018-10-15T11:33:15.181+0100",
+  "time" : "2018-10-15T13:51:42.503+0100",
   "level" : "INFO",
   "name" : "com.test.logger.example",
   "thread" : "main",
