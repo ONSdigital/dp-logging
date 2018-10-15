@@ -44,8 +44,9 @@ public abstract class LogMessageBuilder {
 
     public LogMessageBuilder(Throwable t, String description) {
         this.description = description;
-        logLevel = Level.ERROR;
-        parameters = new LogParameters();
+        this.logLevel = Level.ERROR;
+        this.parameters = new LogParameters();
+
         addParameter(ERROR_CONTENT_KEY, description);
         addParameter(ERROR_CLASS_KEY, t.getClass().getName());
         parameters.getParameters().put(STACK_TRACE_KEY, ExceptionUtils.getStackTrace(t));
@@ -57,7 +58,7 @@ public abstract class LogMessageBuilder {
     }
 
     public String getLogLevel() {
-        return this.logLevel.levelStr;
+        return logLevel.levelStr;
     }
 
     public DateFormat getDataFormat() {
@@ -71,7 +72,7 @@ public abstract class LogMessageBuilder {
 
     public void setNamespace(String namespace) {
         if (StringUtils.isNotEmpty(namespace)) {
-            this.parameters.setNamespace(namespace);
+            parameters.setNamespace(namespace);
         }
     }
 
@@ -81,19 +82,19 @@ public abstract class LogMessageBuilder {
         }
         switch (Level.toLevel(getLogLevel()).levelInt) {
             case Level.ERROR_INT:
-                LOG.error(this.description, this.parameters);
+                LOG.error(description, parameters);
                 break;
             case Level.WARN_INT:
-                LOG.warn(this.description, this.parameters);
+                LOG.warn(description, parameters);
                 break;
             case Level.INFO_INT:
-                LOG.info(this.description, this.parameters);
+                LOG.info(description, parameters);
                 break;
             case Level.DEBUG_INT:
-                LOG.debug(this.description, this.parameters);
+                LOG.debug(description, parameters);
                 break;
             case Level.TRACE_INT:
-                LOG.trace(this.description, this.parameters);
+                LOG.trace(description, parameters);
         }
     }
 
