@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -49,12 +50,11 @@ public abstract class LogMessageBuilder {
 
         addParameter(ERROR_CONTENT_KEY, description);
         addParameter(ERROR_CLASS_KEY, t.getClass().getName());
-        parameters.getParameters().put(STACK_TRACE_KEY, ExceptionUtils.getStackTrace(t));
+        addParameter(STACK_TRACE_KEY, ExceptionUtils.getStackTrace(t));
     }
 
     public LogMessageBuilder addMessage(String message) {
-        parameters.getParameters().put(MSG_KEY, message);
-        return this;
+        return addParameter(MSG_KEY, message);
     }
 
     public String getLogLevel() {
@@ -66,6 +66,24 @@ public abstract class LogMessageBuilder {
     }
 
     public LogMessageBuilder addParameter(String key, Object value) {
+        if (StringUtils.isBlank(key)) {
+            return this;
+        }
+
+        if (value == null) {
+            return this;
+        }
+
+        /**
+         * Marshalling a Path object to JSON can cause a org.codehaus.jackson.map.JsonMappingException cyclic
+         * reference exception. The noraml fix fo this is use the appropriate Jackson object annotation to prevent
+         * this happening, however to keep the logger interface clean and hassle free we check if the value is a path
+         * and use the String representation of it instead.
+         */
+        if (value instanceof Path) {
+            value = value.toString();
+        }
+
         parameters.getParameters().put(key, value);
         return this;
     }

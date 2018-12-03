@@ -10,12 +10,14 @@ import java.io.IOException;
  */
 public class JsonLayout extends AbstractDPLayout {
 
+    static final String DO_LAYOUT_ERR = "JsonLayout.doLayout returned an unexpected error";
+
     @Override
     public String doLayout(ILoggingEvent event) {
         try {
             return toJson(new JsonLogItem(event));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw doLayoutException(DO_LAYOUT_ERR, e);
         }
     }
 }

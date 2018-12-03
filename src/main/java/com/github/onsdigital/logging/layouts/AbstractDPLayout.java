@@ -72,4 +72,18 @@ public abstract class AbstractDPLayout extends LayoutBase<ILoggingEvent> {
     protected String toPrettyJson(JsonLogItem item) throws IOException {
         return addColour(item.getLevel(), PRETTY_OBJECT_WRITER.writeValueAsString(item)) + CoreConstants.LINE_SEPARATOR;
     }
+
+    /**
+     * Runs printStackTrace on an exception thrown in the doLayout method and re throws as a {@link RuntimeException}
+     * to obey the {@link LayoutBase} interface.
+     *
+     * @param message a context message to indicate where the exception came from.
+     * @param e       the cause.
+     * @return a run time exception.
+     */
+    protected RuntimeException doLayoutException(String message, Throwable e) {
+        RuntimeException runEx = new RuntimeException(message, e);
+        runEx.printStackTrace();
+        return runEx;
+    }
 }
