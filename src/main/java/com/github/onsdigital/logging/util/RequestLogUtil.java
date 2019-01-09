@@ -24,7 +24,7 @@ public class RequestLogUtil {
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
 
-        String requestID = MDC.get(REQUEST_ID_KEY);
+        String requestID = request.getHeader(REQUEST_ID_KEY);
         if (requestID == null) {
             requestID = UUID.randomUUID().toString();
         }
