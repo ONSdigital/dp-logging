@@ -6,6 +6,8 @@ import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.UUID;
+
 /**
  * Utility class providing common functionality for extracting details required for logging from in coming requests and
  * setting request logging headers for outbound request.
@@ -21,7 +23,13 @@ public class RequestLogUtil {
     }
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
-        MDC.put(REQUEST_ID_KEY, request.getHeader(REQUEST_ID_KEY));
+
+        String requestID = MDC.get(REQUEST_ID_KEY);
+        if (requestID == null) {
+            requestID = UUID.randomUUID().toString();
+        }
+
+        MDC.put(REQUEST_ID_KEY, requestID);
         MDC.put(REMOTE_HOST_KEY, request.getHeader(REMOTE_HOST_KEY));
     }
 
