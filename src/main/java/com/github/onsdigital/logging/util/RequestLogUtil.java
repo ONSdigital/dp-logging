@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.util;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -20,7 +21,7 @@ public class RequestLogUtil {
     private static final String DEFAULT_REMOTE_IP = "localhost";
 
     // default implementation.
-    private static Supplier<String> requestIdSupplier = () -> UUID.randomUUID().toString();
+    private static Supplier<String> requestIdSupplier = () -> RandomStringUtils.randomAlphanumeric(16);
 
     static void setRequestIdSupplier(Supplier<String> supplier) {
         requestIdSupplier = supplier;
