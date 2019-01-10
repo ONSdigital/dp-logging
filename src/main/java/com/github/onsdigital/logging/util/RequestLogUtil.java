@@ -1,12 +1,13 @@
 package com.github.onsdigital.logging.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Utility class providing common functionality for extracting details required for logging from in coming requests and
@@ -18,19 +19,29 @@ public class RequestLogUtil {
     public static final String REMOTE_HOST_KEY = "host";
     private static final String DEFAULT_REMOTE_IP = "localhost";
 
+    // default implementation.
+    private static Supplier<String> requestIdSupplier = () -> UUID.randomUUID().toString();
+
+    static void setRequestIdSupplier(Supplier<String> supplier) {
+        requestIdSupplier = supplier;
+    }
+
     private RequestLogUtil() {
         // Util class hide the constructor.
     }
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
-
         String requestID = request.getHeader(REQUEST_ID_KEY);
-        if (requestID == null) {
-            requestID = UUID.randomUUID().toString();
+        if (StringUtils.isEmpty(requestID)) {
+            requestID = requestIdSupplier.get();
         }
 
         MDC.put(REQUEST_ID_KEY, requestID);
-        MDC.put(REMOTE_HOST_KEY, request.getHeader(REMOTE_HOST_KEY));
+
+        String host = request.getHeader(REMOTE_HOST_KEY);
+        if (StringUtils.isNotEmpty(host)) {
+            MDC.put(REMOTE_HOST_KEY, host);
+        }
     }
 
     public static NameValuePair[] getLogHeaders() {
