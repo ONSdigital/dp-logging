@@ -1,5 +1,7 @@
 package com.github.onsdigital.logging.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,13 +58,28 @@ public class RequestLogUtilTest {
     }
 
     @Test
-    public void shouldUseReqIdHeaderValueIfValid() {
+    public void shouldExtendReqIdHeaderValueIfValid() {
         RequestLogUtil.setRequestIdSupplier(idGenerator);
 
         when(request.getHeader(REQUEST_ID_KEY)).thenReturn("666");
 
         RequestLogUtil.extractDiagnosticContext(request);
 
-        assertThat(MDC.get(REQUEST_ID_KEY), equalTo("666"));
+        // Length = "666".length() + ", ".length() + 8  = 13
+        assertThat(MDC.get(REQUEST_ID_KEY).length(), equalTo(13));
+        assertThat(StringUtils.countMatches(MDC.get(REQUEST_ID_KEY), ","), equalTo(1));
+    }
+
+    @Test
+    public void shouldExtendReqIdHeaderValueIfValidAndPreviouslyExtended() {
+        RequestLogUtil.setRequestIdSupplier(idGenerator);
+
+        when(request.getHeader(REQUEST_ID_KEY)).thenReturn("666, 777");
+
+        RequestLogUtil.extractDiagnosticContext(request);
+
+        // Length = "666, 777".length() + ", ".length() + 8  = 18
+        assertThat(MDC.get(REQUEST_ID_KEY).length(), equalTo(18));
+        assertThat(StringUtils.countMatches(MDC.get(REQUEST_ID_KEY), ","), equalTo(2));
     }
 }
