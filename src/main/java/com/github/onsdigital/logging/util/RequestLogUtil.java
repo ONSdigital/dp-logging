@@ -7,7 +7,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -19,12 +18,22 @@ public class RequestLogUtil {
     public static final String REQUEST_ID_KEY = "X-Request-Id";
     public static final String REMOTE_HOST_KEY = "host";
     private static final String DEFAULT_REMOTE_IP = "localhost";
+    private static final int REQUEST_ID_LENGTH = 16;
 
     // default implementation.
-    private static Supplier<String> requestIdSupplier = () -> RandomStringUtils.randomAlphanumeric(16);
+    private static Supplier<String> requestIdSupplier = () -> RandomStringUtils.randomAlphanumeric(REQUEST_ID_LENGTH);
 
     static void setRequestIdSupplier(Supplier<String> supplier) {
         requestIdSupplier = supplier;
+    }
+
+    private static String extendRequestID(String requestID) {
+
+        int subStringLength = REQUEST_ID_LENGTH / 2;
+        String stringToAppend = RandomStringUtils.randomAlphanumeric(subStringLength);
+        requestID += ", " + stringToAppend;
+
+        return requestID;
     }
 
     private RequestLogUtil() {
@@ -33,8 +42,14 @@ public class RequestLogUtil {
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
         String requestID = request.getHeader(REQUEST_ID_KEY);
+
+        // if no request ID, supply one
         if (StringUtils.isEmpty(requestID)) {
             requestID = requestIdSupplier.get();
+        }
+        else {
+            // else, extend existing ID
+            requestID = extendRequestID(requestID);
         }
 
         MDC.put(REQUEST_ID_KEY, requestID);
