@@ -58,7 +58,7 @@ public class RequestLogUtilTest {
     }
 
     @Test
-    public void shouldExtendReqIdHeaderValueIfValid() {
+    public void shouldExtendAndUseReqIdHeaderValueIfValid() {
         RequestLogUtil.setRequestIdSupplier(idGenerator);
 
         when(request.getHeader(REQUEST_ID_KEY)).thenReturn("666");
@@ -71,7 +71,7 @@ public class RequestLogUtilTest {
     }
 
     @Test
-    public void shouldExtendReqIdHeaderValueIfValidAndPreviouslyExtended() {
+    public void shouldExtendAndUseReqIdHeaderValueIfValidAndPreviouslyExtended() {
         RequestLogUtil.setRequestIdSupplier(idGenerator);
 
         when(request.getHeader(REQUEST_ID_KEY)).thenReturn("666, 777");
