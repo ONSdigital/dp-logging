@@ -41,6 +41,9 @@ public class JsonLogItem {
     @JsonProperty("request")
     protected String requestId;
 
+    @JsonProperty("user")
+    protected String user;
+
     @JsonProperty("host")
     protected String remoteHost;
     protected String description;
@@ -56,6 +59,7 @@ public class JsonLogItem {
         this.description = event.getFormattedMessage();
         this.requestId = MDC.get(REQUEST_ID_KEY);
         this.remoteHost = MDC.get(REMOTE_HOST_KEY);
+        this.user = MDC.get("USER");
         this.parameters = null;
 
         if (event.getArgumentArray().length > 0) {
