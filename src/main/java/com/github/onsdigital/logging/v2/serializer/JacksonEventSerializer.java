@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public class JacksonEventSerializer implements EventSerializer {
@@ -24,7 +22,7 @@ public class JacksonEventSerializer implements EventSerializer {
         this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         SimpleModule module = new SimpleModule();
-        module.addSerializer(ZonedDateTime.class, new ZonedlDateTimeSerializer());
+        module.addSerializer(ZonedDateTime.class, new JacksonZonedlDateTimeSerializer());
         this.mapper.registerModule(module);
 
         this.mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
