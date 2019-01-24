@@ -5,4 +5,8 @@ public class SimpleEvent extends BaseEvent<SimpleEvent> {
     public SimpleEvent(String namespace, Severity severity) {
         super(namespace, severity);
     }
+
+    public static SimpleEvent logInfo() {
+        return new SimpleEvent("com.test.app", Severity.INFO);
+    }
 }

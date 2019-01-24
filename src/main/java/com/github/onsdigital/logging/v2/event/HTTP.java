@@ -3,6 +3,7 @@ package com.github.onsdigital.logging.v2.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -27,7 +28,7 @@ public class HTTP {
     private Integer port;
     private Long duration;
 
-    public HTTP requst(HttpServletRequest req) {
+    public HTTP request(HttpServletRequest req) {
         if (req != null) {
             method(req.getMethod())
                     .path(req.getRequestURI())
@@ -36,6 +37,15 @@ public class HTTP {
                     .host(req.getServerName())
                     .port(req.getServerPort())
                     .startedAt(ZonedDateTime.now());
+        }
+        return this;
+    }
+
+    public HTTP response(HttpServletResponse resp) {
+        if (resp != null) {
+            statusCode(resp.getStatus())
+                    .endedAt(ZonedDateTime.now())
+                    .duration();
         }
         return this;
     }

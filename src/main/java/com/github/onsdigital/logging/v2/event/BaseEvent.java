@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,12 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T requst(HttpServletRequest req) {
-        getHTPPSafe().requst(req);
+        getHTPPSafe().request(req);
+        return (T) this;
+    }
+
+    public T response(HttpServletResponse resp) {
+        getHTPPSafe().response(resp);
         return (T) this;
     }
 
