@@ -3,13 +3,16 @@ package com.github.onsdigital.logging.v2.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.onsdigital.logging.v2.DPLogger.getEventSerialiser;
+import static com.github.onsdigital.logging.v2.DPLogger.getLogger;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@JsonPropertyOrder({"created_at", "namespace", "trace_id", "span_id"})
+@JsonPropertyOrder({"created_at", "namespace", "severity", "event", "trace_id", "span_id"})
 public abstract class BaseEvent<T extends BaseEvent> {
 
     private String namespace;
@@ -39,6 +42,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
 
         this.data = new ValidatingMap();
+    }
+
+    public T requst(HttpServletRequest req) {
+        getHTPPSafe().requst(req);
+        return (T) this;
     }
 
     public T httpMethod(String method) {
@@ -104,6 +112,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
     public T authIdentityTypeService() {
         this.getAuthSafe().typeService();
         return (T) this;
+    }
+
+    public void log(String event) {
+        this.event = event;
+        getLogger().info(getEventSerialiser().toJson(this));
     }
 
     private HTTP getHTPPSafe() {

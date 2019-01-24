@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -10,7 +11,7 @@ import static spark.utils.StringUtils.isNotEmpty;
 public class HTTP {
 
     @JsonProperty("status_code")
-    private int statucCode;
+    private Integer statucCode;
 
     @JsonProperty("started_at")
     private ZonedDateTime startedAt;
@@ -23,65 +24,88 @@ public class HTTP {
     private String query;
     private String scheme;
     private String host;
-    private int port;
-    private long duration;
+    private Integer port;
+    private Long duration;
 
-    public void method(String method) {
+    public HTTP requst(HttpServletRequest req) {
+        if (req != null) {
+            method(req.getMethod())
+                    .path(req.getRequestURI())
+                    .query(req.getQueryString())
+                    .scheme(req.getScheme())
+                    .host(req.getServerName())
+                    .port(req.getServerPort())
+                    .startedAt(ZonedDateTime.now());
+        }
+        return this;
+    }
+
+    public HTTP method(String method) {
         if (isNotEmpty(method)) {
             this.method = method;
         }
+        return this;
     }
 
-    public void path(String path) {
+    public HTTP path(String path) {
         if (isNotEmpty(path)) {
             this.path = path;
         }
+        return this;
     }
 
-    public void query(String query) {
+    public HTTP query(String query) {
         if (isNotEmpty(query)) {
             this.query = query;
         }
+        return this;
     }
 
-    public void scheme(String scheme) {
+    public HTTP scheme(String scheme) {
         if (isNotEmpty(scheme)) {
             this.scheme = scheme;
         }
+        return this;
     }
 
-    public void host(String host) {
+    public HTTP host(String host) {
         if (isNotEmpty(host)) {
             this.host = host;
         }
+        return this;
     }
 
-    public void port(int port) {
+    public HTTP port(int port) {
         this.port = port;
+        return this;
     }
 
-    public void statusCode(int statusCode) {
+    public HTTP statusCode(int statusCode) {
         this.statucCode = statusCode;
+        return this;
     }
 
-    public void startedAt(ZonedDateTime startedAt) {
+    public HTTP startedAt(ZonedDateTime startedAt) {
         if (startedAt != null) {
             this.startedAt = startedAt;
         }
+        return this;
     }
 
-    public void endedAt(ZonedDateTime endedAt) {
+    public HTTP endedAt(ZonedDateTime endedAt) {
         if (endedAt != null) {
             this.endedAt = endedAt;
         }
+        return this;
     }
 
-    public void duration() {
+    public HTTP duration() {
         if (startedAt != null) {
             if (endedAt == null) {
                 this.endedAt = ZonedDateTime.now();
             }
             this.duration = Duration.between(startedAt, endedAt).toNanos();
         }
+        return this;
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Take the formatted message and wrap it in out base event json -->
+<!--    <appender name="JSON_WRAPPER_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.github.onsdigital.logging.v2.layout.JSONWrapperLayout">
+            </layout>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>-->
+
+    <appender name="APP_JSON_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!-- Message is already formatted in JSON so just output to console -->
+            <Pattern>%msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <logger name="com.test.app" level="debug" additivity="false">
+        <appender-ref ref="APP_JSON_APPENDER"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="JSON_WRAPPER_APPENDER"/>
+    </root>
+</configuration>
