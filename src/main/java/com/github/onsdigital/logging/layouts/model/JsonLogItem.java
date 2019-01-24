@@ -1,10 +1,10 @@
 package com.github.onsdigital.logging.layouts.model;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.onsdigital.logging.builder.LogParameters;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.MDC;
 
 import java.text.SimpleDateFormat;

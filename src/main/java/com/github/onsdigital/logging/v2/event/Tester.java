@@ -1,14 +1,15 @@
 package com.github.onsdigital.logging.v2.event;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.github.onsdigital.logging.v2.serializer.JacksonEventSerializer;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class Tester {
 
-    public static void main(String[] args) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static void main(String[] args) throws Exception {
+
+        ZonedDateTime start = ZonedDateTime.now();
+        Thread.sleep(1000);
 
         SimpleEvent e = new SimpleEvent("test.app", Severity.INFO)
                 .httpMethod("GET")
@@ -18,10 +19,10 @@ public class Tester {
                 .httpHost("localhost")
                 .httpPort(8080)
                 .httpStatusCode(200)
-                .httpStartedAt(LocalDateTime.now())
-                .httpEndedAt(LocalDateTime.now())
+                .httpStartedAt(start)
+                .httpEndedAt(ZonedDateTime.now())
                 .httpDuration();
 
-        System.out.println(gson.toJson(e));
+        System.out.println(new JacksonEventSerializer().toJson(e));
     }
 }

@@ -1,10 +1,8 @@
 package com.github.onsdigital.logging.v2.event;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +26,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     // TODO convert thus to ISO8601 format
     @JsonProperty("created_at")
-    private Date createAt;
+    private ZonedDateTime createAt;
 
     @JsonProperty("trace_id")
     private String traceID;
@@ -38,7 +36,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     private int severity;
 
-    private Map<String, Object> http;
+    private HTTP http;
 
     private Map<String, Object> auth;
 
@@ -47,66 +45,62 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private String event;
 
     protected BaseEvent(String namespace, Severity severity) {
-        this.createAt = new Date();
+        this.createAt = ZonedDateTime.now();
         this.namespace = namespace;
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
 
-        this.http = new ValidatingMap();
+        this.http = new HTTP();
         this.auth = new ValidatingMap();
         this.data = new ValidatingMap();
     }
 
     public T httpMethod(String method) {
-        http.put(HTTP_METHOD, method);
+        http.method(method);
         return (T) this;
     }
 
     public T httpPath(String path) {
-        http.put(HTTP_PATH, path);
+        http.path(path);
         return (T) this;
     }
 
     public T httpQuery(String query) {
-        http.put(HTTP_QUERY, query);
+        http.query(query);
         return (T) this;
     }
 
     public T httpScheme(String scheme) {
-        http.put(HTTP_SCHEME, scheme);
+        http.scheme(scheme);
         return (T) this;
     }
 
     public T httpHost(String host) {
-        http.put(HTTP_HOST, host);
+        http.host(host);
         return (T) this;
     }
 
     public T httpPort(int port) {
-        http.put(HTTP_PORT, port);
+        http.port(port);
         return (T) this;
     }
 
     public T httpStatusCode(int statusCode) {
-        http.put(HTTP_STATUS_CODE, statusCode);
+        http.statusCode(statusCode);
         return (T) this;
     }
 
-    public T httpStartedAt(LocalDateTime startedAt) {
-        http.put(HTTP_STARTED_AT, startedAt);
+    public T httpStartedAt(ZonedDateTime startedAt) {
+        http.startedAt(startedAt);
         return (T) this;
     }
 
-    public T httpEndedAt(LocalDateTime endedAt) {
-        http.put(HTTP_ENDED_AT, endedAt);
+    public T httpEndedAt(ZonedDateTime endedAt) {
+        http.endedAt(endedAt);
         return (T) this;
     }
 
     public T httpDuration() {
-        if (http.containsKey(HTTP_STARTED_AT) && http.containsKey(HTTP_ENDED_AT)) {
-            LocalDateTime s = (LocalDateTime) http.get(HTTP_STARTED_AT);
-            LocalDateTime e = (LocalDateTime) http.get(HTTP_ENDED_AT);
-            http.put(HTTP_DURATION, Duration.between(s, e).toNanos());
-        }
+        http.duration();
         return (T) this;
     }
 
