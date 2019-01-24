@@ -20,9 +20,7 @@ public class ExampleApp {
         });
 
         // Set up a post handler filter which logs a request has compeletd.
-        after((req, resp) -> logInfo()
-                .endHTTP(req.raw(), resp.raw())
-                .log("request completed"));
+        after((req, resp) -> logInfo().endHTTP(req.raw(), resp.raw()).log("request completed"));
 
         // very basic handler that waits 5 seconds before completing.
         get("/hello", (req, resp) -> {
