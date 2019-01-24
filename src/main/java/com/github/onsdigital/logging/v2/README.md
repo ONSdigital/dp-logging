@@ -11,9 +11,9 @@ public class ExampleApp {
         // Initialise the logger
         DPLogger.init(LoggerFactory.getLogger("com.test.app"), new JacksonEventSerialiser());
 
-        // Set up a pre handler filer which adds a traceID to the request and log sa reuest has been receieved.
+        // Set up a pre handler filter
         before((req, resp) -> {
-            // capture the trace_id so it can be automatically added to any logEvents on this thread
+            // capture the trace_id so it can be automatically added to any logEvents created on this thread
             LogEventUtil.setTraceID(req.raw()); 
             // log an event.
             logInfo().beginHTTP(req.raw()).log("request received");
