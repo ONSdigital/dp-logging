@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.onsdigital.logging.v2.time.LogEventUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,8 +17,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @JsonPropertyOrder({"created_at", "namespace", "severity", "event", "trace_id", "span_id"})
 public abstract class BaseEvent<T extends BaseEvent> {
 
-    private String namespace;
-
     @JsonProperty("created_at")
     private ZonedDateTime createAt;
 
@@ -27,14 +26,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
+    private String namespace;
     private int severity;
-
     private HTTP http;
-
     private Auth auth;
-
     private Map<String, Object> data;
-
     private String event;
 
     protected BaseEvent(String namespace, Severity severity) {
@@ -45,63 +41,13 @@ public abstract class BaseEvent<T extends BaseEvent> {
         this.data = new ValidatingMap();
     }
 
-    public T requst(HttpServletRequest req) {
-        getHTPPSafe().request(req);
+    public T beginHTTP(HttpServletRequest req) {
+        getHTPPSafe().begin(req);
         return (T) this;
     }
 
-    public T response(HttpServletResponse resp) {
-        getHTPPSafe().response(resp);
-        return (T) this;
-    }
-
-    public T httpMethod(String method) {
-        getHTPPSafe().method(method);
-        return (T) this;
-    }
-
-    public T httpPath(String path) {
-        getHTPPSafe().path(path);
-        return (T) this;
-    }
-
-    public T httpQuery(String query) {
-        getHTPPSafe().query(query);
-        return (T) this;
-    }
-
-    public T httpScheme(String scheme) {
-        getHTPPSafe().scheme(scheme);
-        return (T) this;
-    }
-
-    public T httpHost(String host) {
-        getHTPPSafe().host(host);
-        return (T) this;
-    }
-
-    public T httpPort(int port) {
-        getHTPPSafe().port(port);
-        return (T) this;
-    }
-
-    public T httpStatusCode(int statusCode) {
-        getHTPPSafe().statusCode(statusCode);
-        return (T) this;
-    }
-
-    public T httpStartedAt(ZonedDateTime startedAt) {
-        getHTPPSafe().startedAt(startedAt);
-        return (T) this;
-    }
-
-    public T httpEndedAt(ZonedDateTime endedAt) {
-        getHTPPSafe().endedAt(endedAt);
-        return (T) this;
-    }
-
-    public T httpDuration() {
-        getHTPPSafe().duration();
+    public T endHTTP(HttpServletRequest req, HttpServletResponse resp) {
+        getHTPPSafe().end(req, resp);
         return (T) this;
     }
 
@@ -122,6 +68,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public void log(String event) {
         this.event = event;
+        this.traceID = LogEventUtil.getTraceID();
         getLogger().info(getEventSerialiser().toJson(this));
     }
 

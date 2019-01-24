@@ -1,18 +1,17 @@
 package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.onsdigital.logging.v2.time.LogEventUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-import static spark.utils.StringUtils.isNotEmpty;
-
 public class HTTP {
 
     @JsonProperty("status_code")
-    private Integer statucCode;
+    private Integer statusCode;
 
     @JsonProperty("started_at")
     private ZonedDateTime startedAt;
@@ -28,94 +27,58 @@ public class HTTP {
     private Integer port;
     private Long duration;
 
-    public HTTP request(HttpServletRequest req) {
+    /**
+     * For a new http request being received by the app. Adds http request details to the log event.
+     *
+     * @param req the request to get the values from.
+     * @return
+     */
+    public HTTP begin(HttpServletRequest req) {
         if (req != null) {
-            method(req.getMethod())
-                    .path(req.getRequestURI())
-                    .query(req.getQueryString())
-                    .scheme(req.getScheme())
-                    .host(req.getServerName())
-                    .port(req.getServerPort())
-                    .startedAt(ZonedDateTime.now());
+            this.method = req.getMethod();
+            this.path = req.getRequestURI();
+            this.query = req.getQueryString();
+            this.scheme = req.getScheme();
+            this.host = req.getServerName();
+            this.port = req.getServerPort();
+            this.startedAt = LogEventUtil.setHTTPStartedAt(ZonedDateTime.now());
         }
         return this;
     }
 
-    public HTTP response(HttpServletResponse resp) {
+    /**
+     * Capture http response details and add them to the HTTP event
+     *
+     * @param req the request to get the values from.
+     * @return
+     */
+    public HTTP end(HttpServletRequest req, HttpServletResponse resp) {
+        if (req != null) {
+            this.method = req.getMethod();
+            this.path = req.getRequestURI();
+            this.query = req.getQueryString();
+            this.scheme = req.getScheme();
+            this.host = req.getServerName();
+            this.port = req.getServerPort();
+            this.startedAt = LogEventUtil.getHTTPStartedAt();
+        }
         if (resp != null) {
-            statusCode(resp.getStatus())
-                    .endedAt(ZonedDateTime.now())
-                    .duration();
+            this.statusCode = resp.getStatus();
+            this.endedAt = ZonedDateTime.now();
+            calcDuration();
         }
         return this;
     }
 
-    public HTTP method(String method) {
-        if (isNotEmpty(method)) {
-            this.method = method;
+    public HTTP calcDuration() {
+        if (this.startedAt == null) {
+            startedAt = ZonedDateTime.now();
         }
-        return this;
-    }
 
-    public HTTP path(String path) {
-        if (isNotEmpty(path)) {
-            this.path = path;
+        if (endedAt == null) {
+            this.endedAt = ZonedDateTime.now();
         }
-        return this;
-    }
-
-    public HTTP query(String query) {
-        if (isNotEmpty(query)) {
-            this.query = query;
-        }
-        return this;
-    }
-
-    public HTTP scheme(String scheme) {
-        if (isNotEmpty(scheme)) {
-            this.scheme = scheme;
-        }
-        return this;
-    }
-
-    public HTTP host(String host) {
-        if (isNotEmpty(host)) {
-            this.host = host;
-        }
-        return this;
-    }
-
-    public HTTP port(int port) {
-        this.port = port;
-        return this;
-    }
-
-    public HTTP statusCode(int statusCode) {
-        this.statucCode = statusCode;
-        return this;
-    }
-
-    public HTTP startedAt(ZonedDateTime startedAt) {
-        if (startedAt != null) {
-            this.startedAt = startedAt;
-        }
-        return this;
-    }
-
-    public HTTP endedAt(ZonedDateTime endedAt) {
-        if (endedAt != null) {
-            this.endedAt = endedAt;
-        }
-        return this;
-    }
-
-    public HTTP duration() {
-        if (startedAt != null) {
-            if (endedAt == null) {
-                this.endedAt = ZonedDateTime.now();
-            }
-            this.duration = Duration.between(startedAt, endedAt).toNanos();
-        }
+        this.duration = Duration.between(startedAt, endedAt).toNanos();
         return this;
     }
 }
