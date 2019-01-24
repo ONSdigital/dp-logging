@@ -9,13 +9,13 @@ import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GsonZoneDateTimeSerializer implements JsonSerializer<ZonedDateTime> {
+public class GsonZoneDateTimeSerialiser implements JsonSerializer<ZonedDateTime> {
 
     private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private DateTimeFormatter formatter;
 
-    public GsonZoneDateTimeSerializer() {
+    public GsonZoneDateTimeSerialiser() {
         this.formatter = DateTimeFormatter.ofPattern(ISO8601_FORMAT);
     }
 

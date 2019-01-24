@@ -1,7 +1,7 @@
 package com.github.onsdigital.logging.v2.event;
 
-import com.github.onsdigital.logging.v2.serializer.EventSerializer;
-import com.github.onsdigital.logging.v2.serializer.JacksonEventSerializer;
+import com.github.onsdigital.logging.v2.serializer.EventSerialiser;
+import com.github.onsdigital.logging.v2.serializer.JacksonEventSerialiser;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 
 public class Tester {
 
-    static int iterations = 1000;
+    static int iterations = 1;
 
     public static void main(String[] args) throws Exception {
 
@@ -18,7 +18,7 @@ public class Tester {
     }
 
     static long withJackson() {
-        EventSerializer jackson = new JacksonEventSerializer();
+        EventSerialiser jackson = new JacksonEventSerialiser();
         LocalDateTime jacksonStart = LocalDateTime.now();
 
         for (int i = 0; i < iterations; i++) {
@@ -32,13 +32,15 @@ public class Tester {
         return new SimpleEvent("test.app", Severity.INFO)
                 .httpMethod("GET")
                 .httpPath("/")
-                .httpQuery("?name=dave")
+                .httpQuery("?name=dave&collectionId=666")
                 .httpScheme("https")
                 .httpHost("localhost")
                 .httpPort(8080)
                 .httpStatusCode(200)
                 .httpStartedAt(ZonedDateTime.now())
                 .httpEndedAt(ZonedDateTime.now())
-                .httpDuration();
+                .httpDuration()
+                .authIdenity("test@test.gov.uk")
+                .authIdentityTypeUser();
     }
 }

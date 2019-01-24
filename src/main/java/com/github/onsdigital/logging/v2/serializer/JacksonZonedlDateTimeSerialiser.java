@@ -9,13 +9,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class JacksonZonedlDateTimeSerializer extends StdSerializer<ZonedDateTime> {
+public class JacksonZonedlDateTimeSerialiser extends StdSerializer<ZonedDateTime> {
 
     private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private DateTimeFormatter formatter;
 
-    public JacksonZonedlDateTimeSerializer() {
+    public JacksonZonedlDateTimeSerialiser() {
         super(ZonedDateTime.class);
         formatter = DateTimeFormatter.ofPattern(ISO8601_FORMAT, Locale.UK);
     }

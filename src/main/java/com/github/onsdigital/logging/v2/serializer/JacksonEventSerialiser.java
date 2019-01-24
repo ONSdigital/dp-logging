@@ -10,11 +10,11 @@ import com.github.onsdigital.logging.v2.event.BaseEvent;
 
 import java.time.ZonedDateTime;
 
-public class JacksonEventSerializer implements EventSerializer {
+public class JacksonEventSerialiser implements EventSerialiser {
 
     private ObjectMapper mapper;
 
-    public JacksonEventSerializer() {
+    public JacksonEventSerialiser() {
         this.mapper = new ObjectMapper();
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
@@ -22,7 +22,7 @@ public class JacksonEventSerializer implements EventSerializer {
         this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         SimpleModule module = new SimpleModule();
-        module.addSerializer(ZonedDateTime.class, new JacksonZonedlDateTimeSerializer());
+        module.addSerializer(ZonedDateTime.class, new JacksonZonedlDateTimeSerialiser());
         this.mapper.registerModule(module);
 
         this.mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);

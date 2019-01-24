@@ -1,6 +1,7 @@
 package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -8,23 +9,11 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@JsonPropertyOrder({"created_at", "namespace", "trace_id", "span_id"})
 public abstract class BaseEvent<T extends BaseEvent> {
-
-    // HTTP map keys
-    static final String HTTP_METHOD = "method";
-    static final String HTTP_PATH = "path";
-    static final String HTTP_QUERY = "query";
-    static final String HTTP_SCHEME = "scheme";
-    static final String HTTP_HOST = "host";
-    static final String HTTP_PORT = "port";
-    static final String HTTP_STATUS_CODE = "status_code";
-    static final String HTTP_STARTED_AT = "started_at";
-    static final String HTTP_ENDED_AT = "ended_at";
-    static final String HTTP_DURATION = "duration";
 
     private String namespace;
 
-    // TODO convert thus to ISO8601 format
     @JsonProperty("created_at")
     private ZonedDateTime createAt;
 
@@ -38,7 +27,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     private HTTP http;
 
-    private Map<String, Object> auth;
+    private Auth auth;
 
     private Map<String, Object> data;
 
@@ -49,59 +38,86 @@ public abstract class BaseEvent<T extends BaseEvent> {
         this.namespace = namespace;
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
 
-        this.http = new HTTP();
-        this.auth = new ValidatingMap();
         this.data = new ValidatingMap();
     }
 
     public T httpMethod(String method) {
-        http.method(method);
+        getHTPPSafe().method(method);
         return (T) this;
     }
 
     public T httpPath(String path) {
-        http.path(path);
+        getHTPPSafe().path(path);
         return (T) this;
     }
 
     public T httpQuery(String query) {
-        http.query(query);
+        getHTPPSafe().query(query);
         return (T) this;
     }
 
     public T httpScheme(String scheme) {
-        http.scheme(scheme);
+        getHTPPSafe().scheme(scheme);
         return (T) this;
     }
 
     public T httpHost(String host) {
-        http.host(host);
+        getHTPPSafe().host(host);
         return (T) this;
     }
 
     public T httpPort(int port) {
-        http.port(port);
+        getHTPPSafe().port(port);
         return (T) this;
     }
 
     public T httpStatusCode(int statusCode) {
-        http.statusCode(statusCode);
+        getHTPPSafe().statusCode(statusCode);
         return (T) this;
     }
 
     public T httpStartedAt(ZonedDateTime startedAt) {
-        http.startedAt(startedAt);
+        getHTPPSafe().startedAt(startedAt);
         return (T) this;
     }
 
     public T httpEndedAt(ZonedDateTime endedAt) {
-        http.endedAt(endedAt);
+        getHTPPSafe().endedAt(endedAt);
         return (T) this;
     }
 
     public T httpDuration() {
-        http.duration();
+        getHTPPSafe().duration();
         return (T) this;
+    }
+
+    public T authIdenity(String identity) {
+        this.getAuthSafe().identity(identity);
+        return (T) this;
+    }
+
+    public T authIdentityTypeUser() {
+        this.getAuthSafe().typeUser();
+        return (T) this;
+    }
+
+    public T authIdentityTypeService() {
+        this.getAuthSafe().typeService();
+        return (T) this;
+    }
+
+    private HTTP getHTPPSafe() {
+        if (this.http == null) {
+            this.http = new HTTP();
+        }
+        return http;
+    }
+
+    private Auth getAuthSafe() {
+        if (this.auth == null) {
+            this.auth = new Auth();
+        }
+        return auth;
     }
 
     private static class ValidatingMap extends HashMap<String, Object> {
