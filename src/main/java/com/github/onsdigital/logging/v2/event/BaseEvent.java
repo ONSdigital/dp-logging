@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.time.LogEventUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,8 +11,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.onsdigital.logging.v2.DPLogger.getEventSerialiser;
-import static com.github.onsdigital.logging.v2.DPLogger.getLogger;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @JsonPropertyOrder({"created_at", "namespace", "severity", "event", "trace_id", "span_id"})
@@ -69,7 +68,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     public void log(String event) {
         this.event = event;
         this.traceID = LogEventUtil.getTraceID();
-        getLogger().info(getEventSerialiser().toJson(this));
+        DPLogger.log(this);
     }
 
     private HTTP getHTPPSafe() {
