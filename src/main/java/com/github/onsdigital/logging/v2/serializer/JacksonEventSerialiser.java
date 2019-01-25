@@ -27,6 +27,7 @@ public class JacksonEventSerialiser implements EventSerialiser {
 
         this.mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.mapper.setDefaultPrettyPrinter(new CustomPrettyPrinter());
     }
 
     @Override

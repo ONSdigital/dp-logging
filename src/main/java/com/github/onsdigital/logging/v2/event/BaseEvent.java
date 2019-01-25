@@ -25,12 +25,12 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
+    private String event;
     private String namespace;
     private int severity;
     private HTTP http;
     private Auth auth;
     private Map<String, Object> data;
-    private String event;
 
     protected BaseEvent(String namespace, Severity severity) {
         this.createAt = ZonedDateTime.now();

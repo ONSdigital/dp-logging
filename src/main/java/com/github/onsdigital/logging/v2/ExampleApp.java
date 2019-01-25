@@ -5,6 +5,10 @@ import com.github.onsdigital.logging.v2.time.LogEventUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.List;
+
+import static com.github.onsdigital.logging.v2.event.ErrorEvent.error;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 import static spark.Spark.after;
 import static spark.Spark.before;
@@ -41,6 +45,20 @@ public class ExampleApp {
 
             resp.status(200);
             return "Hello!";
+        });
+
+        get("/break", (req, resp) -> {
+            List<String> l = null;
+
+            try {
+                l.stream().forEach(s -> System.out.println(s));
+            } catch (NullPointerException e) {
+                IOException ioException = new IOException("Wrapped Exception in another exception", e);
+                throw error(ioException)
+                        .logAndThrow(ioException, "failed to do something...");
+            }
+            resp.status(200);
+            return "done";
         });
     }
 
