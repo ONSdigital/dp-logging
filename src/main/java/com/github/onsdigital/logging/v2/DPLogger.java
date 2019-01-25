@@ -10,7 +10,7 @@ public class DPLogger {
         // contains only static only methods - hide constructor.
     }
 
-    public static <T extends BaseEvent> void init(LoggerConfig loggerConfig) throws LoggingException {
+    public static void init(LoggerConfig loggerConfig) throws LoggingException {
         if (CONFIG == null) {
             synchronized (DPLogger.class) {
                 if (CONFIG == null) {

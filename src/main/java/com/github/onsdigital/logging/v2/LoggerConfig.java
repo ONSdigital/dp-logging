@@ -10,7 +10,7 @@ public class LoggerConfig {
     private final EventSerialiser serialiser;
     private final String namespace;
 
-    LoggerConfig(Logger logger, EventSerialiser serialiser) {
+    public LoggerConfig(Logger logger, EventSerialiser serialiser) {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
         }
