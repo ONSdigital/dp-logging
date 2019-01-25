@@ -35,12 +35,12 @@ public class HTTP {
      */
     public HTTP begin(HttpServletRequest req) {
         if (req != null) {
-            this.method = req.getMethod();
+/*            this.method = req.getMethod();
             this.path = req.getRequestURI();
             this.query = req.getQueryString();
             this.scheme = req.getScheme();
             this.host = req.getServerName();
-            this.port = req.getServerPort();
+            this.port = req.getServerPort();*/
             this.startedAt = LogEventUtil.setHTTPStartedAt(ZonedDateTime.now());
         }
         return this;

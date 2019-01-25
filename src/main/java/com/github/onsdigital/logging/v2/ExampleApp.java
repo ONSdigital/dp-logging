@@ -5,10 +5,7 @@ import com.github.onsdigital.logging.v2.time.LogEventUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
-import static com.github.onsdigital.logging.v2.event.SimpleEvent.fatal;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
-import static com.github.onsdigital.logging.v2.event.SimpleEvent.warn;
 import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.get;
@@ -30,12 +27,17 @@ public class ExampleApp {
                 .log("request completed"));
 
         get("/hello", (req, resp) -> {
-            Thread.sleep(5000);
 
-            info().log("This is info");
-            warn().log("This is warn");
-            error().log("This is error");
-            fatal().log("This is fatal");
+            Thread.sleep(1000);
+            info().log("thinking about it...");
+
+            Thread.sleep(1000);
+            info().log("still thinking about it...");
+
+            Thread.sleep(1000);
+            info().log("almost finished...");
+
+            Thread.sleep(1000);
 
             resp.status(200);
             return "Hello!";
