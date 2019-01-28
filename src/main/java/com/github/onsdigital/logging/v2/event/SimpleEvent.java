@@ -12,6 +12,14 @@ public class SimpleEvent extends BaseEvent<SimpleEvent> {
         return new SimpleEvent(logConfig().getNamespace(), Severity.INFO);
     }
 
+    public static SimpleEvent error() {
+        return new SimpleEvent(logConfig().getNamespace(), Severity.ERROR);
+    }
+
+    public static SimpleEvent fatal(Throwable t) {
+        return new SimpleEvent(logConfig().getNamespace(), Severity.FATAL);
+    }
+
     public static SimpleEvent warn() {
         return new SimpleEvent(logConfig().getNamespace(), Severity.WARN);
     }

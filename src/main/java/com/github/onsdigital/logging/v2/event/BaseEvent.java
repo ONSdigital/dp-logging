@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.time.LogEventUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @JsonPropertyOrder({"created_at", "namespace", "severity", "event", "trace_id", "span_id"})
 public abstract class BaseEvent<T extends BaseEvent> {
@@ -25,19 +22,28 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
+    @JsonProperty("stack_trace")
+    private String[] stackTrace;
+
+    @JsonProperty("error_cause")
+    private String cause;
+
+    private SafeMap data;
+
+    protected transient Throwable throwable;
     private String event;
     private String namespace;
     private int severity;
     private HTTP http;
     private Auth auth;
-    private Map<String, Object> data;
+
 
     protected BaseEvent(String namespace, Severity severity) {
         this.createAt = ZonedDateTime.now();
         this.namespace = namespace;
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
 
-        this.data = new ValidatingMap();
+        this.data = new SafeMap();
     }
 
     public T beginHTTP(HttpServletRequest req) {
@@ -60,9 +66,29 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
-    public T authIdentityTypeService() {
-        this.getAuthSafe().typeService();
+    public T data(String key, Object value) {
+        this.data.put(key, value);
         return (T) this;
+    }
+
+    public <T extends Throwable> T logAndThrow(T t, String event) {
+        this.throwable = t;
+        if (t != null) {
+            this.cause = t.getMessage();
+            this.stackTrace = ExceptionUtils.getStackFrames(t);
+        }
+        log(event);
+        return t;
+    }
+
+    public <T extends Throwable> T logAndThrowX(T t, String event) {
+        this.throwable = t;
+        if (t != null) {
+            this.cause = t.getMessage();
+            this.stackTrace = ExceptionUtils.getStackFrames(t);
+        }
+        log(event);
+        return t;
     }
 
     public void log(String event) {
@@ -83,15 +109,5 @@ public abstract class BaseEvent<T extends BaseEvent> {
             this.auth = new Auth();
         }
         return auth;
-    }
-
-    private static class ValidatingMap extends HashMap<String, Object> {
-        @Override
-        public Object put(String key, Object value) {
-            if (isNotEmpty(key) && value != null) {
-                super.put(key, value);
-            }
-            return value;
-        }
     }
 }

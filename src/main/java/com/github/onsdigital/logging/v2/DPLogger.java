@@ -1,10 +1,11 @@
 package com.github.onsdigital.logging.v2;
 
+import com.github.onsdigital.logging.v2.config.LoggerConfig;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 
 public class DPLogger {
 
-    public static LoggerConfig CONFIG = null;
+    private static LoggerConfig CONFIG = null;
 
     private DPLogger() {
         // contains only static only methods - hide constructor.

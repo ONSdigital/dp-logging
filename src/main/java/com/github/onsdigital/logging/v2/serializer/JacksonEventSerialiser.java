@@ -25,6 +25,8 @@ public class JacksonEventSerialiser implements EventSerialiser {
         module.addSerializer(ZonedDateTime.class, new JacksonZonedlDateTimeSerialiser());
         this.mapper.registerModule(module);
 
+        this.mapper.setPropertyNamingStrategy(new NamingStrategy());
+
         this.mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
         this.mapper.setDefaultPrettyPrinter(new CustomPrettyPrinter());
