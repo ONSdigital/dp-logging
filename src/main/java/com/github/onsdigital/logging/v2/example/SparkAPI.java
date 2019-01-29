@@ -6,8 +6,8 @@ import com.github.onsdigital.logging.v2.serializer.JacksonEventSerialiser;
 import com.github.onsdigital.logging.v2.time.LogEventUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Route;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
@@ -42,18 +42,23 @@ public class SparkAPI {
             return "Hello!";
         });
 
-        get("/break", (req, resp) -> {
+        get("/break", getBreakRoute());
+    }
+
+    private static Route getBreakRoute() {
+        return (req, resp) -> {
             List<String> l = null;
 
             try {
-                l.stream().forEach(s -> System.out.println(s));
-            } catch (NullPointerException e) {
-                IOException ioException = new IOException("Wrapped Exception in another exception", e);
-                throw error().logAndThrow(ioException, "failed to do something...");
+                if (l == null) {
+                    throw new RuntimeException("Something broke...");
+                }
+            } catch (Exception e) {
+                error().logAndThrow(e, "something went wrong");
             }
             resp.status(200);
             return "done";
-        });
+        };
     }
 
 }

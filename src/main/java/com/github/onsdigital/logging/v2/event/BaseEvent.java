@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.time.LogEventUtil;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +21,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
-    @JsonProperty("stack_trace")
-    private String[] stackTrace;
-
-    @JsonProperty("error_cause")
-    private String cause;
-
     private SafeMap data;
 
     protected transient Throwable throwable;
@@ -36,6 +29,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private int severity;
     private HTTP http;
     private Auth auth;
+    private Error error;
 
 
     protected BaseEvent(String namespace, Severity severity) {
@@ -74,18 +68,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     public <T extends Throwable> T logAndThrow(T t, String event) {
         this.throwable = t;
         if (t != null) {
-            this.cause = t.getMessage();
-            this.stackTrace = ExceptionUtils.getStackFrames(t);
-        }
-        log(event);
-        return t;
-    }
-
-    public <T extends Throwable> T logAndThrowX(T t, String event) {
-        this.throwable = t;
-        if (t != null) {
-            this.cause = t.getMessage();
-            this.stackTrace = ExceptionUtils.getStackFrames(t);
+            this.error = new Error(t);
         }
         log(event);
         return t;
