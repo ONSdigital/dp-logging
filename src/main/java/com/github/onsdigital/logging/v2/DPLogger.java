@@ -1,13 +1,13 @@
 package com.github.onsdigital.logging.v2;
 
-import com.github.onsdigital.logging.v2.config.LoggerConfig;
+import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 
 import java.time.format.DateTimeFormatter;
 
 public class DPLogger {
 
-    private static LoggerConfig CONFIG = null;
+    private static Config CONFIG = null;
 
     private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
@@ -17,17 +17,17 @@ public class DPLogger {
         // contains only static only methods - hide constructor.
     }
 
-    public static void init(LoggerConfig loggerConfig) throws LoggingException {
+    public static void init(Config config) throws LoggingException {
         if (CONFIG == null) {
             synchronized (DPLogger.class) {
                 if (CONFIG == null) {
-                    CONFIG = loggerConfig;
+                    CONFIG = config;
                 }
             }
         }
     }
 
-    public static LoggerConfig logConfig() {
+    public static Config logConfig() {
         if (CONFIG == null) {
             throw new LoggingException("DPLogger is not initalised");
         }

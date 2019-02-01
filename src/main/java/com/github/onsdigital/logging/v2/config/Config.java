@@ -5,14 +5,14 @@ import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-public class LoggerConfig {
+public class Config {
 
-    private final Logger logger;
-    private final LogSerialiser serialiser;
-    private final String namespace;
+    private Logger logger;
+    private LogSerialiser serialiser;
+    private String namespace;
     private String dataNamespace = "data";
 
-    public LoggerConfig(Logger logger, LogSerialiser serialiser, String dataNamespace) {
+    Config(Logger logger, LogSerialiser serialiser, String dataNamespace) {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
         }

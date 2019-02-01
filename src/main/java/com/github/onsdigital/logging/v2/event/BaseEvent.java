@@ -24,7 +24,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private SafeMap data;
 
     protected transient Throwable throwable;
-    private String event;
+    protected String event;
     private String namespace;
     private int severity;
     private HTTP http;
@@ -98,5 +98,49 @@ public abstract class BaseEvent<T extends BaseEvent> {
             this.auth = new Auth();
         }
         return auth;
+    }
+
+    public ZonedDateTime getCreateAt() {
+        return this.createAt;
+    }
+
+    public String getTraceID() {
+        return this.traceID;
+    }
+
+    public String getSpanID() {
+        return this.spanID;
+    }
+
+    public SafeMap getData() {
+        return this.data;
+    }
+
+    public Throwable getThrowable() {
+        return this.throwable;
+    }
+
+    public String getEvent() {
+        return this.event;
+    }
+
+    public String getNamespace() {
+        return this.namespace;
+    }
+
+    public int getSeverity() {
+        return this.severity;
+    }
+
+    public HTTP getHttp() {
+        return this.http;
+    }
+
+    public Auth getAuth() {
+        return this.auth;
+    }
+
+    public Error getError() {
+        return this.error;
     }
 }

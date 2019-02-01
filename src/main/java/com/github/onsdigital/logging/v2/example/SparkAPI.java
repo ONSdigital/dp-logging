@@ -1,9 +1,9 @@
 package com.github.onsdigital.logging.v2.example;
 
 import com.github.onsdigital.logging.v2.DPLogger;
-import com.github.onsdigital.logging.v2.config.LoggerConfig;
+import com.github.onsdigital.logging.v2.config.Builder;
+import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.serializer.JacksonLogSerialiser;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Route;
 
@@ -20,26 +20,20 @@ public class SparkAPI {
     public static void main(String[] args) throws Exception {
         System.setProperty("logback.configurationFile", "example-logback.xml");
 
-        Logger logger = LoggerFactory.getLogger("com.test.app");
-        LoggerConfig loggerConfig = new LoggerConfig(logger, new JacksonLogSerialiser(), "simple_app_data");
-        DPLogger.init(loggerConfig);
+        Config config = new Builder()
+                .logger(LoggerFactory.getLogger("com.test.app"))
+                .serialiser(new JacksonLogSerialiser())
+                .dataNamespace("simple_app_data")
+                .create();
 
-        before((req, resp) -> {
-            info().beginHTTP(req.raw()).log("request received");
-        });
+        DPLogger.init(config);
 
-        after((req, resp) -> info()
-                .endHTTP(resp.raw())
-                .log("request completed"));
+        before((req, resp) -> info().beginHTTP(req.raw()).log("request received"));
+
+        after((req, resp) -> info().endHTTP(resp.raw()).log("request completed"));
 
         get("/hello", (req, resp) -> {
-
-            info().data("key1", "value1")
-                    .data("key2", "value2")
-                    .log("doing something....");
-
-            Thread.sleep(3000);
-
+            info().data("key1", "value1").data("key2", "value2").log("doing something....");
             resp.status(200);
             return "Hello!";
         });
