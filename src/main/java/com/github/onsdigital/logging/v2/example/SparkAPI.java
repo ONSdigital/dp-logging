@@ -18,6 +18,8 @@ import static spark.Spark.get;
 public class SparkAPI {
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("logback.configurationFile", "example-logback.xml");
+
         Logger logger = LoggerFactory.getLogger("com.test.app");
         LoggerConfig loggerConfig = new LoggerConfig(logger, new JacksonLogSerialiser(), "simple_app_data");
         DPLogger.init(loggerConfig);

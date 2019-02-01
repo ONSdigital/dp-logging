@@ -8,23 +8,18 @@ a post handler filter.
 public class ExampleApp {
 
     public static void main(String[] args) throws Exception {
-        // Initialise the logger
-        DPLogger.init(LoggerFactory.getLogger("com.test.app"), new JacksonEventSerialiser());
+        System.setProperty("logback.configurationFile", "example-logback.xml");
 
-        // Set up a pre handler filter
-        before((req, resp) -> {
-            // capture the trace_id so it can be automatically added to any logEvents created on this thread
-            LogEventUtil.setTraceID(req.raw()); 
-            // log an event.
-            logInfo().beginHTTP(req.raw()).log("request received");
-        });
+        Logger logger = LoggerFactory.getLogger("com.test.app");
+        LoggerConfig loggerConfig = new LoggerConfig(logger, new JacksonLogSerialiser(), "simple_app_data");
+        DPLogger.init(loggerConfig);
 
-        // Set up a post handler filter which logs a request has compeletd.
-        after((req, resp) -> logInfo().endHTTP(req.raw(), resp.raw()).log("request completed"));
+        before((req, resp) -> info().beginHTTP(req.raw()).log("request received"));
 
-        // very basic handler that waits 5 seconds before completing.
+        after((req, resp) -> info().endHTTP(resp.raw()).log("request completed"));
+
         get("/hello", (req, resp) -> {
-            Thread.sleep(5000);
+            info().data("key1", "value1").data("key2", "value2").log("doing something....");
             resp.status(200);
             return "Hello!";
         });
