@@ -7,14 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
+import com.github.onsdigital.logging.v2.event.HTTP;
 
 import java.time.ZonedDateTime;
 
-public class JacksonEventSerialiser implements EventSerialiser {
+public class JacksonLogSerialiser implements LogSerialiser {
 
     private ObjectMapper mapper;
 
-    public JacksonEventSerialiser() {
+    public JacksonLogSerialiser() {
         this.mapper = new ObjectMapper();
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
@@ -23,6 +24,7 @@ public class JacksonEventSerialiser implements EventSerialiser {
 
         SimpleModule module = new SimpleModule();
         module.addSerializer(ZonedDateTime.class, new JacksonZonedlDateTimeSerialiser());
+        module.addDeserializer(ZonedDateTime.class, new JacksonZonedlDateTimeDeserialiser());
         this.mapper.registerModule(module);
 
         this.mapper.setPropertyNamingStrategy(new NamingStrategy());
@@ -41,5 +43,27 @@ public class JacksonEventSerialiser implements EventSerialiser {
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    public String toJson(HTTP http) {
+        try {
+            return mapper.writeValueAsString(http);
+        } catch (Exception e) {
+            // TODO what do we do here?
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    @Override
+    public HTTP getHTTP(String json) {
+        try {
+            return mapper.readValue(json, HTTP.class);
+        } catch (Exception e) {
+            // TODO what to do here?
+            e.printStackTrace();
+        }
+        return null;
     }
 }

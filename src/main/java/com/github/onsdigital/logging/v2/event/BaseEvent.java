@@ -3,7 +3,7 @@ package com.github.onsdigital.logging.v2.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
-import com.github.onsdigital.logging.v2.time.LogEventUtil;
+import com.github.onsdigital.logging.v2.time.ThreadStorage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,12 +41,15 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T beginHTTP(HttpServletRequest req) {
+        ThreadStorage.storeTraceID(req);
         getHTPPSafe().begin(req);
+        ThreadStorage.storeHTTP(http);
         return (T) this;
     }
 
-    public T endHTTP(HttpServletRequest req, HttpServletResponse resp) {
-        getHTPPSafe().end(req, resp);
+    public T endHTTP(HttpServletResponse resp) {
+        this.http = ThreadStorage.retrieveHTTP();
+        this.http.end(resp);
         return (T) this;
     }
 
@@ -76,7 +79,10 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public void log(String event) {
         this.event = event;
-        this.traceID = LogEventUtil.getTraceID();
+        this.traceID = ThreadStorage.retrieveTraceID();
+        if (http == null) {
+            this.http = ThreadStorage.retrieveHTTP();
+        }
         DPLogger.log(this);
     }
 

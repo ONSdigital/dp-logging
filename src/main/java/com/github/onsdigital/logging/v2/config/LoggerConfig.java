@@ -1,18 +1,18 @@
 package com.github.onsdigital.logging.v2.config;
 
 import com.github.onsdigital.logging.v2.LoggingException;
-import com.github.onsdigital.logging.v2.serializer.EventSerialiser;
+import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 public class LoggerConfig {
 
     private final Logger logger;
-    private final EventSerialiser serialiser;
+    private final LogSerialiser serialiser;
     private final String namespace;
     private String dataNamespace = "data";
 
-    public LoggerConfig(Logger logger, EventSerialiser serialiser, String dataNamespace) {
+    public LoggerConfig(Logger logger, LogSerialiser serialiser, String dataNamespace) {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
         }
@@ -37,7 +37,7 @@ public class LoggerConfig {
         return this.logger;
     }
 
-    public EventSerialiser getSerialiser() {
+    public LogSerialiser getSerialiser() {
         return this.serialiser;
     }
 

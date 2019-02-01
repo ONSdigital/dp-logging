@@ -1,7 +1,6 @@
 package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.onsdigital.logging.v2.time.LogEventUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,38 +34,26 @@ public class HTTP {
      */
     public HTTP begin(HttpServletRequest req) {
         if (req != null) {
-/*            this.method = req.getMethod();
-            this.path = req.getRequestURI();
-            this.query = req.getQueryString();
-            this.scheme = req.getScheme();
-            this.host = req.getServerName();
-            this.port = req.getServerPort();*/
-            this.startedAt = LogEventUtil.setHTTPStartedAt(ZonedDateTime.now());
-        }
-        return this;
-    }
-
-    /**
-     * Capture http response details and add them to the HTTP event
-     *
-     * @param req the request to get the values from.
-     * @return
-     */
-    public HTTP end(HttpServletRequest req, HttpServletResponse resp) {
-        if (req != null) {
             this.method = req.getMethod();
             this.path = req.getRequestURI();
             this.query = req.getQueryString();
             this.scheme = req.getScheme();
             this.host = req.getServerName();
             this.port = req.getServerPort();
-            this.startedAt = LogEventUtil.getHTTPStartedAt();
+            this.startedAt = ZonedDateTime.now();
         }
+        return this;
+    }
+
+    /**
+     * Capture http response details and add them to the HTTP event
+     */
+    public HTTP end(HttpServletResponse resp) {
         if (resp != null) {
             this.statusCode = resp.getStatus();
             this.endedAt = ZonedDateTime.now();
-            calcDuration();
         }
+        calcDuration();
         return this;
     }
 
