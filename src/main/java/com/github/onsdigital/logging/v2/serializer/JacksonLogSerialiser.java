@@ -37,7 +37,7 @@ public class JacksonLogSerialiser implements LogSerialiser {
     @Override
     public <T extends BaseEvent> String toJson(T event) {
         try {
-            return mapper.writeValueAsString(event) + "\n";
+            return mapper.writeValueAsString(event);
         } catch (Exception e) {
             // TODO what do we do here?
             e.printStackTrace();

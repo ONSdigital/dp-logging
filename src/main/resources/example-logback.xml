@@ -4,7 +4,7 @@
     <appender name="JSONIFIED" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
             <layout class="com.github.onsdigital.logging.v2.layout.ThirdPartyEventLayout">
-                <Pattern>%msg</Pattern>
+                <Pattern>%n%msg</Pattern>
             </layout>
         </encoder>
     </appender>
@@ -12,7 +12,7 @@
     <appender name="APP_JSON_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <!-- Message is already formatted in JSON so just output to console -->
-            <Pattern>%msg</Pattern>
+            <Pattern>%n%msg</Pattern>
         </layout>
     </appender>
 

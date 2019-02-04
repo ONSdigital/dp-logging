@@ -27,7 +27,7 @@ public class ThirdPartyEventLayout extends PatternLayout {
     public String doLayout(ILoggingEvent e) {
         ThirdPartyEvent wrapper = new ThirdPartyEvent(e.getLoggerName(), toSeverity(e.getLevel()),
                 e.getFormattedMessage());
-        return serialiserSupplier.get().toJson(wrapper);
+        return serialiserSupplier.get().toJson(wrapper) + "\n";
     }
 
     private Severity toSeverity(Level level) {
