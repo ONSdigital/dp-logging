@@ -69,6 +69,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
+    public T exception(Throwable t) {
+        this.error = new Error(t);
+        return (T) this;
+    }
+
     public <T extends Throwable> T logAndThrow(T t, String event) {
         this.throwable = t;
         if (t != null) {
