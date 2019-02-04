@@ -2,6 +2,8 @@ package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
+import com.github.onsdigital.logging.v2.event.SimpleEvent;
+import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
@@ -54,8 +56,9 @@ public class DPLogger {
     }
 
     public static <T extends BaseEvent> void logIt(T event) {
+        Logger logger = CONFIG.getLogger();
         try {
-            logConfig().getLogger().info(marshal(event, true));
+            logger.info(marshal(event, true));
         } catch (LoggingException ex) {
             System.out.println(MessageFormat.format(MARSHAL_FAILURE, event, ex));
             if (System.out.checkError()) {
@@ -70,7 +73,8 @@ public class DPLogger {
             return logConfig().getSerialiser().toJson(event);
         } catch (LoggingException ex) {
             if (retry) {
-                return marshal(error().exception(ex), false);
+                SimpleEvent err = error().exception(ex);
+                return marshal(err, false);
             }
             throw ex;
         }

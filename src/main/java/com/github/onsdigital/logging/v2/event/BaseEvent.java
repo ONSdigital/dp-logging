@@ -70,11 +70,12 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T exception(Throwable t) {
+        this.throwable = t;
         this.error = new Error(t);
         return (T) this;
     }
 
-    public <T extends Throwable> T logAndThrow(T t, String event) {
+    public <T extends Throwable> T logAndReturn(T t, String event) {
         this.throwable = t;
         if (t != null) {
             this.error = new Error(t);
@@ -83,9 +84,13 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return t;
     }
 
-    public T exception(Throwable t) {
-        this.error = new Error(t);
-        return (T) this;
+    public <T extends Throwable> void logAndThrow(T t, String event) throws T {
+        this.throwable = t;
+        if (t != null) {
+            this.error = new Error(t);
+        }
+        log(event);
+        throw t;
     }
 
     public void log(String event) {
