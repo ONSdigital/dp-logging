@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.time.ThreadStorage;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,6 +78,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return t;
     }
 
+    public T exception(Throwable t) {
+        this.error = new Error(t);
+        return (T) this;
+    }
+
     public void log(String event) {
         this.event = event;
         this.traceID = ThreadStorage.retrieveTraceID();
@@ -142,5 +148,22 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public Error getError() {
         return this.error;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("createAt", createAt)
+                .append("traceID", traceID)
+                .append("spanID", spanID)
+                .append("data", data)
+                .append("throwable", throwable)
+                .append("event", event)
+                .append("namespace", namespace)
+                .append("severity", severity)
+                .append("http", http)
+                .append("auth", auth)
+                .append("error", error)
+                .toString();
     }
 }

@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.layout;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.ThirdPartyEvent;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
@@ -38,7 +39,7 @@ public class ThirdPartyEventLayoutTest {
     }
 
     @Test
-    public void testLayout() {
+    public void testLayout() throws LoggingException {
         when(mockEvent.getLoggerName())
                 .thenReturn("test.logger.name");
         when(mockEvent.getLevel())

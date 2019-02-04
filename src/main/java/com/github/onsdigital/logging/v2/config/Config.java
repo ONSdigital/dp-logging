@@ -11,8 +11,9 @@ public class Config {
     private LogSerialiser serialiser;
     private String namespace;
     private String dataNamespace = "data";
+    private ShutdownHook shutdownHook;
 
-    Config(Logger logger, LogSerialiser serialiser, String dataNamespace) {
+    Config(Logger logger, LogSerialiser serialiser, String dataNamespace, ShutdownHook shutdownHook) throws LoggingException {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
         }
@@ -31,6 +32,8 @@ public class Config {
         if (StringUtils.isNotEmpty(dataNamespace)) {
             this.dataNamespace = dataNamespace;
         }
+
+        this.shutdownHook = shutdownHook;
     }
 
     public Logger getLogger() {
@@ -47,5 +50,9 @@ public class Config {
 
     public String getDataNamespace() {
         return this.dataNamespace;
+    }
+
+    public ShutdownHook getShutdownHook() {
+        return this.shutdownHook;
     }
 }

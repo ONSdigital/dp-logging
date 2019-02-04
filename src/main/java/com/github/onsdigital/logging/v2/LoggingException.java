@@ -1,6 +1,6 @@
 package com.github.onsdigital.logging.v2;
 
-public class LoggingException extends RuntimeException {
+public class LoggingException extends Exception {
 
     public LoggingException(String message) {
         super(message);
