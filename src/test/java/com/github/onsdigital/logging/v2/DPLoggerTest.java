@@ -162,7 +162,7 @@ public class DPLoggerTest {
      * hook should be invoked.
      */
     @Test
-    public void testLogEpicFailure() throws Exception {
+    public void testEpicFailure() throws Exception {
         LoggingException ex = new LoggingException("failed to marshal event to json");
 
         when(serialiser.toJson(any(SimpleEvent.class)))
@@ -198,5 +198,73 @@ public class DPLoggerTest {
         verify(printStream, times(1)).println(format(MARSHAL_FAILURE, event, ex));
         verify(printStream, times(1)).checkError();
         verify(shutdownHook, times(1)).shutdown();
+    }
+
+    @Test
+    public void testMarshallSuccessful() throws Exception {
+        SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "Get to da choppa!");
+        String json = "{\"json\": \"value\"}";
+
+        when(serialiser.toJson(any(SimpleEvent.class))).thenReturn(json);
+        ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
+
+        String result = DPLogger.marshal(event, true);
+
+        verify(serialiser, times(1)).toJson(eventCaptor.capture());
+        verify(config, times(1)).getSerialiser();
+        assertThat(eventCaptor.getValue(), equalTo(event));
+        assertThat(result, equalTo(json));
+    }
+
+    /**
+     * Test scenario where attempting to marshall an event fails but the retry is succesful.
+     */
+    @Test
+    public void testMarshallFailAndRetrySuccessful() throws Exception {
+        LoggingException ex = new LoggingException("bork");
+        SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "Get to da choppa!");
+        String json = "{\"json\": \"value\"}";
+
+        when(serialiser.toJson(any(SimpleEvent.class)))
+                .thenThrow(ex)
+                .thenReturn(json);
+
+        ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
+
+        String result = DPLogger.marshal(event, true);
+
+        verify(serialiser, times(2)).toJson(eventCaptor.capture());
+        verify(config, times(2)).getSerialiser();
+        assertThat(result, equalTo(json));
+
+        assertThat(eventCaptor.getAllValues().get(0), equalTo(event));
+
+        SimpleEvent second = eventCaptor.getAllValues().get(1);
+        assertThat(second.getNamespace(), equalTo("com.test"));
+        assertThat(second.getSeverity(), equalTo(Severity.ERROR.getLevel()));
+        assertThat(second.getEvent(), equalTo(MARSHALL_EVENT_ERR));
+        assertThat(second.getThrowable(), equalTo(ex));
+        assertThat(second.getData().containsKey("event"), is(true));
+        assertThat(second.getData().get("event", String.class), equalTo(event.toString()));
+    }
+
+    @Test(expected = LoggingException.class)
+    public void testMarshalFailNoRetry() throws Exception {
+        LoggingException ex = new LoggingException("bork");
+        SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "Get to da choppa!");
+        String json = "{\"json\": \"value\"}";
+
+        when(serialiser.toJson(any(SimpleEvent.class))).thenThrow(ex);
+
+        ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
+
+        try {
+            DPLogger.marshal(event, false);
+        } catch (LoggingException e) {
+            verify(serialiser, times(1)).toJson(eventCaptor.capture());
+            verify(config, times(1)).getSerialiser();
+            assertThat(eventCaptor.getValue(), equalTo(event));
+            throw e;
+        }
     }
 }
