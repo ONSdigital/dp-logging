@@ -8,6 +8,8 @@ public interface LogSerialiser {
 
     <T extends BaseEvent> String toJson(T event) throws LoggingException;
 
+    <T extends BaseEvent> String toJsonRetriable(T event) throws LoggingException;
+
     String toJson(HTTP http);
 
     HTTP getHTTP(String json);

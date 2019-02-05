@@ -9,8 +9,11 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 import com.github.onsdigital.logging.v2.event.HTTP;
+import com.github.onsdigital.logging.v2.event.SimpleEvent;
 
 import java.time.ZonedDateTime;
+
+import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 
 public class JacksonLogSerialiser implements LogSerialiser {
 
@@ -48,6 +51,19 @@ public class JacksonLogSerialiser implements LogSerialiser {
             return mapper.writeValueAsString(event);
         } catch (Exception e) {
             throw new LoggingException("error marshalling event to json", e);
+        }
+    }
+
+    @Override
+    public <T extends BaseEvent> String toJsonRetriable(T event) throws LoggingException {
+        try {
+            return toJson(event);
+        } catch (Exception ex) {
+            SimpleEvent err = error("failed to marshal log event to json")
+                    .exception(ex)
+                    .data("event", event.toString());
+
+            return toJson(err);
         }
     }
 

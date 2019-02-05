@@ -2,12 +2,10 @@ package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
-import com.github.onsdigital.logging.v2.event.SimpleEvent;
 import org.slf4j.Logger;
 
 import java.time.format.DateTimeFormatter;
 
-import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 import static java.text.MessageFormat.format;
 
 public class DPLogger {
@@ -50,7 +48,7 @@ public class DPLogger {
     public static <T extends BaseEvent> void log(T event) {
         Logger logger = CONFIG.getLogger();
         try {
-            logger.info(marshal(event, true));
+            logger.info(logConfig().getSerialiser().toJsonRetriable(event));
         } catch (LoggingException ex) {
             System.out.println(format(MARSHAL_FAILURE, event, ex));
             if (System.out.checkError()) {
@@ -59,24 +57,7 @@ public class DPLogger {
         }
     }
 
-
-    static <T extends BaseEvent> String marshal(T event, boolean retry) throws LoggingException {
-        try {
-            return logConfig().getSerialiser().toJson(event);
-        } catch (LoggingException ex) {
-            if (retry) {
-                // try marshalling an error event before giving up.
-                SimpleEvent err = error(MARSHALL_EVENT_ERR)
-                        .exception(ex)
-                        .data("event", event.toString());
-                return marshal(err, false);
-            }
-            throw ex;
-        }
-    }
-
     public static DateTimeFormatter formatter() {
         return FORMATTER;
     }
 }
-

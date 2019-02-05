@@ -39,7 +39,7 @@ public class ThirdPartyEventLayoutTest {
     }
 
     @Test
-    public void testLayout() throws LoggingException {
+    public void testLayoutSuccess() throws LoggingException {
         when(mockEvent.getLoggerName())
                 .thenReturn("test.logger.name");
         when(mockEvent.getLevel())
@@ -47,11 +47,11 @@ public class ThirdPartyEventLayoutTest {
         when(mockEvent.getFormattedMessage())
                 .thenReturn("hello world");
 
-        when(logSerialiserMock.toJson(any(ThirdPartyEvent.class)))
+        when(logSerialiserMock.toJsonRetriable(any(ThirdPartyEvent.class)))
                 .thenReturn("done");
 
         ArgumentCaptor<ThirdPartyEvent> argumentCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
-        when(logSerialiserMock.toJson(argumentCaptor.capture())).thenReturn("done");
+        when(logSerialiserMock.toJsonRetriable(argumentCaptor.capture())).thenReturn("done");
 
         layout.doLayout(mockEvent);
 
@@ -69,6 +69,43 @@ public class ThirdPartyEventLayoutTest {
         assertNull("span_id incorrect", e.getSpanID());
         assertNull("throwable incorrect", e.getThrowable());
 
-        verify(logSerialiserMock, times(1)).toJson(any(ThirdPartyEvent.class));
+        verify(logSerialiserMock, times(1)).toJsonRetriable(e);
     }
+
+    @Test
+    public void testLayoutToJsonFailure() throws Exception {
+        when(mockEvent.getLoggerName())
+                .thenReturn("test.logger.name");
+        when(mockEvent.getLevel())
+                .thenReturn(Level.INFO);
+        when(mockEvent.getFormattedMessage())
+                .thenReturn("hello world");
+
+        LoggingException ex = new LoggingException("bork");
+
+        ArgumentCaptor<ThirdPartyEvent> eventCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
+        when(logSerialiserMock.toJsonRetriable(eventCaptor.capture()))
+                .thenThrow(ex);
+
+        String result = layout.doLayout(mockEvent);
+
+        assertThat(result, equalTo("error while attempting to marshall log event to json: bork"));
+
+        ThirdPartyEvent e = eventCaptor.getValue();
+        assertThat("event incorrect", e.getEvent(), equalTo("third party log"));
+        assertThat("event incorrect", e.getRaw(), equalTo("hello world"));
+        assertThat("namespace incorrect", e.getNamespace(), equalTo("test.logger.name"));
+        assertThat("severity incorrect", e.getSeverity(), equalTo(Severity.INFO.getLevel()));
+        assertThat("data incorrect", e.getData().isEmpty(), is(true));
+        assertNotNull("created_at incorrect", e.getCreateAt());
+        assertNull("http incorrect", e.getHttp());
+        assertNull("auth incorrect", e.getAuth());
+        assertNull("error incorrect", e.getError());
+        assertNull("trace_id incorrect", e.getTraceID());
+        assertNull("span_id incorrect", e.getSpanID());
+        assertNull("throwable incorrect", e.getThrowable());
+
+        verify(logSerialiserMock, times(1)).toJsonRetriable(e);
+    }
+
 }
