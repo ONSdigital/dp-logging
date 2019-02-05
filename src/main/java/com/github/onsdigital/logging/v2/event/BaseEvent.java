@@ -37,8 +37,12 @@ public abstract class BaseEvent<T extends BaseEvent> {
         this.createAt = ZonedDateTime.now();
         this.namespace = namespace;
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
-
         this.data = new SafeMap();
+    }
+
+    protected BaseEvent(String namespace, Severity severity, String event) {
+        this(namespace, severity);
+        this.event = event;
     }
 
     public T beginHTTP(HttpServletRequest req) {
