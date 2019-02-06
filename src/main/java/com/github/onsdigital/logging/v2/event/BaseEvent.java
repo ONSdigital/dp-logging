@@ -24,7 +24,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     private SafeMap data;
 
-    protected transient Throwable throwable;
     protected String event;
     private String namespace;
     private int severity;
@@ -74,13 +73,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T exception(Throwable t) {
-        this.throwable = t;
         this.error = new Error(t);
         return (T) this;
     }
 
     public <T extends Throwable> T logException(T t, String event) {
-        this.throwable = t;
         if (t != null) {
             this.error = new Error(t);
         }
@@ -89,7 +86,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public <T extends Throwable> void logAndThrow(T t, String event) throws T {
-        this.throwable = t;
         if (t != null) {
             this.error = new Error(t);
         }
@@ -136,10 +132,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return this.data;
     }
 
-    public Throwable getThrowable() {
-        return this.throwable;
-    }
-
     public String getEvent() {
         return this.event;
     }
@@ -171,7 +163,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
                 .append("traceID", traceID)
                 .append("spanID", spanID)
                 .append("data", data)
-                .append("throwable", throwable)
                 .append("event", event)
                 .append("namespace", namespace)
                 .append("severity", severity)

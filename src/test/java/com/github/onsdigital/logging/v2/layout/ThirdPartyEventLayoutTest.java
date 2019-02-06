@@ -67,7 +67,6 @@ public class ThirdPartyEventLayoutTest {
         assertNull("error incorrect", e.getError());
         assertNull("trace_id incorrect", e.getTraceID());
         assertNull("span_id incorrect", e.getSpanID());
-        assertNull("throwable incorrect", e.getThrowable());
 
         verify(logSerialiserMock, times(1)).marshallEvent(e);
     }
@@ -103,7 +102,6 @@ public class ThirdPartyEventLayoutTest {
         assertNull("error incorrect", e.getError());
         assertNull("trace_id incorrect", e.getTraceID());
         assertNull("span_id incorrect", e.getSpanID());
-        assertNull("throwable incorrect", e.getThrowable());
 
         verify(logSerialiserMock, times(1)).marshallEvent(e);
     }
