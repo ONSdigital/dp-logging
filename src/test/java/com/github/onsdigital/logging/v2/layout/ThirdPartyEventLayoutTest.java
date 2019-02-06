@@ -47,11 +47,11 @@ public class ThirdPartyEventLayoutTest {
         when(mockEvent.getFormattedMessage())
                 .thenReturn("hello world");
 
-        when(logSerialiserMock.toJsonRetriable(any(ThirdPartyEvent.class)))
+        when(logSerialiserMock.marshall(any(ThirdPartyEvent.class)))
                 .thenReturn("done");
 
         ArgumentCaptor<ThirdPartyEvent> argumentCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
-        when(logSerialiserMock.toJsonRetriable(argumentCaptor.capture())).thenReturn("done");
+        when(logSerialiserMock.marshall(argumentCaptor.capture())).thenReturn("done");
 
         layout.doLayout(mockEvent);
 
@@ -69,7 +69,7 @@ public class ThirdPartyEventLayoutTest {
         assertNull("span_id incorrect", e.getSpanID());
         assertNull("throwable incorrect", e.getThrowable());
 
-        verify(logSerialiserMock, times(1)).toJsonRetriable(e);
+        verify(logSerialiserMock, times(1)).marshall(e);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ThirdPartyEventLayoutTest {
         LoggingException ex = new LoggingException("bork");
 
         ArgumentCaptor<ThirdPartyEvent> eventCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
-        when(logSerialiserMock.toJsonRetriable(eventCaptor.capture()))
+        when(logSerialiserMock.marshall(eventCaptor.capture()))
                 .thenThrow(ex);
 
         String result = layout.doLayout(mockEvent);
@@ -105,7 +105,7 @@ public class ThirdPartyEventLayoutTest {
         assertNull("span_id incorrect", e.getSpanID());
         assertNull("throwable incorrect", e.getThrowable());
 
-        verify(logSerialiserMock, times(1)).toJsonRetriable(e);
+        verify(logSerialiserMock, times(1)).marshall(e);
     }
 
 }

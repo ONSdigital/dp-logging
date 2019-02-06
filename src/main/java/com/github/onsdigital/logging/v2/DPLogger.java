@@ -48,7 +48,7 @@ public class DPLogger {
     public static <T extends BaseEvent> void log(T event) {
         Logger logger = CONFIG.getLogger();
         try {
-            logger.info(logConfig().getSerialiser().toJsonRetriable(event));
+            logger.info(logConfig().getSerialiser().marshall(event));
         } catch (LoggingException ex) {
             System.out.println(format(MARSHAL_FAILURE, event, ex));
             if (System.out.checkError()) {

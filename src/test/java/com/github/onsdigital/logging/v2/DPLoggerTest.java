@@ -61,7 +61,7 @@ public class DPLoggerTest {
         SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "One o'clock and all's well"); //Disney referernce :p
         String json = "{\"json\": \"value\"}";
 
-        when(serialiser.toJsonRetriable(event))
+        when(serialiser.marshall(event))
                 .thenReturn(json);
 
         ArgumentCaptor<SimpleEvent> toJsonCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
@@ -70,7 +70,7 @@ public class DPLoggerTest {
         DPLogger.log(event);
 
         verify(config, times(1)).getLogger();
-        verify(serialiser, times(1)).toJsonRetriable(toJsonCaptor.capture());
+        verify(serialiser, times(1)).marshall(toJsonCaptor.capture());
         verify(logger, times(1)).info(logInfoCaptor.capture());
         verify(config, never()).getShutdownHook();
         verifyZeroInteractions(printStream, shutdownHook);
@@ -84,7 +84,7 @@ public class DPLoggerTest {
         SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "Get to da choppa!");
         LoggingException ex = new LoggingException("failed to marshal event to json");
 
-        when(serialiser.toJsonRetriable(any(SimpleEvent.class))).thenThrow(ex);
+        when(serialiser.marshall(any(SimpleEvent.class))).thenThrow(ex);
 
         ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
         ArgumentCaptor<String> printStreamCaptor = ArgumentCaptor.forClass(String.class);
@@ -92,7 +92,7 @@ public class DPLoggerTest {
         DPLogger.log(event);
 
         verify(config, times(1)).getLogger();
-        verify(serialiser, times(1)).toJsonRetriable(eventCaptor.capture());
+        verify(serialiser, times(1)).marshall(eventCaptor.capture());
         verify(printStream, times(1)).println(printStreamCaptor.capture());
 
         assertThat(eventCaptor.getValue(), equalTo(event));
@@ -106,7 +106,7 @@ public class DPLoggerTest {
         SimpleEvent event = new SimpleEvent("com.test", Severity.INFO, "Get to da choppa!");
         LoggingException ex = new LoggingException("failed to marshal event to json");
 
-        when(serialiser.toJsonRetriable(any(SimpleEvent.class))).thenThrow(ex);
+        when(serialiser.marshall(any(SimpleEvent.class))).thenThrow(ex);
         when(printStream.checkError()).thenReturn(true);
 
         ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
@@ -115,7 +115,7 @@ public class DPLoggerTest {
         DPLogger.log(event);
 
         verify(config, times(1)).getLogger();
-        verify(serialiser, times(1)).toJsonRetriable(eventCaptor.capture());
+        verify(serialiser, times(1)).marshall(eventCaptor.capture());
         verify(printStream, times(1)).println(printStreamCaptor.capture());
         verify(shutdownHook, times(1)).shutdown();
 

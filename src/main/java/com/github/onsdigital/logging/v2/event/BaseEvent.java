@@ -3,7 +3,7 @@ package com.github.onsdigital.logging.v2.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
-import com.github.onsdigital.logging.v2.time.ThreadStorage;
+import com.github.onsdigital.logging.v2.storage.ThreadStorage;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;

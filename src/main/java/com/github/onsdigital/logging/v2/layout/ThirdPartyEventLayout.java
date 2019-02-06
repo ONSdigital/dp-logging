@@ -30,7 +30,7 @@ public class ThirdPartyEventLayout extends PatternLayout {
         ThirdPartyEvent wrapper = new ThirdPartyEvent(e.getLoggerName(), toSeverity(e.getLevel()),
                 e.getFormattedMessage());
         try {
-            return serialiserSupplier.get().toJsonRetriable(wrapper) + "\n";
+            return serialiserSupplier.get().marshall(wrapper) + "\n";
         } catch (LoggingException ex) {
             return format("error while attempting to marshall log event to json: {0}", ex.getMessage());
         }

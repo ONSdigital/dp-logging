@@ -1,5 +1,6 @@
-package com.github.onsdigital.logging.v2.time;
+package com.github.onsdigital.logging.v2.storage;
 
+import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -19,7 +20,12 @@ public class ThreadStorage {
     }
 
     public static void storeHTTP(HTTP http) {
-        MDC.put(HTTP_KEY, logConfig().getSerialiser().toJson(http));
+        try {
+            String json = logConfig().getSerialiser().marshall(http);
+            MDC.put(HTTP_KEY, logConfig().getSerialiser().marshall(http));
+        } catch (LoggingException ex) {
+            // TODO how to handle this.
+        }
     }
 
     public static HTTP retrieveHTTP() {
@@ -27,7 +33,12 @@ public class ThreadStorage {
         if (StringUtils.isEmpty(httpJson)) {
             return new HTTP();
         }
-        return logConfig().getSerialiser().getHTTP(httpJson);
+        try {
+            logConfig().getSerialiser().getHTTP(httpJson);
+        } catch (LoggingException ex) {
+            // TODO how to handle this.
+        }
+        return null;
     }
 
     public static void storeTraceID(HttpServletRequest req) {

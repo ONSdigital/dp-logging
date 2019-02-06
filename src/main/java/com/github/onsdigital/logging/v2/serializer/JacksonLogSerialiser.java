@@ -46,16 +46,12 @@ public class JacksonLogSerialiser implements LogSerialiser {
     }
 
     @Override
-    public <T extends BaseEvent> String toJson(T event) throws LoggingException {
-        try {
-            return mapper.writeValueAsString(event);
-        } catch (Exception e) {
-            throw new LoggingException("error marshalling event to json", e);
-        }
+    public <T extends BaseEvent> String marshall(T event) throws LoggingException {
+        return toJson(event);
     }
 
     @Override
-    public <T extends BaseEvent> String toJsonRetriable(T event) throws LoggingException {
+    public <T extends BaseEvent> String marshallWithRetry(T event) throws LoggingException {
         try {
             return toJson(event);
         } catch (Exception ex) {
@@ -68,24 +64,25 @@ public class JacksonLogSerialiser implements LogSerialiser {
     }
 
     @Override
-    public String toJson(HTTP http) {
-        try {
-            return mapper.writeValueAsString(http);
-        } catch (Exception e) {
-            // TODO what do we do here?
-            e.printStackTrace();
-        }
-        return "";
+    public String marshall(HTTP http) throws LoggingException {
+        return toJson(http);
     }
 
     @Override
-    public HTTP getHTTP(String json) {
+    public HTTP getHTTP(String json) throws LoggingException {
         try {
             return mapper.readValue(json, HTTP.class);
         } catch (Exception e) {
-            // TODO what to do here?
-            e.printStackTrace();
+            throw new LoggingException("error unmarshalling HTTP json to object", e);
         }
-        return null;
     }
+
+    private String toJson(Object obj) throws LoggingException {
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new LoggingException("error marshalling event to json", e);
+        }
+    }
+
 }
