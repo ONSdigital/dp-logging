@@ -17,14 +17,20 @@ import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 
 public class JacksonLogSerialiser implements LogSerialiser {
 
+    static final String MARSHALL_ERROR_MSG = "failed to marshal log event to json";
+    static final String EVENT_KEY = "event";
+
     private ObjectMapper mapper;
+
+    private ErrorEventMapper errorEventMapper;
 
     public JacksonLogSerialiser() {
         this(false);
     }
 
-    public JacksonLogSerialiser(ObjectMapper mapper) {
+    JacksonLogSerialiser(ObjectMapper mapper, ErrorEventMapper errorEventMapper) {
         this.mapper = mapper;
+        this.errorEventMapper = errorEventMapper;
     }
 
     public JacksonLogSerialiser(boolean isPretty) {
@@ -43,6 +49,15 @@ public class JacksonLogSerialiser implements LogSerialiser {
         if (isPretty) {
             this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
+
+        // default error mapper implementation
+        this.errorEventMapper = (ex, message, event) -> {
+            SimpleEvent err = error(message).exception(ex);
+            if (event != null) {
+                err.data(EVENT_KEY, event.toString());
+            }
+            return err;
+        };
     }
 
     @Override
@@ -55,11 +70,7 @@ public class JacksonLogSerialiser implements LogSerialiser {
         try {
             return toJson(event);
         } catch (Exception ex) {
-            SimpleEvent err = error("failed to marshal log event to json")
-                    .exception(ex)
-                    .data("event", event.toString());
-
-            return toJson(err);
+            return toJson(errorEventMapper.map(ex, MARSHALL_ERROR_MSG, event));
         }
     }
 
@@ -84,5 +95,4 @@ public class JacksonLogSerialiser implements LogSerialiser {
             throw new LoggingException("error marshalling event to json", e);
         }
     }
-
 }
