@@ -6,11 +6,18 @@ import com.github.onsdigital.logging.v2.event.HTTP;
 
 public interface LogSerialiser {
 
-    <T extends BaseEvent> String marshall(T event) throws LoggingException;
+    /**
+     * Marshall {@link <T extends BaseEvent>} to a json string
+     */
+    <T extends BaseEvent> String marshallEvent(T event) throws LoggingException;
 
-    <T extends BaseEvent> String marshallWithRetry(T event) throws LoggingException;
+    /**
+     * Marshall an {@link <T extends BaseEvent>} to a json string.
+     */
+    String marshallHTTP(HTTP http) throws LoggingException;
 
-    String marshall(HTTP http) throws LoggingException;
-
-    HTTP getHTTP(String json) throws LoggingException;
+    /**
+     * Unmarshall a json string into a {@link HTTP}
+     */
+    HTTP unmarshallHTTP(String json) throws LoggingException;
 }

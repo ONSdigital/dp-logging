@@ -54,19 +54,15 @@ public class JacksonLogSerialiser implements LogSerialiser {
         this.errorEventMapper = (ex, message, event) -> {
             SimpleEvent err = error(message).exception(ex);
             if (event != null) {
-                err.data(EVENT_KEY, event.toString());
+                err.data("original_class", event.getClass().getName())
+                        .data("original_event", event.getEvent());
             }
             return err;
         };
     }
 
     @Override
-    public <T extends BaseEvent> String marshall(T event) throws LoggingException {
-        return toJson(event);
-    }
-
-    @Override
-    public <T extends BaseEvent> String marshallWithRetry(T event) throws LoggingException {
+    public <T extends BaseEvent> String marshallEvent(T event) throws LoggingException {
         try {
             return toJson(event);
         } catch (Exception ex) {
@@ -75,12 +71,12 @@ public class JacksonLogSerialiser implements LogSerialiser {
     }
 
     @Override
-    public String marshall(HTTP http) throws LoggingException {
+    public String marshallHTTP(HTTP http) throws LoggingException {
         return toJson(http);
     }
 
     @Override
-    public HTTP getHTTP(String json) throws LoggingException {
+    public HTTP unmarshallHTTP(String json) throws LoggingException {
         try {
             return mapper.readValue(json, HTTP.class);
         } catch (Exception e) {

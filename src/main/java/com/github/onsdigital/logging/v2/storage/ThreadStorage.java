@@ -21,8 +21,8 @@ public class ThreadStorage {
 
     public static void storeHTTP(HTTP http) {
         try {
-            String json = logConfig().getSerialiser().marshall(http);
-            MDC.put(HTTP_KEY, logConfig().getSerialiser().marshall(http));
+            String json = logConfig().getSerialiser().marshallHTTP(http);
+            MDC.put(HTTP_KEY, json);
         } catch (LoggingException ex) {
             // TODO how to handle this.
         }
@@ -34,7 +34,7 @@ public class ThreadStorage {
             return new HTTP();
         }
         try {
-            logConfig().getSerialiser().getHTTP(httpJson);
+            logConfig().getSerialiser().unmarshallHTTP(httpJson);
         } catch (LoggingException ex) {
             // TODO how to handle this.
         }

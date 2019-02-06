@@ -47,11 +47,11 @@ public class ThirdPartyEventLayoutTest {
         when(mockEvent.getFormattedMessage())
                 .thenReturn("hello world");
 
-        when(logSerialiserMock.marshall(any(ThirdPartyEvent.class)))
+        when(logSerialiserMock.marshallEvent(any(ThirdPartyEvent.class)))
                 .thenReturn("done");
 
         ArgumentCaptor<ThirdPartyEvent> argumentCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
-        when(logSerialiserMock.marshall(argumentCaptor.capture())).thenReturn("done");
+        when(logSerialiserMock.marshallEvent(argumentCaptor.capture())).thenReturn("done");
 
         layout.doLayout(mockEvent);
 
@@ -69,7 +69,7 @@ public class ThirdPartyEventLayoutTest {
         assertNull("span_id incorrect", e.getSpanID());
         assertNull("throwable incorrect", e.getThrowable());
 
-        verify(logSerialiserMock, times(1)).marshall(e);
+        verify(logSerialiserMock, times(1)).marshallEvent(e);
     }
 
     @Test
@@ -84,12 +84,12 @@ public class ThirdPartyEventLayoutTest {
         LoggingException ex = new LoggingException("bork");
 
         ArgumentCaptor<ThirdPartyEvent> eventCaptor = ArgumentCaptor.forClass(ThirdPartyEvent.class);
-        when(logSerialiserMock.marshall(eventCaptor.capture()))
+        when(logSerialiserMock.marshallEvent(eventCaptor.capture()))
                 .thenThrow(ex);
 
         String result = layout.doLayout(mockEvent);
 
-        assertThat(result, equalTo("error while attempting to marshall log event to json: bork"));
+        assertThat(result, equalTo("error while attempting to marshallHTTP log event to json: bork"));
 
         ThirdPartyEvent e = eventCaptor.getValue();
         assertThat("event incorrect", e.getEvent(), equalTo("third party log"));
@@ -105,7 +105,7 @@ public class ThirdPartyEventLayoutTest {
         assertNull("span_id incorrect", e.getSpanID());
         assertNull("throwable incorrect", e.getThrowable());
 
-        verify(logSerialiserMock, times(1)).marshall(e);
+        verify(logSerialiserMock, times(1)).marshallEvent(e);
     }
 
 }
