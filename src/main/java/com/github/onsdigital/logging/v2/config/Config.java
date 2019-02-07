@@ -1,12 +1,12 @@
 package com.github.onsdigital.logging.v2.config;
 
 import com.github.onsdigital.logging.v2.LoggingException;
+import com.github.onsdigital.logging.v2.config.nop.LogConfig;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 
-public class Config {
+public class Config implements LogConfig {
 
     private Logger logger;
     private LogSerialiser serialiser;
@@ -52,11 +52,11 @@ public class Config {
         return this.serialiser;
     }
 
-    public String getNamespace() {
+    public String getNopNamespace() {
         return this.namespace;
     }
 
-    public String getDataNamespace() {
+    public String getNopDataNamespace() {
         return this.dataNamespace;
     }
 

@@ -1,8 +1,8 @@
 package com.github.onsdigital.logging.v2;
 
-import com.github.onsdigital.logging.v2.config.Config;
+import com.github.onsdigital.logging.v2.config.Logger;
+import com.github.onsdigital.logging.v2.config.nop.LogConfig;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
-import org.slf4j.Logger;
 
 import java.time.format.DateTimeFormatter;
 
@@ -10,7 +10,7 @@ import static java.text.MessageFormat.format;
 
 public class DPLogger {
 
-    private static Config CONFIG = null;
+    private static LogConfig CONFIG = null;
 
     private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     static final String MARSHAL_FAILURE = "failed to marshal log event to json: event {0}, exception: {1}";
@@ -22,7 +22,7 @@ public class DPLogger {
         // contains only static only methods - hide constructor.
     }
 
-    public static void init(Config config) {
+    public static void init(LogConfig config) {
         if (CONFIG == null) {
             synchronized (DPLogger.class) {
                 if (CONFIG == null) {
@@ -32,13 +32,13 @@ public class DPLogger {
         }
     }
 
-    static void reload(Config config) {
+    static void reload(LogConfig config) {
         synchronized (DPLogger.class) {
             CONFIG = config;
         }
     }
 
-    public static Config logConfig() {
+    public static LogConfig logConfig() {
         if (CONFIG == null) {
             throw new UncheckedLoggingException("DPLogger is not initalised");
         }

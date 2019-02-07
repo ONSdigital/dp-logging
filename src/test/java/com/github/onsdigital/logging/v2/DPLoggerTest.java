@@ -1,6 +1,7 @@
 package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
+import com.github.onsdigital.logging.v2.config.Logger;
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
@@ -11,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
 
 import java.io.PrintStream;
 
@@ -46,7 +46,7 @@ public class DPLoggerTest {
 
     @Before
     public void setUp() {
-        when(config.getNamespace()).thenReturn("com.test");
+        when(config.getNopNamespace()).thenReturn("com.test");
         when(config.getSerialiser()).thenReturn(serialiser);
         when(config.getLogger()).thenReturn(logger);
         when(config.getShutdownHook()).thenReturn(shutdownHook);

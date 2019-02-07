@@ -19,22 +19,22 @@ public class SimpleEvent extends BaseEvent<SimpleEvent> {
     }
 
     public static SimpleEvent info() {
-        return new SimpleEvent(logConfig().getNamespace(), Severity.INFO);
+        return new SimpleEvent(logConfig().getNopNamespace(), Severity.INFO);
     }
 
     public static SimpleEvent error() {
-        return new SimpleEvent(logConfig().getNamespace(), Severity.ERROR);
+        return new SimpleEvent(logConfig().getNopNamespace(), Severity.ERROR);
     }
 
     public static SimpleEvent error(String event) {
-        return new SimpleEvent(logConfig().getNamespace(), Severity.ERROR, event);
+        return new SimpleEvent(logConfig().getNopNamespace(), Severity.ERROR, event);
     }
 
     public static SimpleEvent fatal(Throwable t) {
-        return new SimpleEvent(logConfig().getNamespace(), Severity.FATAL);
+        return new SimpleEvent(logConfig().getNopNamespace(), Severity.FATAL);
     }
 
     public static SimpleEvent warn() {
-        return new SimpleEvent(logConfig().getNamespace(), Severity.WARN);
+        return new SimpleEvent(logConfig().getNopNamespace(), Severity.WARN);
     }
 }

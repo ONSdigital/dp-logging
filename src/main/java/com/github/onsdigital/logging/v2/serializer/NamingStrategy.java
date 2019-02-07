@@ -10,7 +10,7 @@ public class NamingStrategy extends PropertyNamingStrategy {
     @Override
     public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
         if (defaultName == "data") {
-            return DPLogger.logConfig().getDataNamespace();
+            return DPLogger.logConfig().getNopDataNamespace();
         }
         return super.nameForField(config, field, defaultName);
     }
