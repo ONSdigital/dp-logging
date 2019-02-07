@@ -1,6 +1,6 @@
 package com.github.onsdigital.logging.v2;
 
-import com.github.onsdigital.logging.v2.config.nop.LogConfig;
+import com.github.onsdigital.logging.v2.config.LogConfig;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 
 import java.time.format.DateTimeFormatter;
