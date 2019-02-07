@@ -1,5 +1,7 @@
 package com.github.onsdigital.logging.v2.event;
 
+import com.github.onsdigital.logging.v2.storage.LogStore;
+
 import static com.github.onsdigital.logging.v2.DPLogger.logConfig;
 
 public class SimpleEvent extends BaseEvent<SimpleEvent> {
@@ -10,6 +12,10 @@ public class SimpleEvent extends BaseEvent<SimpleEvent> {
 
     public SimpleEvent(String namespace, Severity severity, String event) {
         super(namespace, severity, logConfig().getLogStore(), event);
+    }
+
+    public SimpleEvent(String namespace, Severity severity, LogStore logStore, String event) {
+        super(namespace, severity, logStore, event);
     }
 
     public static SimpleEvent info() {

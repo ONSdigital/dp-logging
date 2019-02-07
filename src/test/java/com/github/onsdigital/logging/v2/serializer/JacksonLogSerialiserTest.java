@@ -7,6 +7,7 @@ import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
+import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,7 @@ public class JacksonLogSerialiserTest {
     @Before
     public void setUp() {
         this.serialiser = new JacksonLogSerialiser(objectMapper, errorEventMapper);
-        SimpleEvent expected = new SimpleEvent("test.test", Severity.INFO);
+        SimpleEvent expected = new SimpleEvent("test.test", Severity.INFO, mock(LogStore.class), "");
         loggingException = new LoggingException("bork");
     }
 

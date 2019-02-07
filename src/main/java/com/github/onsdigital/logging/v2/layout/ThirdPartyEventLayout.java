@@ -28,7 +28,7 @@ public class ThirdPartyEventLayout extends PatternLayout {
     @Override
     public String doLayout(ILoggingEvent e) {
         ThirdPartyEvent wrapper = new ThirdPartyEvent(e.getLoggerName(), toSeverity(e.getLevel()),
-                e.getFormattedMessage());
+                e.getFormattedMessage(), logConfig().getLogStore());
         try {
             return serialiserSupplier.get().marshallEvent(wrapper) + "\n";
         } catch (LoggingException ex) {

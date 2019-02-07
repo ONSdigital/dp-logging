@@ -2,10 +2,13 @@ package com.github.onsdigital.logging.v2.layout;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.LoggingException;
+import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.ThirdPartyEvent;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
+import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +40,11 @@ public class ThirdPartyEventLayoutTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.layout = new ThirdPartyEventLayout(() -> logSerialiserMock);
+
+        Config config = mock(Config.class);
+        when(config.getLogStore()).thenReturn(mock(LogStore.class));
+
+        DPLogger.init(config);
     }
 
     @Test
