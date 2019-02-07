@@ -5,11 +5,11 @@ import static com.github.onsdigital.logging.v2.DPLogger.logConfig;
 public class SimpleEvent extends BaseEvent<SimpleEvent> {
 
     public SimpleEvent(String namespace, Severity severity) {
-        super(namespace, severity);
+        super(namespace, severity, logConfig().getLogStore());
     }
 
     public SimpleEvent(String namespace, Severity severity, String event) {
-        super(namespace, severity, event);
+        super(namespace, severity, logConfig().getLogStore(), event);
     }
 
     public static SimpleEvent info() {

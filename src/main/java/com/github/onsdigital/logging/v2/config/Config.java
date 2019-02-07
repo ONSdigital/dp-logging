@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.config;
 
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
+import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -12,8 +13,10 @@ public class Config {
     private String namespace;
     private String dataNamespace = "data";
     private ShutdownHook shutdownHook;
+    private LogStore logStore;
 
-    Config(Logger logger, LogSerialiser serialiser, String dataNamespace, ShutdownHook shutdownHook) throws LoggingException {
+    Config(Logger logger, LogSerialiser serialiser, LogStore logStore, String dataNamespace, ShutdownHook shutdownHook)
+            throws LoggingException {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
         }
@@ -23,6 +26,11 @@ public class Config {
             throw new LoggingException("DPLogger failed to initialise: EventSerialiser was null");
         }
         this.serialiser = serialiser;
+
+        if (logStore == null) {
+            throw new LoggingException("DPLogger failed to initialise: LogStore was null");
+        }
+        this.logStore = logStore;
 
         if (StringUtils.isEmpty(logger.getName())) {
             throw new LoggingException("DPLogger failed initialise: namespace was null or empty");
@@ -54,5 +62,9 @@ public class Config {
 
     public ShutdownHook getShutdownHook() {
         return this.shutdownHook;
+    }
+
+    public LogStore getLogStore() {
+        return this.logStore;
     }
 }

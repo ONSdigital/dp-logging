@@ -2,6 +2,7 @@ package com.github.onsdigital.logging.v2.config;
 
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
+import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.slf4j.Logger;
 
 public class Builder {
@@ -10,6 +11,7 @@ public class Builder {
     private LogSerialiser serialiser;
     private String dataNamespace = "data";
     private ShutdownHook shutdownHook;
+    private LogStore logStore;
 
     public Builder logger(Logger logger) {
         this.logger = logger;
@@ -31,7 +33,12 @@ public class Builder {
         return this;
     }
 
+    public Builder logStore(LogStore logStore) {
+        this.logStore = logStore;
+        return this;
+    }
+
     public Config create() throws LoggingException {
-        return new Config(logger, serialiser, dataNamespace, shutdownHook);
+        return new Config(logger, serialiser, logStore, dataNamespace, shutdownHook);
     }
 }

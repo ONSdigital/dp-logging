@@ -3,7 +3,7 @@ package com.github.onsdigital.logging.v2.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
-import com.github.onsdigital.logging.v2.storage.ThreadStorage;
+import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,28 +31,30 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private Auth auth;
     private Error error;
 
+    private transient LogStore store;
 
-    protected BaseEvent(String namespace, Severity severity) {
+    protected BaseEvent(String namespace, Severity severity, LogStore store) {
         this.createAt = ZonedDateTime.now();
         this.namespace = namespace;
         this.severity = severity == null ? Severity.INFO.getLevel() : severity.getLevel();
         this.data = new SafeMap();
+        this.store = store;
     }
 
-    protected BaseEvent(String namespace, Severity severity, String event) {
-        this(namespace, severity);
+    protected BaseEvent(String namespace, Severity severity, LogStore store, String event) {
+        this(namespace, severity, store);
         this.event = event;
     }
 
     public T beginHTTP(HttpServletRequest req) {
-        ThreadStorage.storeTraceID(req);
+        store.saveTraceID(req);
         getHTPPSafe().begin(req);
-        ThreadStorage.storeHTTP(http);
+        store.saveHTTP(http);
         return (T) this;
     }
 
     public T endHTTP(HttpServletResponse resp) {
-        this.http = ThreadStorage.retrieveHTTP();
+        this.http = store.getHTTP();
         this.http.end(resp);
         return (T) this;
     }
@@ -95,9 +97,9 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public void log(String event) {
         this.event = event;
-        this.traceID = ThreadStorage.retrieveTraceID();
+        this.traceID = store.getTraceID();
         if (http == null) {
-            this.http = ThreadStorage.retrieveHTTP();
+            this.http = store.getHTTP();
         }
         DPLogger.log(this);
     }
