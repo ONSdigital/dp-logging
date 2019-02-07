@@ -15,7 +15,7 @@ public class NopConfig implements LogConfig {
     private ShutdownHook nopShutdownHook;
 
     public NopConfig() {
-        this.nopSerialiser = null;
+        this.nopSerialiser = new NopLogSerialiser();
         this.nopStore = new NopStore();
         this.nopNamespace = "nop.namespace";
         this.nopDataNamespace = "nop.data.namespace";
