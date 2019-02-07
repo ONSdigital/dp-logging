@@ -55,7 +55,9 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public T endHTTP(HttpServletResponse resp) {
         this.http = store.getHTTP();
-        this.http.end(resp);
+        if (this.http != null) {
+            this.http.end(resp);
+        }
         return (T) this;
     }
 
