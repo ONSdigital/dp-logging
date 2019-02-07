@@ -1,6 +1,5 @@
 package com.github.onsdigital.logging.v2;
 
-import com.github.onsdigital.logging.v2.config.Logger;
 import com.github.onsdigital.logging.v2.config.nop.LogConfig;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 

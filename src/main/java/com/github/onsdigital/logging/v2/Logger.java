@@ -1,4 +1,4 @@
-package com.github.onsdigital.logging.v2.config;
+package com.github.onsdigital.logging.v2;
 
 public interface Logger {
 

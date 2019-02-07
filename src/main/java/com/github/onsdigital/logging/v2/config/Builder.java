@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2.config;
 
+import com.github.onsdigital.logging.v2.Logger;
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.config.nop.LogConfig;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;

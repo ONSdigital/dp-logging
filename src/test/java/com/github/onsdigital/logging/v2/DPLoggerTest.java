@@ -1,7 +1,6 @@
 package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
-import com.github.onsdigital.logging.v2.config.Logger;
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
