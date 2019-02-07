@@ -41,7 +41,7 @@ public class MDCLogStore implements LogStore {
             return new HTTP();
         }
         try {
-            logConfig().getSerialiser().unmarshallHTTP(httpJson);
+            return logConfig().getSerialiser().unmarshallHTTP(httpJson);
         } catch (LoggingException ex) {
             // TODO how to handle this.
         }
