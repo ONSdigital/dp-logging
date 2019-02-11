@@ -16,8 +16,8 @@ public class MDCLogStore implements LogStore {
 
     static final String HTTP_KEY = "http";
     static final String TRACE_ID_KEY = "trace_id";
-    static final String MARSHALL_ERR_FMT = "failed to marshall HTTP, trace_id: {0}";
-    static final String UNMARSHALL_ERR_FMT = "failed to unmarshall HTTP, trace_id: {0}";
+    static final String MARSHALL_ERR_FMT = "failed to marshall {0}, trace_id: {1}";
+    static final String UNMARSHALL_ERR_FMT = "failed to unmarshall {0}, trace_id: {1}";
 
     static final String AUTH_KEY = "auth";
 
@@ -32,7 +32,7 @@ public class MDCLogStore implements LogStore {
         try {
             MDC.put(HTTP_KEY, serialiser.marshallHTTP(http));
         } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(MARSHALL_ERR_FMT, getTraceID()), ex);
+            LoggingException wrapped = new LoggingException(format(MARSHALL_ERR_FMT, HTTP_KEY, getTraceID()), ex);
             System.err.println(wrapped);
         }
     }
@@ -51,7 +51,7 @@ public class MDCLogStore implements LogStore {
         try {
             MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));
         } catch (LoggingException ex) {
-            LoggingException wrapper = new LoggingException("TODO", ex);
+            LoggingException wrapper = new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapper);
         }
     }
@@ -65,10 +65,10 @@ public class MDCLogStore implements LogStore {
         try {
             return serialiser.unmarshallHTTP(httpJson);
         } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, getTraceID()), ex);
+            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, HTTP_KEY, getTraceID()), ex);
             System.err.println(wrapped);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MDCLogStore implements LogStore {
         try {
             return serialiser.unmarshallAuth(authStr);
         } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format("TODO", getTraceID()), ex);
+            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapped);
             return null;
         }
