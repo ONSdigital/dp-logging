@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.config.Config;
+import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
@@ -157,6 +158,61 @@ public class JacksonLogSerialiserTest {
             serialiser.marshallHTTP(http);
         } catch (LoggingException ex) {
             verify(objectMapper, times(1)).writeValueAsString(http);
+            throw ex;
+        }
+    }
+
+    @Test
+    public void testMarshallAuthSuccess() throws Exception {
+        Auth auth = mock(Auth.class);
+
+        when(objectMapper.writeValueAsString(auth))
+                .thenReturn("JSON");
+
+        String result = serialiser.marshallAuth(auth);
+
+        assertThat(result, equalTo("JSON"));
+        verify(objectMapper, times(1)).writeValueAsString(auth);
+    }
+
+    @Test(expected = LoggingException.class)
+    public void testMarshallAuthError() throws Exception {
+        Auth auth = mock(Auth.class);
+
+        when(objectMapper.writeValueAsString(auth))
+                .thenThrow(jsonProcessingException);
+
+        try {
+            serialiser.marshallAuth(auth);
+        } catch (LoggingException ex) {
+            verify(objectMapper, times(1)).writeValueAsString(auth);
+            throw ex;
+        }
+    }
+
+    @Test
+    public void testUnmarshallAuthSuccess() throws Exception {
+        Auth auth = mock(Auth.class);
+
+        when(objectMapper.readValue("JSON", Auth.class))
+                .thenReturn(auth);
+
+        Auth result = serialiser.unmarshallAuth("JSON");
+
+        assertThat(result, equalTo(auth));
+        verify(objectMapper, times(1)).readValue("JSON", Auth.class);
+    }
+
+    @Test(expected = LoggingException.class)
+    public void testUnarshallAuthError() throws Exception {
+        Auth auth = mock(Auth.class);
+
+        when(objectMapper.readValue("JSON", Auth.class))
+                .thenThrow(jsonProcessingException);
+        try {
+            serialiser.unmarshallAuth("JSON");
+        } catch (LoggingException ex) {
+            verify(objectMapper, times(1)).readValue("JSON", Auth.class);
             throw ex;
         }
     }
