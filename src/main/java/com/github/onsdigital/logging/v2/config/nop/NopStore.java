@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2.config.nop;
 
+import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 
@@ -13,6 +14,11 @@ public class NopStore implements LogStore {
 
     @Override
     public void saveTraceID(HttpServletRequest req) {
+
+    }
+
+    @Override
+    public void saveAuth(Auth auth) {
 
     }
 

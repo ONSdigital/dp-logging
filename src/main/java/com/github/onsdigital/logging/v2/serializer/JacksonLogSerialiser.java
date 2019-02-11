@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.onsdigital.logging.v2.LoggingException;
+import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
@@ -82,6 +83,11 @@ public class JacksonLogSerialiser implements LogSerialiser {
         } catch (Exception e) {
             throw new LoggingException("error unmarshalling HTTP json to object", e);
         }
+    }
+
+    @Override
+    public String marshallAuth(Auth auth) throws LoggingException {
+        return null;
     }
 
     private String toJson(Object obj) throws LoggingException {
