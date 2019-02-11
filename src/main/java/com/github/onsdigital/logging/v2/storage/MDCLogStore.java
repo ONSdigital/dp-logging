@@ -51,7 +51,7 @@ public class MDCLogStore implements LogStore {
         try {
             MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));
         } catch (LoggingException ex) {
-            LoggingException wrapper = new LoggingException("", ex);
+            LoggingException wrapper = new LoggingException("TODO", ex);
             System.err.println(wrapper);
         }
     }
@@ -74,5 +74,20 @@ public class MDCLogStore implements LogStore {
     @Override
     public String getTraceID() {
         return MDC.get(TRACE_ID_KEY);
+    }
+
+    @Override
+    public Auth getAuth() {
+        String authStr = MDC.get(AUTH_KEY);
+        if (StringUtils.isEmpty(authStr)) {
+            return null;
+        }
+        try {
+            return serialiser.unmarshallAuth(authStr);
+        } catch (LoggingException ex) {
+            LoggingException wrapped = new LoggingException(format("TODO", getTraceID()), ex);
+            System.err.println(wrapped);
+            return null;
+        }
     }
 }

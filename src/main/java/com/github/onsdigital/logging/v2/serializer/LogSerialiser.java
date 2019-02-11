@@ -23,4 +23,6 @@ public interface LogSerialiser {
     HTTP unmarshallHTTP(String json) throws LoggingException;
 
     String marshallAuth(Auth auth) throws LoggingException;
+
+    Auth unmarshallAuth(String auth) throws LoggingException;
 }

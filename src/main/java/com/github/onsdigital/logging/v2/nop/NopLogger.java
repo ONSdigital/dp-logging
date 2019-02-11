@@ -1,7 +1,6 @@
-package com.github.onsdigital.logging.v2.config.nop;
+package com.github.onsdigital.logging.v2.nop;
 
-
-        import com.github.onsdigital.logging.v2.Logger;
+import com.github.onsdigital.logging.v2.Logger;
 
 public class NopLogger implements Logger {
 

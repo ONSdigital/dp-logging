@@ -1,4 +1,4 @@
-package com.github.onsdigital.logging.v2.config.nop;
+package com.github.onsdigital.logging.v2.nop;
 
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.HTTP;
@@ -29,6 +29,11 @@ public class NopStore implements LogStore {
 
     @Override
     public String getTraceID() {
+        return null;
+    }
+
+    @Override
+    public Auth getAuth() {
         return null;
     }
 }

@@ -87,7 +87,16 @@ public class JacksonLogSerialiser implements LogSerialiser {
 
     @Override
     public String marshallAuth(Auth auth) throws LoggingException {
-        return null;
+        return toJson(auth);
+    }
+
+    @Override
+    public Auth unmarshallAuth(String auth) throws LoggingException {
+        try {
+            return mapper.readValue(auth, Auth.class);
+        } catch (Exception e) {
+            throw new LoggingException("error unmarshalling Auth json to object", e);
+        }
     }
 
     private String toJson(Object obj) throws LoggingException {

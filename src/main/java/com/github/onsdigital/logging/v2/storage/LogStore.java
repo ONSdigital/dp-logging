@@ -16,4 +16,6 @@ public interface LogStore {
     HTTP getHTTP();
 
     String getTraceID();
+
+    Auth getAuth();
 }

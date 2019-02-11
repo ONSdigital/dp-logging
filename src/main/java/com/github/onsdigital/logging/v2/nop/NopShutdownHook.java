@@ -1,4 +1,4 @@
-package com.github.onsdigital.logging.v2.config.nop;
+package com.github.onsdigital.logging.v2.nop;
 
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
 

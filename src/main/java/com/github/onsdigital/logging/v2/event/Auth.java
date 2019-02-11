@@ -25,6 +25,11 @@ public class Auth {
         return this;
     }
 
+    public Auth typeUser(IdentityType identityType) {
+        this.identityType = identityType;
+        return this;
+    }
+
     public void typeUser() {
         this.identityType = IdentityType.USER;
     }

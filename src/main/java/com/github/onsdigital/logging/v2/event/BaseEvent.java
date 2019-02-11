@@ -61,8 +61,18 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
-    public T authIdenity(String identity) {
-        this.auth = this.getAuthSafe().identity(identity);
+    public T userIdentity(String identity) {
+        return authIdenity(identity, Auth.IdentityType.USER);
+    }
+
+    public T serviceIdentity(String identity) {
+        return authIdenity(identity, Auth.IdentityType.SERVICE);
+    }
+
+    private T authIdenity(String identity, Auth.IdentityType identityType) {
+        this.auth = this.getAuthSafe()
+                .identity(identity)
+                .typeUser(identityType);
         store.saveAuth(auth);
         return (T) this;
     }
@@ -104,6 +114,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
         if (http == null) {
             this.http = store.getHTTP();
         }
+
+        if (auth == null) {
+            this.auth = store.getAuth();
+        }
+
         DPLogger.log(this);
     }
 

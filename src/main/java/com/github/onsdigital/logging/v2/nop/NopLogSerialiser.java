@@ -1,4 +1,4 @@
-package com.github.onsdigital.logging.v2.config.nop;
+package com.github.onsdigital.logging.v2.nop;
 
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
@@ -24,6 +24,11 @@ public class NopLogSerialiser implements LogSerialiser {
 
     @Override
     public String marshallAuth(Auth auth) throws LoggingException {
+        return null;
+    }
+
+    @Override
+    public Auth unmarshallAuth(String auth) throws LoggingException {
         return null;
     }
 }
