@@ -1,9 +1,10 @@
 package com.github.onsdigital.logging.v2.event;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Auth {
+
+    public static final String FLORENCE_TOKEN = "X-Florence-Token";
 
     public enum IdentityType {
 
@@ -19,8 +20,9 @@ public class Auth {
     @JsonProperty("identity_type")
     private IdentityType identityType;
 
-    public void identity(String identity) {
+    public Auth identity(String identity) {
         this.identity = identity;
+        return this;
     }
 
     public void typeUser() {

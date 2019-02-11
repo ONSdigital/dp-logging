@@ -1,6 +1,7 @@
 package com.github.onsdigital.logging.v2.serializer;
 
 import com.github.onsdigital.logging.v2.LoggingException;
+import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 import com.github.onsdigital.logging.v2.event.HTTP;
 
@@ -20,4 +21,6 @@ public interface LogSerialiser {
      * Unmarshall a json string into a {@link HTTP}
      */
     HTTP unmarshallHTTP(String json) throws LoggingException;
+
+    String marshallAuth(Auth auth) throws LoggingException;
 }

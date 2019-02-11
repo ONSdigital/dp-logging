@@ -1,6 +1,7 @@
 package com.github.onsdigital.logging.v2.storage;
 
 import com.github.onsdigital.logging.v2.LoggingException;
+import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,8 @@ public class MDCLogStore implements LogStore {
     static final String TRACE_ID_KEY = "trace_id";
     static final String MARSHALL_ERR_FMT = "failed to marshall HTTP, trace_id: {0}";
     static final String UNMARSHALL_ERR_FMT = "failed to unmarshall HTTP, trace_id: {0}";
+
+    static final String AUTH_KEY = "auth";
 
     private LogSerialiser serialiser;
 
@@ -41,6 +44,16 @@ public class MDCLogStore implements LogStore {
             traceID = UUID.randomUUID().toString();
         }
         MDC.put(TRACE_ID_KEY, traceID);
+    }
+
+    @Override
+    public void saveAuth(Auth auth) {
+        try {
+            MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));
+        } catch (LoggingException ex) {
+            LoggingException wrapper = new LoggingException("", ex);
+            System.err.println(wrapper);
+        }
     }
 
     @Override

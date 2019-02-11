@@ -62,7 +62,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T authIdenity(String identity) {
-        this.getAuthSafe().identity(identity);
+        this.auth = this.getAuthSafe().identity(identity);
+        store.saveAuth(auth);
         return (T) this;
     }
 
