@@ -52,11 +52,11 @@ public class Config implements LogConfig {
         return this.serialiser;
     }
 
-    public String getNopNamespace() {
+    public String getNamespace() {
         return this.namespace;
     }
 
-    public String getNopDataNamespace() {
+    public String getDataNamespace() {
         return this.dataNamespace;
     }
 

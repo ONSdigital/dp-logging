@@ -45,7 +45,7 @@ public class DPLoggerTest {
 
     @Before
     public void setUp() {
-        when(config.getNopNamespace()).thenReturn("com.test");
+        when(config.getNamespace()).thenReturn("com.test");
         when(config.getSerialiser()).thenReturn(serialiser);
         when(config.getLogger()).thenReturn(logger);
         when(config.getShutdownHook()).thenReturn(shutdownHook);

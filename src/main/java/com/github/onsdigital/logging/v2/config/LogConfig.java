@@ -10,9 +10,9 @@ public interface LogConfig {
 
     LogSerialiser getSerialiser();
 
-    String getNopNamespace();
+    String getNamespace();
 
-    String getNopDataNamespace();
+    String getDataNamespace();
 
     ShutdownHook getShutdownHook();
 

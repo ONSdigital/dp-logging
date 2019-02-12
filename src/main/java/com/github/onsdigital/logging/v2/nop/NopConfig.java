@@ -35,12 +35,12 @@ public class NopConfig implements LogConfig {
     }
 
     @Override
-    public String getNopNamespace() {
+    public String getNamespace() {
         return nopNamespace;
     }
 
     @Override
-    public String getNopDataNamespace() {
+    public String getDataNamespace() {
         return nopDataNamespace;
     }
 

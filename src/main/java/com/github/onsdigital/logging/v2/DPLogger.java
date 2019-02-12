@@ -23,10 +23,8 @@ public class DPLogger {
     }
 
     public static void init(LogConfig config) {
-        if (CONFIG == null) {
-            synchronized (DPLogger.class) {
-                CONFIG = config;
-            }
+        synchronized (DPLogger.class) {
+            CONFIG = config;
         }
     }
 
