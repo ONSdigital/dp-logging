@@ -40,11 +40,6 @@ public class ThirdPartyEventLayoutTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.layout = new ThirdPartyEventLayout(() -> logSerialiserMock);
-
-        Config config = mock(Config.class);
-        when(config.getLogStore()).thenReturn(mock(LogStore.class));
-
-        DPLogger.init(config);
     }
 
     @Test
