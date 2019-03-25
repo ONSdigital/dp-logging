@@ -45,6 +45,19 @@ public class HTTP {
         return this;
     }
 
+    public HTTP begin(HTTP that) {
+        if (that != null) {
+            this.method = that.method;
+            this.path = that.path;
+            this.query = that.query;
+            this.scheme = that.scheme;
+            this.host = that.host;
+            this.port = that.port;
+            this.startedAt = ZonedDateTime.now();
+        }
+        return this;
+    }
+
     /**
      * Capture http response details and add them to the HTTP event
      */
@@ -53,6 +66,13 @@ public class HTTP {
             this.statusCode = resp.getStatus();
             this.endedAt = ZonedDateTime.now();
         }
+        calcDuration();
+        return this;
+    }
+
+    public HTTP end(int statusCode) {
+        this.statusCode = statusCode;
+        this.endedAt = ZonedDateTime.now();
         calcDuration();
         return this;
     }

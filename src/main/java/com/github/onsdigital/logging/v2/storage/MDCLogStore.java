@@ -47,6 +47,14 @@ public class MDCLogStore implements LogStore {
     }
 
     @Override
+    public void saveTraceID(String id) {
+        if (StringUtils.isEmpty(id)) {
+            id = UUID.randomUUID().toString();
+        }
+        MDC.put(TRACE_ID_KEY, id);
+    }
+
+    @Override
     public void saveAuth(Auth auth) {
         try {
             MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));

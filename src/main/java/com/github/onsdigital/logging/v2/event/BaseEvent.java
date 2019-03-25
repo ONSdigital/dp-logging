@@ -53,10 +53,25 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
+    public T beginHTTP(HTTP http, String traceID) {
+        store.saveTraceID(traceID);
+        this.http = new HTTP().begin(http);
+        store.saveHTTP(http);
+        return (T) this;
+    }
+
     public T endHTTP(HttpServletResponse resp) {
         this.http = store.getHTTP();
         if (this.http != null) {
             this.http.end(resp);
+        }
+        return (T) this;
+    }
+
+    public T endHTTP(int statusCode) {
+        this.http = store.getHTTP();
+        if (this.http != null) {
+            this.http.end(statusCode);
         }
         return (T) this;
     }

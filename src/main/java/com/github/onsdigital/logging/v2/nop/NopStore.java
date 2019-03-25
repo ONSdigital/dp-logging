@@ -18,6 +18,11 @@ public class NopStore implements LogStore {
     }
 
     @Override
+    public void saveTraceID(String id) {
+
+    }
+
+    @Override
     public void saveAuth(Auth auth) {
 
     }
