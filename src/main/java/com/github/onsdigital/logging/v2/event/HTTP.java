@@ -58,6 +58,41 @@ public class HTTP {
         return this;
     }
 
+    public HTTP setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+        return this;
+    }
+
+    public HTTP setMethod(String method) {
+        this.method = method;
+        return this;
+    }
+
+    public HTTP setPath(String path) {
+        this.path = path;
+        return this;
+    }
+
+    public HTTP setQuery(String query) {
+        this.query = query;
+        return this;
+    }
+
+    public HTTP setScheme(String scheme) {
+        this.scheme = scheme;
+        return this;
+    }
+
+    public HTTP setHost(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public HTTP setPort(Integer port) {
+        this.port = port;
+        return this;
+    }
+
     /**
      * Capture http response details and add them to the HTTP event
      */
