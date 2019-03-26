@@ -45,6 +45,54 @@ public class HTTP {
         return this;
     }
 
+    public HTTP begin(HTTP that) {
+        if (that != null) {
+            this.method = that.method;
+            this.path = that.path;
+            this.query = that.query;
+            this.scheme = that.scheme;
+            this.host = that.host;
+            this.port = that.port;
+            this.startedAt = ZonedDateTime.now();
+        }
+        return this;
+    }
+
+    public HTTP setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+        return this;
+    }
+
+    public HTTP setMethod(String method) {
+        this.method = method;
+        return this;
+    }
+
+    public HTTP setPath(String path) {
+        this.path = path;
+        return this;
+    }
+
+    public HTTP setQuery(String query) {
+        this.query = query;
+        return this;
+    }
+
+    public HTTP setScheme(String scheme) {
+        this.scheme = scheme;
+        return this;
+    }
+
+    public HTTP setHost(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public HTTP setPort(Integer port) {
+        this.port = port;
+        return this;
+    }
+
     /**
      * Capture http response details and add them to the HTTP event
      */
@@ -53,6 +101,13 @@ public class HTTP {
             this.statusCode = resp.getStatus();
             this.endedAt = ZonedDateTime.now();
         }
+        calcDuration();
+        return this;
+    }
+
+    public HTTP end(int statusCode) {
+        this.statusCode = statusCode;
+        this.endedAt = ZonedDateTime.now();
         calcDuration();
         return this;
     }

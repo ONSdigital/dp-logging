@@ -11,6 +11,8 @@ public interface LogStore {
 
     void saveTraceID(HttpServletRequest req);
 
+    void saveTraceID(String id);
+
     void saveAuth(Auth auth);
 
     HTTP getHTTP();
