@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <property scope="context" name="default.logger.name" value="dp-logger-default"/>
+    <property scope="context" name="default.logger.formatted" value="false"/>
+
     <appender name="JSONIFIED" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
             <layout class="com.github.onsdigital.logging.v2.layout.ThirdPartyEventLayout">
