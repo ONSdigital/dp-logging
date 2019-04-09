@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2;
 
+import com.github.onsdigital.logging.v2.config.DefaultConfig;
 import com.github.onsdigital.logging.v2.config.LogConfig;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
 import com.github.onsdigital.logging.v2.nop.NopConfig;
@@ -10,7 +11,7 @@ import static java.text.MessageFormat.format;
 
 public class DPLogger {
 
-    private static LogConfig CONFIG = new NopConfig();
+    private static LogConfig CONFIG = DefaultConfig.get();
 
     private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     static final String MARSHAL_FAILURE = "failed to marshal log event to json: event {0}, exception: {1}";
