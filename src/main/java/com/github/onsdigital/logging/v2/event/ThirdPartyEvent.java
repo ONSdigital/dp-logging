@@ -19,6 +19,7 @@ public class ThirdPartyEvent extends BaseEvent {
         super(namespace, severity, logStore);
         super.event = "third party log";
         this.raw = e.getFormattedMessage();
+        this.traceID(logStore.getTraceID());
 
         if (e.getThrowableProxy() != null) {
             IThrowableProxy iThrowableProxy = e.getThrowableProxy();
