@@ -31,6 +31,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private HTTP http;
     private Auth auth;
     private Error error;
+    private Errors errors;
 
     private transient LogStore store;
 
@@ -115,6 +116,11 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public T exception(Throwable t) {
         this.error = new Error(t);
+        return (T) this;
+    }
+
+    public T exceptionAll(Throwable t) {
+        this.errors = new Errors(t);
         return (T) this;
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property scope="context" name="default.logger.name" value="dp-logger-default"/>
+    <property scope="context" name="default.logger.formatted" value="true"/>
+
+    <appender name="JSONIFIED" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.github.onsdigital.logging.v2.layout.ThirdPartyEventLayout">
+                <Pattern>%n%msg</Pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="APP_JSON_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!-- Message is already formatted in JSON so just output to console -->
+            <Pattern>%n%msg</Pattern>
+        </layout>
+    </appender>
+
+    <logger name="com.test.app" level="debug" additivity="false">
+        <appender-ref ref="APP_JSON_APPENDER"/>
+    </logger>
+
+    <logger name="everything.else" level="warn" additivity="false">
+        <appender-ref ref="JSONIFIED"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="APP_JSON_APPENDER"/>
+    </root>
+</configuration>
