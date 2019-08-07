@@ -14,8 +14,10 @@ public class Config implements LogConfig {
     private String dataNamespace = "data";
     private ShutdownHook shutdownHook;
     private LogStore logStore;
+    private ErrorWriter errorWriter;
 
-    Config(Logger logger, LogSerialiser serialiser, LogStore logStore, String dataNamespace, ShutdownHook shutdownHook)
+    Config(Logger logger, LogSerialiser serialiser, LogStore logStore, String dataNamespace,
+           ShutdownHook shutdownHook, ErrorWriter errorWriter)
             throws LoggingException {
         if (logger == null) {
             throw new LoggingException("DPLogger failed to initialise: Logger was null");
@@ -36,6 +38,11 @@ public class Config implements LogConfig {
             throw new LoggingException("DPLogger failed initialise: namespace was null or empty");
         }
         this.namespace = logger.getName();
+
+        if (errorWriter == null) {
+            errorWriter = new Builder.DefaultErrorWriter();
+        }
+        this.errorWriter = errorWriter;
 
         if (StringUtils.isNotEmpty(dataNamespace)) {
             this.dataNamespace = dataNamespace;
@@ -66,5 +73,9 @@ public class Config implements LogConfig {
 
     public LogStore getLogStore() {
         return this.logStore;
+    }
+
+    public ErrorWriter getErrorWriter() {
+        return this.errorWriter;
     }
 }

@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2.event;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
@@ -23,17 +24,18 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
-    private SafeMap data;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private int severity;
 
+    private SafeMap data;
     protected String event;
     private String namespace;
-    private int severity;
     private HTTP http;
     private Auth auth;
     private Error error;
     private Errors errors;
 
-    private transient LogStore store;
+    protected transient LogStore store;
 
     protected BaseEvent(String namespace, Severity severity, LogStore store) {
         this.createAt = ZonedDateTime.now();
