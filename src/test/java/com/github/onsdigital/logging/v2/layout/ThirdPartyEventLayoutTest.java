@@ -34,12 +34,15 @@ public class ThirdPartyEventLayoutTest {
     @Mock
     private LogSerialiser logSerialiserMock;
 
+    @Mock
+    private LogStore logStore;
+
     private ThirdPartyEventLayout layout;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.layout = new ThirdPartyEventLayout(() -> logSerialiserMock);
+        this.layout = new ThirdPartyEventLayout(() -> logSerialiserMock, () -> logStore);
     }
 
     @Test

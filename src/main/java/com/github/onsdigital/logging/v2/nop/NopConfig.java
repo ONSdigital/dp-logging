@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2.nop;
 
+import com.github.onsdigital.logging.v2.config.ErrorWriter;
 import com.github.onsdigital.logging.v2.Logger;
 import com.github.onsdigital.logging.v2.config.LogConfig;
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
@@ -14,6 +15,7 @@ public class NopConfig implements LogConfig {
     private String nopNamespace;
     private String nopDataNamespace;
     private ShutdownHook nopShutdownHook;
+    private ErrorWriter nopErrorWriter;
 
     public NopConfig() {
         this.nopSerialiser = new NopLogSerialiser();
@@ -22,6 +24,7 @@ public class NopConfig implements LogConfig {
         this.nopDataNamespace = "nop.data.namespace";
         this.nopShutdownHook = new NopShutdownHook();
         this.nopLog = new NopLogger();
+        this.nopErrorWriter = (s) -> false;
     }
 
     @Override
@@ -52,5 +55,10 @@ public class NopConfig implements LogConfig {
     @Override
     public LogStore getLogStore() {
         return nopStore;
+    }
+
+    @Override
+    public ErrorWriter getErrorWriter() {
+        return nopErrorWriter;
     }
 }
