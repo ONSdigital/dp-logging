@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Errors {
 
-    List<Error> errors;
+    private List<Error> errors;
 
     public Errors(Throwable t) {
         this.errors = new ArrayList<>();
@@ -25,6 +25,6 @@ public class Errors {
     }
 
     private void addError(Throwable t) {
-        this.errors.add(new Error(t));
+        errors.add(new Error(t));
     }
 }

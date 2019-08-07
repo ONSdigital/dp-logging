@@ -25,6 +25,8 @@ public class ThirdPartyEvent extends BaseEvent {
             IThrowableProxy iThrowableProxy = e.getThrowableProxy();
             if (iThrowableProxy instanceof ThrowableProxy) {
                 Throwable t = ((ThrowableProxy) iThrowableProxy).getThrowable();
+                // TODO - once the centralised logging schema is updated this needs to use the recurive method to
+                // capture the full error.
                 this.exception(t);
             }
         }

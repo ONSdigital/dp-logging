@@ -15,7 +15,7 @@ public class Error {
     private Map<String, Object> data;
 
     public Error(Throwable t) {
-        this.message = t.getMessage();
+        this.message = t.getClass().getName() + ": " + t.getMessage();
         this.stackTraces = Arrays.asList(t.getStackTrace())
                 .stream()
                 .map(e -> new StackTrace(e))
