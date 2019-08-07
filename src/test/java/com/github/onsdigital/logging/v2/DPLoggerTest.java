@@ -16,6 +16,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import static com.github.onsdigital.logging.v2.DPLogger.MARSHAL_FAILURE;
+import static com.github.onsdigital.logging.v2.DPLogger.getMarshalFailureMessage;
+import static com.github.onsdigital.logging.v2.DPLogger.handleMarshalEventFailure;
 import static java.text.MessageFormat.format;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,6 +25,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -119,5 +122,75 @@ public class DPLoggerTest {
 
         assertThat(eventCaptor.getValue(), equalTo(event));
         verifyZeroInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Fatal() {
+        DPLogger.logEventJson("json", Severity.FATAL, logger);
+
+        verify(logger, times(1)).error("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Error() {
+        DPLogger.logEventJson("json", Severity.ERROR, logger);
+
+        verify(logger, times(1)).error("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Warn() {
+        DPLogger.logEventJson("json", Severity.WARN, logger);
+
+        verify(logger, times(1)).warn("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_info() {
+        DPLogger.logEventJson("json", Severity.INFO, logger);
+
+        verify(logger, times(1)).info("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_default() {
+        DPLogger.logEventJson("json", null, logger);
+
+        verify(logger, times(1)).info("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testHandleMarshalEventFailure() {
+        SimpleEvent event = SimpleEvent.info();
+        LoggingException ex = new LoggingException("Narp!");
+        String expectedMessage = getMarshalFailureMessage(event, ex);
+
+        when(errorWriter.write(expectedMessage))
+                .thenReturn(false);
+
+        handleMarshalEventFailure(event, ex, errorWriter, shutdownHook);
+
+        verify(errorWriter, times(1)).write(expectedMessage);
+        verifyZeroInteractions(shutdownHook);
+    }
+
+    @Test
+    public void testHandleMarshalEventFailureErrorWriterFailure() {
+        SimpleEvent event = SimpleEvent.info();
+        LoggingException ex = new LoggingException("Narp!");
+        String expectedMessage = getMarshalFailureMessage(event, ex);
+
+        when(errorWriter.write(expectedMessage))
+                .thenReturn(true);
+
+        handleMarshalEventFailure(event, ex, errorWriter, shutdownHook);
+
+        verify(errorWriter, times(1)).write(expectedMessage);
+        verify(shutdownHook, times(1)).shutdown();
     }
 }
