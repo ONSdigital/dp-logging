@@ -1,5 +1,7 @@
 package com.github.onsdigital.logging.v2.event;
 
+import ch.qos.logback.classic.Level;
+
 public enum Severity {
 
     /**
@@ -30,5 +32,28 @@ public enum Severity {
 
     public int getLevel() {
         return this.level;
+    }
+
+    public static Severity getSeverity(int level) {
+        switch (level) {
+            case 0:
+                return FATAL;
+            case 1:
+                return ERROR;
+            case 2:
+                return WARN;
+            default:
+                return INFO;
+        }
+    }
+
+    public static Severity getSeverity(Level level) {
+        if (level.toInteger() == Level.ERROR_INT)
+            return ERROR;
+
+        if (level.toInteger() == Level.WARN_INT)
+            return WARN;
+
+        return INFO;
     }
 }

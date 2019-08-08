@@ -12,6 +12,11 @@ public class Builder {
     private String dataNamespace = "data";
     private ShutdownHook shutdownHook;
     private LogStore logStore;
+    private ErrorWriter errorWriter;
+
+    public Builder() {
+        this.errorWriter = new DefaultErrorWriter();
+    }
 
     public Builder logger(Logger logger) {
         this.logger = logger;
@@ -38,7 +43,21 @@ public class Builder {
         return this;
     }
 
+    public Builder errorWriter(ErrorWriter errorWriter) {
+        this.errorWriter = errorWriter;
+        return this;
+    }
+
     public LogConfig create() throws LoggingException {
-        return new Config(logger, serialiser, logStore, dataNamespace, shutdownHook);
+        return new Config(logger, serialiser, logStore, dataNamespace, shutdownHook, errorWriter);
+    }
+
+    static class DefaultErrorWriter implements ErrorWriter {
+
+        @Override
+        public boolean write(String s) {
+            System.out.println(s);
+            return System.out.checkError();
+        }
     }
 }

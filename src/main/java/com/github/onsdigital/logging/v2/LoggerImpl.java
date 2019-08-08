@@ -11,6 +11,16 @@ public class LoggerImpl implements Logger {
     }
 
     @Override
+    public void error(String event) {
+        log.error(event);
+    }
+
+    @Override
+    public void warn(String event) {
+        log.warn(event);
+    }
+
+    @Override
     public void info(String event) {
         this.log.info(event);
     }

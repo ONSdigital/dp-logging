@@ -1,6 +1,7 @@
 package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
+import com.github.onsdigital.logging.v2.config.ErrorWriter;
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
@@ -12,9 +13,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.PrintStream;
+import java.util.List;
 
 import static com.github.onsdigital.logging.v2.DPLogger.MARSHAL_FAILURE;
+import static com.github.onsdigital.logging.v2.DPLogger.getMarshalFailureMessage;
+import static com.github.onsdigital.logging.v2.DPLogger.handleMarshalEventFailure;
 import static java.text.MessageFormat.format;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,6 +25,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +36,7 @@ public class DPLoggerTest {
     private LogSerialiser serialiser;
 
     @Mock
-    private PrintStream printStream;
+    private ErrorWriter errorWriter;
 
     @Mock
     private ShutdownHook shutdownHook;
@@ -49,8 +53,7 @@ public class DPLoggerTest {
         when(config.getSerialiser()).thenReturn(serialiser);
         when(config.getLogger()).thenReturn(logger);
         when(config.getShutdownHook()).thenReturn(shutdownHook);
-
-        System.setOut(printStream);
+        when(config.getErrorWriter()).thenReturn(errorWriter);
 
         DPLogger.reload(config);
     }
@@ -72,7 +75,7 @@ public class DPLoggerTest {
         verify(serialiser, times(1)).marshallEvent(toJsonCaptor.capture());
         verify(logger, times(1)).info(logInfoCaptor.capture());
         verify(config, never()).getShutdownHook();
-        verifyZeroInteractions(printStream, shutdownHook);
+        verifyZeroInteractions(errorWriter, shutdownHook);
     }
 
     /**
@@ -90,12 +93,10 @@ public class DPLoggerTest {
 
         DPLogger.log(event);
 
-        verify(config, times(1)).getLogger();
         verify(serialiser, times(1)).marshallEvent(eventCaptor.capture());
-        verify(printStream, times(1)).println(printStreamCaptor.capture());
+        verify(errorWriter).write(format(MARSHAL_FAILURE, event, ex));
 
         assertThat(eventCaptor.getValue(), equalTo(event));
-        assertThat(printStreamCaptor.getValue(), equalTo(format(MARSHAL_FAILURE, event, ex)));
         verifyZeroInteractions(logger, shutdownHook);
     }
 
@@ -106,20 +107,90 @@ public class DPLoggerTest {
         LoggingException ex = new LoggingException("failed to marshal event to json");
 
         when(serialiser.marshallEvent(any(SimpleEvent.class))).thenThrow(ex);
-        when(printStream.checkError()).thenReturn(true);
+        when(errorWriter.write(any())).thenReturn(true);
 
         ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
         ArgumentCaptor<String> printStreamCaptor = ArgumentCaptor.forClass(String.class);
 
         DPLogger.log(event);
 
-        verify(config, times(1)).getLogger();
+        List<String> s = printStreamCaptor.getAllValues();
+
         verify(serialiser, times(1)).marshallEvent(eventCaptor.capture());
-        verify(printStream, times(1)).println(printStreamCaptor.capture());
+        verify(errorWriter, times(1)).write(format(MARSHAL_FAILURE, event, ex));
         verify(shutdownHook, times(1)).shutdown();
 
         assertThat(eventCaptor.getValue(), equalTo(event));
-        assertThat(printStreamCaptor.getValue(), equalTo(format(MARSHAL_FAILURE, event, ex)));
         verifyZeroInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Fatal() {
+        DPLogger.logEventJson("json", Severity.FATAL, logger);
+
+        verify(logger, times(1)).error("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Error() {
+        DPLogger.logEventJson("json", Severity.ERROR, logger);
+
+        verify(logger, times(1)).error("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_Warn() {
+        DPLogger.logEventJson("json", Severity.WARN, logger);
+
+        verify(logger, times(1)).warn("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_info() {
+        DPLogger.logEventJson("json", Severity.INFO, logger);
+
+        verify(logger, times(1)).info("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testLogEventJson_default() {
+        DPLogger.logEventJson("json", null, logger);
+
+        verify(logger, times(1)).info("json");
+        verifyNoMoreInteractions(logger);
+    }
+
+    @Test
+    public void testHandleMarshalEventFailure() {
+        SimpleEvent event = SimpleEvent.info();
+        LoggingException ex = new LoggingException("Narp!");
+        String expectedMessage = getMarshalFailureMessage(event, ex);
+
+        when(errorWriter.write(expectedMessage))
+                .thenReturn(false);
+
+        handleMarshalEventFailure(event, ex, errorWriter, shutdownHook);
+
+        verify(errorWriter, times(1)).write(expectedMessage);
+        verifyZeroInteractions(shutdownHook);
+    }
+
+    @Test
+    public void testHandleMarshalEventFailureErrorWriterFailure() {
+        SimpleEvent event = SimpleEvent.info();
+        LoggingException ex = new LoggingException("Narp!");
+        String expectedMessage = getMarshalFailureMessage(event, ex);
+
+        when(errorWriter.write(expectedMessage))
+                .thenReturn(true);
+
+        handleMarshalEventFailure(event, ex, errorWriter, shutdownHook);
+
+        verify(errorWriter, times(1)).write(expectedMessage);
+        verify(shutdownHook, times(1)).shutdown();
     }
 }

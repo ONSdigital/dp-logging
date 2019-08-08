@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.v2.event;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
@@ -23,16 +24,18 @@ public abstract class BaseEvent<T extends BaseEvent> {
     @JsonProperty("span_id")
     private String spanID;
 
-    private SafeMap data;
-
-    protected String event;
-    private String namespace;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private int severity;
+
+    private SafeMap data;
+    private String namespace;
     private HTTP http;
     private Auth auth;
     private Error error;
+    private Errors errors;
 
-    private transient LogStore store;
+    protected String event;
+    protected transient LogStore store;
 
     protected BaseEvent(String namespace, Severity severity, LogStore store) {
         this.createAt = ZonedDateTime.now();
@@ -114,7 +117,16 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     public T exception(Throwable t) {
-        this.error = new Error(t);
+        if (null != t) {
+            this.error = new Error(t);
+        }
+        return (T) this;
+    }
+
+    public T exceptionAll(Throwable t) {
+        if (null != t) {
+            this.errors = new Errors(t);
+        }
         return (T) this;
     }
 
@@ -215,6 +227,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
                 .append("http", http)
                 .append("auth", auth)
                 .append("error", error)
+                .append("errors", errors)
                 .toString();
     }
 }

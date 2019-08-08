@@ -2,8 +2,9 @@ package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Arrays;
 import java.util.Map;
+
+import static com.github.onsdigital.logging.v2.event.StackTrace.stackTraceArrayFromThrowable;
 
 public class Error {
 
@@ -15,35 +16,20 @@ public class Error {
     private Map<String, Object> data;
 
     public Error(Throwable t) {
-        this.message = t.getMessage();
-        this.stackTraces = Arrays.asList(t.getStackTrace())
-                .stream()
-                .map(e -> new StackTrace(e))
-                .toArray(size -> new StackTrace[size]);
+        this.message = t.getClass().getName() + ": " + t.getMessage();
+        this.stackTraces = stackTraceArrayFromThrowable(t);
         this.data = null;
     }
 
-    static class StackTrace {
-        private String file;
-        private String function;
-        private int line;
+    public String getMessage() {
+        return this.message;
+    }
 
-        public StackTrace(StackTraceElement e) {
-            this.line = e.getLineNumber();
-            this.file = e.getClassName();
-            this.function = e.getMethodName();
-        }
+    public StackTrace[] getStackTraces() {
+        return this.stackTraces;
+    }
 
-        public int getLine() {
-            return this.line;
-        }
-
-        public String getFile() {
-            return this.file;
-        }
-
-        public String getFunction() {
-            return this.function;
-        }
+    public Map<String, Object> getData() {
+        return this.data;
     }
 }

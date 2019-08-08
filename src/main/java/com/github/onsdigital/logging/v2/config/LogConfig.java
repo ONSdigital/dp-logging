@@ -17,4 +17,6 @@ public interface LogConfig {
     ShutdownHook getShutdownHook();
 
     LogStore getLogStore();
+
+    ErrorWriter getErrorWriter();
 }
