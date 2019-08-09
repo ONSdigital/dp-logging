@@ -103,7 +103,6 @@
                             <excludes>
                                 <exclude>**/logging/builder/*</exclude>
                                 <exclude>**/logging/layouts/*</exclude>
-                                <exclude>**/logging/util/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
