@@ -23,7 +23,7 @@ configuration. Create a `logback.xml` file on your class path - typically it liv
 ```
 /src/main/resources
 ```
-You can use the `example-logback.xml` as starting point.
+You can use the [example-logback.xml](src/main/resources/example-logback.xml) as starting point.
 
 The example logback.xml defines 2 `appenders`:
 
@@ -60,6 +60,8 @@ Finally the example logback defines:
  - A logger for our application using the `DP_LOGGER` appender.
  
 ### Programatic configuration
+_Note:_ See the [examples(src/main/java/com/github/onsdigital/logging/v2/examples) package for the full version of the snippets used here
+
 Before you can use the logger in your code you have to set up a few things. Its recommended you do this as part of your 
 application initalisation.
 
@@ -95,7 +97,7 @@ DPLogger.init(config);
 ```
 
 Unless explicitly configured DPLogger will use ```java com.github.onsdigital.logging.v2.nop.NopConfig``` by default. 
-As the name suggests is a nop impl essentially the same as sending log events to `>/dev/null`.
+As the name suggests is a nop impl which is essentially the same as sending log events to `>/dev/null`.
 
 ### Using the logger
 
@@ -130,7 +132,7 @@ import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 Which create log output:
 ````json
 {
-  "created_at" : "2019-08-09T11:49:41.365Z",
+  "created_at" : "2019-08-09T12:36:01.278Z",
   "namespace" : "logging-example",
   "severity" : 3,
   "event" : "info logging",
@@ -144,7 +146,7 @@ Which create log output:
   }
 }
 {
-  "created_at" : "2019-08-09T11:55:08.369Z",
+  "created_at" : "2019-08-09T12:36:01.415Z",
   "namespace" : "logging-example",
   "severity" : 1,
   "event" : "error logging with exception",
@@ -159,9 +161,9 @@ Which create log output:
   "error" : {
     "message" : "java.lang.RuntimeException: example exception",
     "stack_trace" : [ {
-      "file" : ccom.github.onsdigital.logging.v2.examples.Exampleple,
+      "file" : "com.github.onsdigital.logging.v2.examples.Example",
       "function" : "main",
-      "line" : 56
+      "line" : 48
     } ]
   }
 }
@@ -216,7 +218,7 @@ Using your custom event:
 Output:
 ```json
 {
-  "created_at" : "2019-08-09T12:09:07.746Z",
+  "created_at" : "2019-08-09T12:36:01.438Z",
   "namespace" : "logging-example",
   "severity" : 3,
   "event" : "customized event",
