@@ -19,6 +19,7 @@ import static java.lang.System.getenv;
  * Simply create an env var <i>DP_LOGGING_FORMAT=</i> to one of the above. The default is text if no var is set or the
  * value is not valid.
  */
+@Deprecated
 public class ConfigurableLayout extends AbstractDPLayout {
 
     private static final String LOGGING_FORMAT_ENV_KEY = "DP_LOGGING_FORMAT";

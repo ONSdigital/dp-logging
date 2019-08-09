@@ -15,6 +15,7 @@ import static java.text.MessageFormat.format;
 /**
  * Created by dave on 05/02/2018.
  */
+@Deprecated
 public abstract class AbstractDPLayout extends LayoutBase<ILoggingEvent> {
 
     private static final String DEBUG_COLOUR = "92;1m";

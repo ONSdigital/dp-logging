@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Custom layout to display log info in json format.
  */
+@Deprecated
 public class JsonLayout extends AbstractDPLayout {
 
     static final String DO_LAYOUT_ERR = "JsonLayout.doLayout returned an unexpected error";

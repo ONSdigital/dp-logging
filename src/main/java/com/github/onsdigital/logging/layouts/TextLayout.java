@@ -18,6 +18,7 @@ import static org.apache.commons.lang3.StringUtils.join;
 /**
  * Created by dave on 5/10/16.
  */
+@Deprecated
 public class TextLayout extends AbstractDPLayout {
 
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
