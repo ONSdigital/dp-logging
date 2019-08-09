@@ -23,7 +23,7 @@ configuration. Create a `logback.xml` file on your class path - typically it liv
 ```
 /src/main/resources
 ```
-You can use the example logback.xml as starting point.
+You can use the `example-logback.xml` as starting point.
 
 The example logback.xml defines 2 `appenders`:
 
@@ -159,7 +159,7 @@ Which create log output:
   "error" : {
     "message" : "java.lang.RuntimeException: example exception",
     "stack_trace" : [ {
-      "file" : "com.github.onsdigital.logging.example.Example",
+      "file" : ccom.github.onsdigital.logging.v2.examples.Exampleple,
       "function" : "main",
       "line" : 56
     } ]
