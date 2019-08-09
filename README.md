@@ -60,9 +60,10 @@ Finally the example logback defines:
  - A logger for our application using the `DP_LOGGER` appender.
  
 ### Programatic configuration
+Before you can use the logger in your code you have to set up a few things. Its recommended you do this as part of your 
+application initalisation.
 
-First we need to create a `LogConfig`. Its recommended you do this as part of your application initalisation. Below is 
-a typical example using the `Builder` to generate our config:
+Firstly we need to create a `LogConfig` which set which versions on the logger depencencies we want to use. 
  
 ```java
     static LogConfig getLogConfig() throws Exception {
@@ -82,7 +83,8 @@ a typical example using the `Builder` to generate our config:
 ```
  - `LogSerialiser` Responsible for marshalling our log event Object to a JSON string.
  - `Logger` - The logging implementation to use - sets the namespace for our log messages.
- - `LogStore` - An object for storing values in ThreadLocal so they do not have to be passed into every log message.
+ - `LogStore` - An object for storing certain common values in ThreadLocal. Typcially reserved for details we want in
+  every message (e.g. traceID) but don't want to have to explicitly pass them around everywhere within our application.
  - `ShutdownHook` - A hook allowing you to do any clean up on shutdown - closing resources etc. Here we are using a 
  Nop implmentation
  
@@ -104,10 +106,11 @@ pattern allowing you to chain method calls together to build up your event. Once
 
 `SimpleEvent` comes with several static methods for creating new log events for each logging level. It also provides 
 several setters for common fields, additionally you can use `data(K, V)` to add a key value pair if you need to add 
-any details that do not have specific setter methods.
+any details that do not have a dedicated setter methods.
 
 The following is an example of logging an info and error event:   
 ````java
+import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 ...
 ...
@@ -163,3 +166,67 @@ Which create log output:
   }
 }
 ````
+
+### Extending SimpleEvent
+As previously mentioned you can use the `SimpleEvent.data(K, V)` method to add any key value pair to an event. 
+However, if you have bespoke events that are likely to be added many times in your application you can extend 
+`com.github.onsdigital.logging.v2.event.BaseEvent` and add your own convenience methods.
+
+Example:
+````java
+package com.github.onsdigital.logging.example;
+
+import com.github.onsdigital.logging.v2.event.BaseEvent;
+import com.github.onsdigital.logging.v2.event.Severity;
+import org.apache.commons.lang3.StringUtils;
+
+import static com.github.onsdigital.logging.v2.DPLogger.logConfig;
+
+public class CustomEvent extends BaseEvent<CustomEvent> {
+
+    protected CustomEvent(Severity severity) {
+        super(logConfig().getNamespace(), severity, logConfig().getLogStore());
+    }
+
+    public static CustomEvent warn() {
+        return new CustomEvent(Severity.WARN);
+    }
+
+    public static CustomEvent info() {
+        return new CustomEvent(Severity.INFO);
+    }
+
+    public static CustomEvent error() {
+        return new CustomEvent(Severity.ERROR);
+    }
+
+    public CustomEvent myField(String value) {
+        if (StringUtils.isNotEmpty(value))
+            data("myField", value);
+        return this;
+    }
+}
+````
+
+Using your custom event:
+```java
+    CustomEvent.info().myField("batman").traceID("1234").log("customized event");
+```
+
+Output:
+```json
+{
+  "created_at" : "2019-08-09T12:09:07.746Z",
+  "namespace" : "logging-example",
+  "severity" : 3,
+  "event" : "customized event",
+  "trace_id" : "1234",
+  "data" : {
+    "myField" : "batman"
+  },
+  "auth" : {
+    "identity" : "batman",
+    "identity_type" : "service"
+  }
+}
+```
