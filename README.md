@@ -36,8 +36,8 @@ The example logback.xml defines 2 `appenders`:
 ```
 
 The `DP_LOGGER` appender will be used by your application. Internally dp-logging will convert each log event into a JSON
- string compliant with the DP logging standards. Log events created from by your app will already be correctly formatted
-  so the appender simply writes them to the console.
+ string compliant with the DP logging standards. Log events created by your app will already be correctly formatted 
+ so the appender simply writes them to the console.
 
 
 ```xml
@@ -89,15 +89,15 @@ Firstly we need to create a `LogConfig` which sets which versions on the logger 
  - `ShutdownHook` - A hook allowing you to do any clean up on shutdown - closing resources etc. Here we are using a 
  Nop implmentation
  
- Finally we init `DPLogger` with `LogConfig` instance we created:
+ Finally we init `DPLogger` with the `LogConfig` instance we created:
  
  ```java
 DPLogger.init(config);
 ```
 
 Unless explicitly configured DPLogger will use ```java com.github.onsdigital.logging.v2.nop.NopConfig``` by default - 
-essentially the same as sending log events to `>/dev/null`. This handy for when unit testing any classes using 
-dp-logger - the nop default means you are not required to set up the logger in each test class.
+essentially the same as sending log events to `>/dev/null`. This handy when unit testing any classes using dp-logger - 
+the nop default means you are not required to set up the logger in each test class.
 
 ### Using the logger
 
@@ -121,10 +121,10 @@ error();
 fatal();
 ```
  
- It also provides several setters for common fields and `data(K, V)` which allows you to add key value pairs if you 
- there is no setter for the data you need to add to the event. 
+ It also provides several setters for common fields and `data(K, V)` allows you to add key value pairs if there is no
+  appropriate setter for the data you want to add. 
 
-The following is an example of logging an info and error event:   
+#### Examples: Using SimpleEvent
 ````java
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
@@ -135,7 +135,8 @@ import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
         .serviceIdentity("batman")
         .data("key", "value")
         .log("info logging");
-
+...
+...
     error().traceID("1234")
             .serviceIdentity("batman")
             .data("key", "value")
@@ -184,9 +185,9 @@ Which create log output:
 ````
 
 ### Extending SimpleEvent
-As previously mentioned you can use `SimpleEvent.data(K, V)` to add key value pairs to a log event. 
-However, if you have bespoke events that are likely to be added many times in your application you can extend 
-`com.github.onsdigital.logging.v2.event.BaseEvent` and add your own convenience methods.
+As previously mentioned you can use `SimpleEvent.data(K, V)` to add key value pairs to a log event if there is no 
+appropriate setter. However, if you have bespoke events fields that are likely to be included many times throughout your
+application you can extend `com.github.onsdigital.logging.v2.event.BaseEvent` and add your own convenience methods.
 
 Example:
 ````java
