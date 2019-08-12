@@ -51,9 +51,9 @@ The `DP_LOGGER` appender will be used by your application. Internally dp-logging
 ```
 
 The `THIRD_PARTY` appender is used to capture any log event with a namespace different from your application. The 
-appender captures the raw event and coverts it to a JSON string complying wit the DP logging spec. For example if your 
-app uses a third party library any log output it generates be captured and formatted before it it written - ensuring 
-all log events are consistent.
+appender captures the raw event and coverts it to a DP logging spec compliant JSON string.
+For example if your app uses a third party library any log output it generates will be captured and formatted before 
+it is written - ensuring all log events are consistent.
 
 Finally the example logback.xml defines:
  - A root logger which uses the `THIRD_PARTY` appender.
