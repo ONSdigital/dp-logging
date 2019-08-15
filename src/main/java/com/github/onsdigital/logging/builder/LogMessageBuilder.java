@@ -14,6 +14,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Created by dave on 5/5/16.
  */
+@Deprecated
 public abstract class LogMessageBuilder {
 
     protected static Logger LOG = null;

@@ -10,6 +10,7 @@ import java.util.Map;
  * to a {@link org.slf4j.Logger} log method and an easier way to identify it when processing each arg object.
  * See {@link com.github.onsdigital.logging.layouts.TextLayout#appendParameters(StringBuilder, ILoggingEvent)} for example.
  */
+@Deprecated
 public class LogParameters {
 
     private Map<String, Object> parameters;

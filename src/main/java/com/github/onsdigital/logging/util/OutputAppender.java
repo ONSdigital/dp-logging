@@ -1,5 +1,6 @@
 package com.github.onsdigital.logging.util;
 
+@Deprecated
 @FunctionalInterface
 public interface OutputAppender {
 

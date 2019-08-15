@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Created by dave on 5/16/16.
  */
+@Deprecated
 public class PrettyJsonLayout extends JsonLayout {
 
     static final String DO_LAYOUT_ERR = "PrettyJsonLayout.doLayout returned an unexpected error";
