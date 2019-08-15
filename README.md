@@ -7,7 +7,25 @@ string that conforms to DP logging standards specification.
 
 ### Getting started
 
-Add the maven dependency to your `pom.xml`.
+Add the following to you `pom.xml`
+```xml
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>http://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+```
+
+And add the maven dependency to your `pom.xml`.
 ```
 <dependency>
     <groupId>com.github.ONSdigital</groupId>
