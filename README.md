@@ -26,7 +26,7 @@ Add the following to you `pom.xml`
 ```
 
 And add the maven dependency to your `pom.xml`.
-```
+```xml
 <dependency>
     <groupId>com.github.ONSdigital</groupId>
     <artifactId>dp-logging</artifactId>
