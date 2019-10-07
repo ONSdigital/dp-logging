@@ -31,20 +31,25 @@ public class ThirdPartyEventTest {
 
     @Test
     public void shouldAddExceptionIfExists() {
-        Throwable thrownException = new RuntimeException("nargle");
+        Throwable bar = new RuntimeException("bar");
+        Throwable foo = new RuntimeException("foo", bar);
 
         when(event.getThrowableProxy())
                 .thenReturn(throwableProxy);
         when(throwableProxy.getThrowable())
-                .thenReturn(thrownException);
+                .thenReturn(foo);
 
         ThirdPartyEvent thirdPartyEvent = new ThirdPartyEvent("", Severity.ERROR, event, logStore);
-        Error actual = thirdPartyEvent.getError();
+        Errors actual = thirdPartyEvent.getErrors();
 
-        String expectedMessage = thrownException.getClass().getName() + ": " + thrownException.getMessage();
-        assertThat(actual.getMessage(), equalTo(expectedMessage));
 
-        StackTrace[] expectedStackTrace = stackTraceArrayFromThrowable(thrownException);
-        assertThat(actual.getStackTraces(), equalTo(expectedStackTrace));
+        Errors expected = new Errors(foo);
+
+        String expectedMessage = foo.getClass().getName() + ": " + foo.getMessage();
+        assertThat(actual.getErrors().size(), equalTo(2));
+        assertThat(actual.getErrors().get(0).getMessage(), equalTo(expectedMessage));
+
+        StackTrace[] expectedStackTrace = stackTraceArrayFromThrowable(foo);
+        assertThat(actual.getErrors().get(0).getStackTraces(), equalTo(expectedStackTrace));
     }
 }

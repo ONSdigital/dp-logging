@@ -71,7 +71,7 @@ public class ThirdPartyEventLayoutTest {
         assertNotNull("created_at incorrect", e.getCreateAt());
         assertNull("http incorrect", e.getHttp());
         assertNull("auth incorrect", e.getAuth());
-        assertNull("error incorrect", e.getError());
+        assertNull("error incorrect", e.getErrors());
         assertNull("trace_id incorrect", e.getTraceID());
         assertNull("span_id incorrect", e.getSpanID());
 
@@ -106,7 +106,7 @@ public class ThirdPartyEventLayoutTest {
         assertNotNull("created_at incorrect", e.getCreateAt());
         assertNull("http incorrect", e.getHttp());
         assertNull("auth incorrect", e.getAuth());
-        assertNull("error incorrect", e.getError());
+        assertNull("error incorrect", e.getErrors());
         assertNull("trace_id incorrect", e.getTraceID());
         assertNull("span_id incorrect", e.getSpanID());
 

@@ -31,7 +31,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private String namespace;
     private HTTP http;
     private Auth auth;
-    private Error error;
     private Errors errors;
 
     protected String event;
@@ -118,30 +117,19 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public T exception(Throwable t) {
         if (null != t) {
-            this.error = new Error(t);
-        }
-        return (T) this;
-    }
-
-    public T exceptionAll(Throwable t) {
-        if (null != t) {
             this.errors = new Errors(t);
         }
         return (T) this;
     }
 
     public <T extends Throwable> T logException(T t, String event) {
-        if (t != null) {
-            this.error = new Error(t);
-        }
+        exception(t);
         log(event);
         return t;
     }
 
     public <T extends Throwable> void logAndThrow(T t, String event) throws T {
-        if (t != null) {
-            this.error = new Error(t);
-        }
+        exception(t);
         log(event);
         throw t;
     }
@@ -210,8 +198,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return this.auth;
     }
 
-    public Error getError() {
-        return this.error;
+    public Errors getErrors() {
+        return this.errors;
     }
 
     @Override
@@ -226,7 +214,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
                 .append("severity", severity)
                 .append("http", http)
                 .append("auth", auth)
-                .append("error", error)
                 .append("errors", errors)
                 .toString();
     }
