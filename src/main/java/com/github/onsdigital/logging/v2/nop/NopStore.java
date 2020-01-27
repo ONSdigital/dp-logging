@@ -1,16 +1,11 @@
 package com.github.onsdigital.logging.v2.nop;
 
 import com.github.onsdigital.logging.v2.event.Auth;
-import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class NopStore implements LogStore {
-    @Override
-    public void saveHTTP(HTTP http) {
-
-    }
 
     @Override
     public void saveTraceID(HttpServletRequest req) {
@@ -25,11 +20,6 @@ public class NopStore implements LogStore {
     @Override
     public void saveAuth(Auth auth) {
 
-    }
-
-    @Override
-    public HTTP getHTTP() {
-        return null;
     }
 
     @Override
