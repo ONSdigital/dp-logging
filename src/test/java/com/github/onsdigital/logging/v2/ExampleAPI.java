@@ -6,7 +6,6 @@ import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import com.github.onsdigital.logging.v2.storage.MDCLogStore;
 
-import static com.github.onsdigital.logging.v2.event.SimpleEvent.error;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 import static spark.Spark.after;
 import static spark.Spark.before;
@@ -35,12 +34,6 @@ public class ExampleAPI {
             info().log("handling hello request");
             return "hello world";
         });
-
-
-        get("/break", (req, resp) -> {
-            throw new RuntimeException("three", new RuntimeException("two", new RuntimeException("one")));
-        });
-
 
     }
 

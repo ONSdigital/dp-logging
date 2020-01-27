@@ -60,7 +60,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Depreecated use {@link BaseEvent#request(HttpServletRequest)} instead.
+     * Deprecated use {@link BaseEvent#request(HttpServletRequest)} instead.
      */
     @Deprecated
     public T beginHTTP(HttpServletRequest req) {
@@ -70,7 +70,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Depreecated use {@link BaseEvent#request(HttpServletRequest)} instead.
+     * Deprecated use {@link BaseEvent#request(HttpServletRequest)} instead.
      */
     @Deprecated
     public T beginHTTP(HTTP httpDetails) {
@@ -80,7 +80,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Depreecated use {@link BaseEvent#response(HttpServletResponse)} instead.
+     * Deprecated use {@link BaseEvent#response(HttpServletResponse)} instead.
      */
     @Deprecated
     public T endHTTP(HttpServletResponse resp) {
@@ -90,7 +90,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Depreecated use {@link BaseEvent#response(HttpServletResponse)} instead.
+     * Deprecated use {@link BaseEvent#response(HttpServletResponse)} instead.
      */
     @Deprecated
     public T endHTTP(int statusCode) {
