@@ -59,6 +59,12 @@
             <version>2.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -72,7 +78,6 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>

@@ -4,6 +4,8 @@ import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -249,5 +251,49 @@ public class MDCLogStoreTest {
 
         String actualValue = MDC.get(TRACE_ID_KEY);
         assertThat(actualValue, equalTo("1234567890"));
+    }
+
+    @Test
+    public void saveTraceID_headerNullStoreNull_shouldGenerateNewID() {
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(null);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+    }
+
+    @Test
+    public void saveTraceID_headerNullStoreValueExists_shouldUseStoredValue() {
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(null);
+
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
+    }
+
+    @Test
+    public void saveTraceID_headerAndStoreValuesExists_shouldUseStoredValue() {
+        Header header = mock(Header.class);
+        when(header.getValue())
+                .thenReturn("1234567890");
+
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(header);
+
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
     }
 }

@@ -4,6 +4,8 @@ import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,13 @@ public class MDCLogStore implements LogStore {
         String traceID = getTraceIDForRequest(req);
         traceID = defaultIfBlank(traceID, newTraceID());
         MDC.put(TRACE_ID_KEY, traceID);
+    }
+
+    @Override
+    public void saveTraceID(HttpUriRequest httpUriRequest) {
+        Header header = httpUriRequest.getFirstHeader(TRACE_ID_KEY);
+        String headerValue = header != null ? header.getValue() : "";
+        saveTraceID(headerValue);
     }
 
     @Override

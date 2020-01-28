@@ -1,6 +1,8 @@
 package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,9 +44,28 @@ public class HTTP {
         return this;
     }
 
+    public HTTP request(HttpUriRequest req) {
+        if (req != null) {
+            this.method = req.getMethod();
+            this.path = req.getURI().getPath();
+            this.query = req.getURI().getQuery();
+            this.scheme = req.getURI().getScheme();
+            this.host = req.getURI().getHost();
+            this.port = req.getURI().getPort();
+        }
+        return this;
+    }
+
     public HTTP response(HttpServletResponse resp) {
         if (resp != null) {
             this.statusCode = resp.getStatus();
+        }
+        return this;
+    }
+
+    public HTTP response(HttpResponse resp) {
+        if (resp != null) {
+            this.statusCode = resp.getStatusLine().getStatusCode();
         }
         return this;
     }

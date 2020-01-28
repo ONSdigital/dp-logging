@@ -7,6 +7,8 @@ import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,7 +107,20 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
+    public T request(HttpUriRequest req) {
+        store.saveTraceID(req);
+        getHTPPSafe().request(req);
+        return (T) this;
+    }
+
     public T response(HttpServletResponse resp) {
+        this.http = getHTPPSafe();
+        this.traceID = store.getTraceID();
+        this.http.response(resp);
+        return (T) this;
+    }
+
+    public T response(HttpResponse resp) {
         this.http = getHTPPSafe();
         this.traceID = store.getTraceID();
         this.http.response(resp);
