@@ -5,19 +5,25 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 
+import static com.github.onsdigital.logging.v2.DPLogger.logConfig;
+import static java.text.MessageFormat.format;
+
 public class ThirdPartyEvent extends BaseEvent {
 
+    static final String EVENT_DESCRIPTION = "external library event";
+    static final String NAMESPACE_FMT = "{0} {1}";
     private String raw;
 
     public ThirdPartyEvent(String namespace, Severity severity, String raw, LogStore logStore) {
-        super(namespace, severity, logStore);
-        super.event = "third party log";
+        super(logConfig().getNamespace(), severity, logStore);
+        super.event = formatEvent(namespace);
+        this.traceID(logStore.getTraceID());
         this.raw = raw;
     }
 
     public ThirdPartyEvent(String namespace, Severity severity, ILoggingEvent e, LogStore logStore) {
-        super(namespace, severity, logStore);
-        super.event = "third party log";
+        super(logConfig().getNamespace(), severity, logStore);
+        super.event = formatEvent(namespace);
         this.raw = e.getFormattedMessage();
         this.traceID(logStore.getTraceID());
 
@@ -25,11 +31,13 @@ public class ThirdPartyEvent extends BaseEvent {
             IThrowableProxy iThrowableProxy = e.getThrowableProxy();
             if (iThrowableProxy instanceof ThrowableProxy) {
                 Throwable t = ((ThrowableProxy) iThrowableProxy).getThrowable();
-                // TODO - once the centralised logging schema is updated this needs to use the recurive method to
-                // capture the full error.
                 this.exception(t);
             }
         }
+    }
+
+    static String formatEvent(String eventNamespace) {
+        return format(NAMESPACE_FMT, EVENT_DESCRIPTION, eventNamespace);
     }
 
     public String getRaw() {
