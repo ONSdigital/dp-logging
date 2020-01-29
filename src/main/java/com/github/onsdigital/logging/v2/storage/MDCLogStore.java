@@ -2,15 +2,17 @@ package com.github.onsdigital.logging.v2.storage;
 
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
-import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 import static java.text.MessageFormat.format;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 public class MDCLogStore implements LogStore {
 
@@ -28,29 +30,23 @@ public class MDCLogStore implements LogStore {
     }
 
     @Override
-    public void saveHTTP(HTTP http) {
-        try {
-            MDC.put(HTTP_KEY, serialiser.marshallHTTP(http));
-        } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(MARSHALL_ERR_FMT, HTTP_KEY, getTraceID()), ex);
-            System.err.println(wrapped);
-        }
-    }
-
-    @Override
     public void saveTraceID(HttpServletRequest req) {
-        String traceID = req.getHeader(TRACE_ID_KEY);
-        if (StringUtils.isEmpty(traceID)) {
-            traceID = UUID.randomUUID().toString();
-        }
+        String traceID = getTraceIDForRequest(req);
+        traceID = defaultIfBlank(traceID, newTraceID());
         MDC.put(TRACE_ID_KEY, traceID);
     }
 
     @Override
+    public void saveTraceID(HttpUriRequest httpUriRequest) {
+        Header header = httpUriRequest.getFirstHeader(TRACE_ID_KEY);
+        String headerValue = header != null ? header.getValue() : "";
+        saveTraceID(headerValue);
+    }
+
+    @Override
     public void saveTraceID(String id) {
-        if (StringUtils.isEmpty(id)) {
-            id = UUID.randomUUID().toString();
-        }
+        id = defaultIfBlank(getTraceID(), id);
+        id = defaultIfBlank(id, newTraceID());
         MDC.put(TRACE_ID_KEY, id);
     }
 
@@ -61,21 +57,6 @@ public class MDCLogStore implements LogStore {
         } catch (LoggingException ex) {
             LoggingException wrapper = new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapper);
-        }
-    }
-
-    @Override
-    public HTTP getHTTP() {
-        String httpJson = MDC.get(HTTP_KEY);
-        if (StringUtils.isEmpty(httpJson)) {
-            return null;
-        }
-        try {
-            return serialiser.unmarshallHTTP(httpJson);
-        } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, HTTP_KEY, getTraceID()), ex);
-            System.err.println(wrapped);
-            return null;
         }
     }
 
@@ -97,5 +78,13 @@ public class MDCLogStore implements LogStore {
             System.err.println(wrapped);
             return null;
         }
+    }
+
+    private String getTraceIDForRequest(HttpServletRequest req) {
+        return defaultIfBlank(getTraceID(), req.getHeader(TRACE_ID_KEY));
+    }
+
+    private String newTraceID() {
+        return UUID.randomUUID().toString();
     }
 }

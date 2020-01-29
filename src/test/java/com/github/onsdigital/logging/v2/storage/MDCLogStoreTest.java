@@ -2,9 +2,10 @@ package com.github.onsdigital.logging.v2.storage;
 
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
-import com.github.onsdigital.logging.v2.event.HTTP;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +17,9 @@ import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintStream;
+import java.util.UUID;
 
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.AUTH_KEY;
-import static com.github.onsdigital.logging.v2.storage.MDCLogStore.HTTP_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.MARSHALL_ERR_FMT;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.TRACE_ID_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.UNMARSHALL_ERR_FMT;
@@ -33,7 +34,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,93 +78,6 @@ public class MDCLogStoreTest {
     @After
     public void tearDown() {
         MDC.clear();
-    }
-
-    @Test
-    public void testSaveHTTPSuccess() throws Exception {
-        HTTP http = new HTTP();
-
-        when(serialiser.marshallHTTP(http))
-                .thenReturn(httpJson);
-
-        store.saveHTTP(http);
-
-        verify(serialiser, times(1)).marshallHTTP(http);
-        assertThat(MDC.get(HTTP_KEY), equalTo(httpJson));
-    }
-
-    @Test
-    public void testSaveHTTPMarshallError() throws Exception {
-        HTTP http = new HTTP();
-        PrintStream stdErr = mock(PrintStream.class);
-        System.setErr(stdErr);
-
-        when(request.getHeader("trace_id")).thenReturn(TRACE_ID);
-        store.saveTraceID(request);
-
-        when(serialiser.marshallHTTP(http))
-                .thenThrow(new LoggingException("bork"));
-
-        store.saveHTTP(http);
-
-        ArgumentCaptor<LoggingException> captor = ArgumentCaptor.forClass(LoggingException.class);
-
-        verify(serialiser, times(1)).marshallHTTP(http);
-        verify(stdErr, times(1)).println(captor.capture());
-
-        LoggingException actual = captor.getValue();
-        assertThat(actual.getMessage(), equalTo(format(MARSHALL_ERR_FMT, HTTP_KEY, TRACE_ID)));
-    }
-
-    @Test
-    public void testGetHTTPSuccess() throws Exception {
-        MDC.put(HTTP_KEY, httpJson);
-
-        HTTP http = new HTTP();
-
-        when(serialiser.unmarshallHTTP(httpJson))
-                .thenReturn(http);
-
-        HTTP result = store.getHTTP();
-
-        verify(serialiser, times(1)).unmarshallHTTP(httpJson);
-        assertThat(result, equalTo(http));
-    }
-
-    @Test
-    public void testGetHTTPSerialiserException() throws Exception {
-        MDC.put(HTTP_KEY, httpJson);
-        MDC.put(TRACE_ID_KEY, TRACE_ID);
-
-        PrintStream stdErr = mock(PrintStream.class);
-        System.setErr(stdErr);
-
-        LoggingException exception = new LoggingException("bork");
-
-        when(serialiser.unmarshallHTTP(httpJson))
-                .thenThrow(exception);
-
-        ArgumentCaptor<LoggingException> captor = ArgumentCaptor.forClass(LoggingException.class);
-
-        HTTP result = store.getHTTP();
-
-        verify(serialiser, times(1)).unmarshallHTTP(httpJson);
-        verify(stdErr, times(1)).println(captor.capture());
-
-        assertThat(result, is(nullValue()));
-        assertThat(captor.getValue().getMessage(), equalTo(format(UNMARSHALL_ERR_FMT, HTTP_KEY, TRACE_ID)));
-    }
-
-    @Test
-    public void testGetHTTPNoValueSavedS() throws Exception {
-        PrintStream stdErr = mock(PrintStream.class);
-        System.setErr(stdErr);
-
-        HTTP result = store.getHTTP();
-
-        assertThat(result, is(nullValue()));
-
-        verifyZeroInteractions(serialiser, stdErr);
     }
 
     @Test
@@ -262,5 +175,125 @@ public class MDCLogStoreTest {
         verify(stdErr, times(1)).println(captor.capture());
         verify(serialiser, times(1)).unmarshallAuth(authJson);
         assertThat(captor.getValue().getMessage(), equalTo(format(UNMARSHALL_ERR_FMT, AUTH_KEY, TRACE_ID)));
+    }
+
+    @Test
+    public void saveTraceId_valueAlreadyStored_requestValueShouldNotOverrideExistingValue() {
+        String existingValue = "0987654321";
+        MDC.put(TRACE_ID_KEY, existingValue);
+
+        String requestTraceId = "1234567890";
+        when(request.getParameter(TRACE_ID_KEY))
+                .thenReturn(requestTraceId);
+
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(existingValue));
+    }
+
+    @Test
+    public void saveTraceId_noIDInRequestOrStore_shouldGenerateAndStoreNewID() {
+        when(request.getParameter(TRACE_ID_KEY))
+                .thenReturn("");
+
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+
+        UUID.fromString(actualValue);
+    }
+
+    @Test
+    public void saveTraceId_RequestIDHeaderNoValueStored_shouldStoreRequestHeader() {
+        String value = "1234567890";
+        when(request.getHeader(TRACE_ID_KEY))
+                .thenReturn(value);
+
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(value));
+    }
+
+    @Test
+    public void saveTraceId_emptyValueNoStoredValue_shouldGenerateAndStoreValue() {
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+    }
+
+    @Test
+    public void saveTraceId_paramEmptyAndValueStored_shouldUseStoredValue() {
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID("");
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
+    }
+
+    @Test
+    public void saveTraceId_paramNotEmptyAndValueStored_shouldUseStoredValue() {
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID("1234567890");
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
+    }
+
+    @Test
+    public void saveTraceId_paramNotEmptyAndStoreEmpty_shouldUseParamValue() {
+        store.saveTraceID("1234567890");
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo("1234567890"));
+    }
+
+    @Test
+    public void saveTraceID_headerNullStoreNull_shouldGenerateNewID() {
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(null);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+    }
+
+    @Test
+    public void saveTraceID_headerNullStoreValueExists_shouldUseStoredValue() {
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(null);
+
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
+    }
+
+    @Test
+    public void saveTraceID_headerAndStoreValuesExists_shouldUseStoredValue() {
+        Header header = mock(Header.class);
+        when(header.getValue())
+                .thenReturn("1234567890");
+
+        HttpUriRequest req = mock(HttpUriRequest.class);
+        when(req.getFirstHeader(TRACE_ID_KEY))
+                .thenReturn(header);
+
+        MDC.put(TRACE_ID_KEY, TRACE_ID);
+
+        store.saveTraceID(req);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertThat(actualValue, equalTo(TRACE_ID));
     }
 }

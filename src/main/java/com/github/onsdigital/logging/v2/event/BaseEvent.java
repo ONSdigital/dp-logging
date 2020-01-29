@@ -7,6 +7,8 @@ import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,33 +61,69 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return (T) this;
     }
 
+    /**
+     * Deprecated use {@link BaseEvent#request(HttpServletRequest)} instead.
+     */
+    @Deprecated
     public T beginHTTP(HttpServletRequest req) {
         store.saveTraceID(req);
-        getHTPPSafe().begin(req);
-        store.saveHTTP(http);
+        getHTPPSafe().request(req);
         return (T) this;
     }
 
+    /**
+     * Deprecated use {@link BaseEvent#request(HttpServletRequest)} instead.
+     */
+    @Deprecated
     public T beginHTTP(HTTP httpDetails) {
         traceID(store.getTraceID());
-        this.http = new HTTP().begin(httpDetails);
-        store.saveHTTP(http);
+        this.http = new HTTP().request(httpDetails);
         return (T) this;
     }
 
+    /**
+     * Deprecated use {@link BaseEvent#response(HttpServletResponse)} instead.
+     */
+    @Deprecated
     public T endHTTP(HttpServletResponse resp) {
-        this.http = store.getHTTP();
-        if (this.http != null) {
-            this.http.end(resp);
-        }
+        this.http = getHTPPSafe();
+        this.http.response(resp);
         return (T) this;
     }
 
+    /**
+     * Deprecated use {@link BaseEvent#response(HttpServletResponse)} instead.
+     */
+    @Deprecated
     public T endHTTP(int statusCode) {
-        this.http = store.getHTTP();
-        if (this.http != null) {
-            this.http.end(statusCode);
-        }
+        this.http = getHTPPSafe();
+        this.http.response(statusCode);
+        return (T) this;
+    }
+
+    public T request(HttpServletRequest req) {
+        store.saveTraceID(req);
+        getHTPPSafe().request(req);
+        return (T) this;
+    }
+
+    public T request(HttpUriRequest req) {
+        store.saveTraceID(req);
+        getHTPPSafe().request(req);
+        return (T) this;
+    }
+
+    public T response(HttpServletResponse resp) {
+        this.http = getHTPPSafe();
+        this.traceID = store.getTraceID();
+        this.http.response(resp);
+        return (T) this;
+    }
+
+    public T response(HttpResponse resp) {
+        this.http = getHTPPSafe();
+        this.traceID = store.getTraceID();
+        this.http.response(resp);
         return (T) this;
     }
 
@@ -137,9 +175,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
     public void log(String event) {
         this.event = event;
         this.traceID = store.getTraceID();
-        if (http == null) {
-            this.http = store.getHTTP();
-        }
 
         if (auth == null) {
             this.auth = store.getAuth();
