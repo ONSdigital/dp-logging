@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 
 public class HTTP {
 
@@ -47,13 +48,19 @@ public class HTTP {
     public HTTP request(HttpUriRequest req) {
         if (req != null) {
             this.method = req.getMethod();
-            this.path = req.getURI().getPath();
-            this.query = req.getURI().getQuery();
-            this.scheme = req.getURI().getScheme();
-            this.host = req.getURI().getHost();
-            this.port = req.getURI().getPort();
+            extractUriDetails(req.getURI());
         }
         return this;
+    }
+
+    private void extractUriDetails(URI uri) {
+        if (uri != null) {
+            this.path = uri.getPath();
+            this.query = uri.getQuery();
+            this.scheme = uri.getScheme();
+            this.host = uri.getHost();
+            this.port = uri.getPort();
+        }
     }
 
     public HTTP response(HttpServletResponse resp) {
@@ -70,7 +77,7 @@ public class HTTP {
         return this;
     }
 
-    public HTTP response(int status) {
+    public HTTP response(int statusCode) {
         this.statusCode = statusCode;
         return this;
     }

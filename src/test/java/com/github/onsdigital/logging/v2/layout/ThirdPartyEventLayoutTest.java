@@ -63,9 +63,9 @@ public class ThirdPartyEventLayoutTest {
         layout.doLayout(mockEvent);
 
         ThirdPartyEvent e = argumentCaptor.getValue();
-        assertThat("event incorrect", e.getEvent(), equalTo("third party log"));
+        assertThat("event incorrect", e.getEvent(), equalTo("external library event test.logger.name"));
         assertThat("event incorrect", e.getRaw(), equalTo("hello world"));
-        assertThat("namespace incorrect", e.getNamespace(), equalTo("test.logger.name"));
+        assertThat("namespace incorrect", e.getNamespace(), equalTo("dp-logger-default"));
         assertThat("severity incorrect", e.getSeverity(), equalTo(Severity.INFO.getLevel()));
         assertThat("data incorrect", e.getData().isEmpty(), is(true));
         assertNotNull("created_at incorrect", e.getCreateAt());
@@ -98,9 +98,9 @@ public class ThirdPartyEventLayoutTest {
         assertThat(result, equalTo("error while attempting to marshallHTTP log event to json: bork"));
 
         ThirdPartyEvent e = eventCaptor.getValue();
-        assertThat("event incorrect", e.getEvent(), equalTo("third party log"));
+        assertThat("event incorrect", e.getEvent(), equalTo("external library event test.logger.name"));
         assertThat("event incorrect", e.getRaw(), equalTo("hello world"));
-        assertThat("namespace incorrect", e.getNamespace(), equalTo("test.logger.name"));
+        assertThat("namespace incorrect", e.getNamespace(), equalTo("dp-logger-default"));
         assertThat("severity incorrect", e.getSeverity(), equalTo(Severity.INFO.getLevel()));
         assertThat("data incorrect", e.getData().isEmpty(), is(true));
         assertNotNull("created_at incorrect", e.getCreateAt());
