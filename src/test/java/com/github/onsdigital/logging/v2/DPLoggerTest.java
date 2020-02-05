@@ -160,7 +160,7 @@ public class DPLoggerTest {
     public void testLogEventJson_default() {
         DPLogger.logEventJson("json", null, logger);
 
-        verify(logger, times(1)).info("json");
+        verifyZeroInteractions(logger);
         verifyNoMoreInteractions(logger);
     }
 

@@ -22,7 +22,7 @@
         <appender-ref ref="DP_LOGGER"/>
     </logger>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="THIRD_PARTY"/>
     </root>
 

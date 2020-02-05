@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.AUTH_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.MARSHALL_ERR_FMT;
+import static com.github.onsdigital.logging.v2.storage.MDCLogStore.REQUEST_ID_HEADER;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.TRACE_ID_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.UNMARSHALL_ERR_FMT;
 import static java.text.MessageFormat.format;
@@ -88,7 +89,8 @@ public class MDCLogStoreTest {
 
     @Test
     public void testSaveTraceIDSuccess() {
-        when(request.getHeader(TRACE_ID_KEY)).thenReturn(TRACE_ID);
+        when(request.getHeader(REQUEST_ID_HEADER))
+                .thenReturn(TRACE_ID);
 
         store.saveTraceID(request);
 
@@ -208,7 +210,7 @@ public class MDCLogStoreTest {
     @Test
     public void saveTraceId_RequestIDHeaderNoValueStored_shouldStoreRequestHeader() {
         String value = "1234567890";
-        when(request.getHeader(TRACE_ID_KEY))
+        when(request.getHeader(REQUEST_ID_HEADER))
                 .thenReturn(value);
 
         store.saveTraceID(request);

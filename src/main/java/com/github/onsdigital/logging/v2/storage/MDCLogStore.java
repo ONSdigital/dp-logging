@@ -18,6 +18,7 @@ public class MDCLogStore implements LogStore {
 
     static final String HTTP_KEY = "http";
     static final String TRACE_ID_KEY = "trace_id";
+    static final String REQUEST_ID_HEADER = "X-Request-Id";
     static final String MARSHALL_ERR_FMT = "failed to marshall {0}, trace_id: {1}";
     static final String UNMARSHALL_ERR_FMT = "failed to unmarshall {0}, trace_id: {1}";
 
@@ -31,14 +32,14 @@ public class MDCLogStore implements LogStore {
 
     @Override
     public void saveTraceID(HttpServletRequest req) {
-        String traceID = getTraceIDForRequest(req);
+        String traceID = getTraceIDFromRequest(req);
         traceID = defaultIfBlank(traceID, newTraceID());
         MDC.put(TRACE_ID_KEY, traceID);
     }
 
     @Override
     public void saveTraceID(HttpUriRequest httpUriRequest) {
-        Header header = httpUriRequest.getFirstHeader(TRACE_ID_KEY);
+        Header header = httpUriRequest.getFirstHeader(REQUEST_ID_HEADER);
         String headerValue = header != null ? header.getValue() : "";
         saveTraceID(headerValue);
     }
@@ -80,8 +81,8 @@ public class MDCLogStore implements LogStore {
         }
     }
 
-    private String getTraceIDForRequest(HttpServletRequest req) {
-        return defaultIfBlank(getTraceID(), req.getHeader(TRACE_ID_KEY));
+    private String getTraceIDFromRequest(HttpServletRequest req) {
+        return defaultIfBlank(getTraceID(), req.getHeader(REQUEST_ID_HEADER));
     }
 
     private String newTraceID() {
