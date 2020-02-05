@@ -8,5 +8,7 @@ public interface Logger {
 
     void info(String event);
 
+    void debug(String event);
+
     String getName();
 }

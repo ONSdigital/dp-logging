@@ -6,6 +6,7 @@ import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import com.github.onsdigital.logging.v2.storage.MDCLogStore;
 
+import static com.github.onsdigital.logging.v2.event.SimpleEvent.debug;
 import static com.github.onsdigital.logging.v2.event.SimpleEvent.info;
 import static spark.Spark.after;
 import static spark.Spark.before;
@@ -23,6 +24,7 @@ public class ExampleAPI {
         port(8088);
 
         before("/*", (req, resp) -> {
+            debug().log("DEBUG request in");
             info().request(req.raw()).log("request receieved");
         });
 

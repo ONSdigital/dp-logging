@@ -26,6 +26,11 @@ public class LoggerImpl implements Logger {
     }
 
     @Override
+    public void debug(String event) {
+        this.log.debug(event);
+    }
+
+    @Override
     public String getName() {
         return this.log.getName();
     }

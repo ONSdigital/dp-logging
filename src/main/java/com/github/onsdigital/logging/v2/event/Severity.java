@@ -22,7 +22,10 @@ public enum Severity {
     /**
      * All non-failure events
      */
-    INFO(3);
+    INFO(3),
+
+
+    DEBUG(4);
 
     private final int level;
 
@@ -42,8 +45,10 @@ public enum Severity {
                 return ERROR;
             case 2:
                 return WARN;
-            default:
+            case 3:
                 return INFO;
+            default:
+                return DEBUG;
         }
     }
 

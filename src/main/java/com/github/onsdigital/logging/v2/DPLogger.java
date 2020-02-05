@@ -76,6 +76,23 @@ public class DPLogger {
     }
 
     static void logEventJson(String eventJson, Severity severity, Logger logger) {
+        switch (severity) {
+            case FATAL:
+                // fall through to error
+            case ERROR:
+                logger.error(eventJson);
+                break;
+            case WARN:
+                logger.warn(eventJson);
+                break;
+            case INFO:
+                logger.info(eventJson);
+                break;
+            default:
+                logger.debug(eventJson);
+        }
+
+
         if (FATAL == severity)
             logger.error(eventJson);
         else if (ERROR == severity)

@@ -18,6 +18,10 @@ public class SimpleEvent extends BaseEvent<SimpleEvent> {
         super(namespace, severity, logStore, event);
     }
 
+    public static SimpleEvent debug() {
+        return new SimpleEvent(logConfig().getNamespace(), Severity.DEBUG);
+    }
+
     public static SimpleEvent info() {
         return new SimpleEvent(logConfig().getNamespace(), Severity.INFO);
     }

@@ -20,6 +20,11 @@ public class NopLogger implements Logger {
     }
 
     @Override
+    public void debug(String event) {
+
+    }
+
+    @Override
     public String getName() {
         return "";
     }
