@@ -9,9 +9,6 @@ import com.github.onsdigital.logging.v2.event.Severity;
 
 import java.time.format.DateTimeFormatter;
 
-import static com.github.onsdigital.logging.v2.event.Severity.ERROR;
-import static com.github.onsdigital.logging.v2.event.Severity.FATAL;
-import static com.github.onsdigital.logging.v2.event.Severity.WARN;
 import static com.github.onsdigital.logging.v2.event.Severity.getSeverity;
 import static java.text.MessageFormat.format;
 
@@ -91,16 +88,6 @@ public class DPLogger {
             default:
                 logger.debug(eventJson);
         }
-
-
-        if (FATAL == severity)
-            logger.error(eventJson);
-        else if (ERROR == severity)
-            logger.error(eventJson);
-        else if (WARN == severity)
-            logger.warn(eventJson);
-        else
-            logger.info(eventJson);
     }
 
     static <T extends BaseEvent> String getMarshalFailureMessage(T event, LoggingException ex) {
