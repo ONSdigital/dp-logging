@@ -21,12 +21,14 @@ import java.util.UUID;
 
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.AUTH_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.MARSHALL_ERR_FMT;
+import static com.github.onsdigital.logging.v2.storage.MDCLogStore.REQUEST_ID_HEADER;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.TRACE_ID_KEY;
 import static com.github.onsdigital.logging.v2.storage.MDCLogStore.UNMARSHALL_ERR_FMT;
 import static java.text.MessageFormat.format;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -88,7 +90,8 @@ public class MDCLogStoreTest {
 
     @Test
     public void testSaveTraceIDSuccess() {
-        when(request.getHeader(TRACE_ID_KEY)).thenReturn(TRACE_ID);
+        when(request.getHeader(REQUEST_ID_HEADER))
+                .thenReturn(TRACE_ID);
 
         store.saveTraceID(request);
 
@@ -178,18 +181,18 @@ public class MDCLogStoreTest {
     }
 
     @Test
-    public void saveTraceId_valueAlreadyStored_requestValueShouldNotOverrideExistingValue() {
+    public void saveTraceId_valueAlreadyStored_requestValueShouldOverride() {
         String existingValue = "0987654321";
         MDC.put(TRACE_ID_KEY, existingValue);
 
-        String requestTraceId = "1234567890";
-        when(request.getParameter(TRACE_ID_KEY))
-                .thenReturn(requestTraceId);
+        String requestId = "1234567890";
+        when(request.getHeader(REQUEST_ID_HEADER))
+                .thenReturn(requestId);
 
         store.saveTraceID(request);
 
         String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(existingValue));
+        assertThat(actualValue, equalTo(requestId));
     }
 
     @Test
@@ -208,7 +211,7 @@ public class MDCLogStoreTest {
     @Test
     public void saveTraceId_RequestIDHeaderNoValueStored_shouldStoreRequestHeader() {
         String value = "1234567890";
-        when(request.getHeader(TRACE_ID_KEY))
+        when(request.getHeader(REQUEST_ID_HEADER))
                 .thenReturn(value);
 
         store.saveTraceID(request);
@@ -226,23 +229,27 @@ public class MDCLogStoreTest {
     }
 
     @Test
-    public void saveTraceId_paramEmptyAndValueStored_shouldUseStoredValue() {
+    public void saveTraceId_paramEmptyAndValueStored_shouldOverwriteWithNewValue() {
         MDC.put(TRACE_ID_KEY, TRACE_ID);
 
         store.saveTraceID("");
 
         String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(TRACE_ID));
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertThat(actualValue, not(equalTo(TRACE_ID)));
+
+        // if this fails an exception will be thrown.
+        UUID.fromString(actualValue);
     }
 
     @Test
-    public void saveTraceId_paramNotEmptyAndValueStored_shouldUseStoredValue() {
+    public void saveTraceId_paramNotEmptyAndValueStored_shouldOverwriteStoredValue() {
         MDC.put(TRACE_ID_KEY, TRACE_ID);
 
         store.saveTraceID("1234567890");
 
         String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(TRACE_ID));
+        assertThat(actualValue, equalTo("1234567890"));
     }
 
     @Test
@@ -266,9 +273,9 @@ public class MDCLogStoreTest {
     }
 
     @Test
-    public void saveTraceID_headerNullStoreValueExists_shouldUseStoredValue() {
+    public void saveTraceID_headerNullStoreValueExists_shouldOverwriteWithNewValue() {
         HttpUriRequest req = mock(HttpUriRequest.class);
-        when(req.getFirstHeader(TRACE_ID_KEY))
+        when(req.getFirstHeader(REQUEST_ID_HEADER))
                 .thenReturn(null);
 
         MDC.put(TRACE_ID_KEY, TRACE_ID);
@@ -276,24 +283,49 @@ public class MDCLogStoreTest {
         store.saveTraceID(req);
 
         String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(TRACE_ID));
+
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertTrue(!StringUtils.equals(actualValue, TRACE_ID));
     }
 
+
     @Test
-    public void saveTraceID_headerAndStoreValuesExists_shouldUseStoredValue() {
+    public void saveTraceID_headerAndStoreValuesExists_shouldOverwriteStoredValue() {
+        String headerValue = "12345";
         Header header = mock(Header.class);
         when(header.getValue())
-                .thenReturn("1234567890");
+                .thenReturn(headerValue);
 
         HttpUriRequest req = mock(HttpUriRequest.class);
-        when(req.getFirstHeader(TRACE_ID_KEY))
+        when(req.getFirstHeader(REQUEST_ID_HEADER))
                 .thenReturn(header);
 
-        MDC.put(TRACE_ID_KEY, TRACE_ID);
+        String existingValue = "098765";
+        MDC.put(TRACE_ID_KEY, existingValue);
 
         store.saveTraceID(req);
 
         String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(TRACE_ID));
+        assertThat(actualValue, equalTo(headerValue));
+    }
+
+    @Test
+    public void saveTraceID_HttpServletRequestIsNull_shouldGenerateNewId() {
+        HttpServletRequest request = null;
+
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
+    }
+
+    @Test
+    public void saveTraceID_HttpUriRequestIsNull_shouldGenerateNewId() {
+        HttpUriRequest request = null;
+
+        store.saveTraceID(request);
+
+        String actualValue = MDC.get(TRACE_ID_KEY);
+        assertTrue(StringUtils.isNotEmpty(actualValue));
     }
 }
