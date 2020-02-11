@@ -9,18 +9,18 @@ import javax.servlet.http.HttpServletRequest;
 public class NopStore implements LogStore {
 
     @Override
-    public void saveTraceID(HttpServletRequest req) {
-
+    public String saveTraceID(HttpServletRequest req) {
+        return "";
     }
 
     @Override
-    public void saveTraceID(HttpUriRequest httpUriRequest) {
-
+    public String saveTraceID(HttpUriRequest httpUriRequest) {
+        return "";
     }
 
     @Override
-    public void saveTraceID(String id) {
-
+    public String saveTraceID(String id) {
+        return "";
     }
 
     @Override

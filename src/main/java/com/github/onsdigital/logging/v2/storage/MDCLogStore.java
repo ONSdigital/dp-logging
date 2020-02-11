@@ -31,25 +31,26 @@ public class MDCLogStore implements LogStore {
     }
 
     @Override
-    public void saveTraceID(HttpServletRequest req) {
+    public String saveTraceID(HttpServletRequest req) {
         String id = req == null ? "" : req.getHeader(REQUEST_ID_HEADER);
-        saveTraceID(id);
+        return saveTraceID(id);
     }
 
     @Override
-    public void saveTraceID(HttpUriRequest httpUriRequest) {
+    public String saveTraceID(HttpUriRequest httpUriRequest) {
         String id = "";
         if (httpUriRequest != null) {
             Header header = httpUriRequest.getFirstHeader(REQUEST_ID_HEADER);
             id = getHeaderValue(header);
         }
-        saveTraceID(id);
+        return saveTraceID(id);
     }
 
     @Override
-    public void saveTraceID(String id) {
+    public String saveTraceID(String id) {
         id = defaultIfBlank(id, newTraceID());
         MDC.put(TRACE_ID_KEY, id);
+        return id;
     }
 
     @Override

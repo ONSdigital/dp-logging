@@ -23,11 +23,11 @@ public class ExampleAPI {
         port(8088);
 
         before("/*", (req, resp) -> {
-            info().request(req.raw()).log("request receieved");
+            info().beginHTTP(req.raw()).log("request receieved");
         });
 
         after("/*", ((request, response) -> {
-            info().request(request.raw()).response(response.raw()).log("request processing compelete");
+            info().endHTTP(request.raw(), response.raw()).log("request processing compelete");
         }));
 
         get("/hello", (req, resp) -> {
