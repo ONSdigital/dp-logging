@@ -52,25 +52,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Log this event.
-     *
-     * @param event a human readable description of the event.
-     */
-    public void log(String event) {
-        this.event = event;
-
-        if (StringUtils.isEmpty(traceID)) {
-            this.traceID = store.getTraceID();
-        }
-
-        if (auth == null) {
-            this.auth = store.getAuth();
-        }
-
-        DPLogger.log(this);
-    }
-
-    /**
      * Set the trace ID for this log event. If a trace ID already exists it will be overwritten, if a
      * null or empty ID is provided then a new ID will be generated.
      *
@@ -177,6 +158,25 @@ public abstract class BaseEvent<T extends BaseEvent> {
         exception(t);
         log(event);
         throw t;
+    }
+
+    /**
+     * Log this event.
+     *
+     * @param event a human readable description of the event.
+     */
+    public void log(String event) {
+        this.event = event;
+
+        if (StringUtils.isEmpty(traceID)) {
+            this.traceID = store.getTraceID();
+        }
+
+        if (auth == null) {
+            this.auth = store.getAuth();
+        }
+
+        DPLogger.log(this);
     }
 
     private Auth getAuthSafe() {
