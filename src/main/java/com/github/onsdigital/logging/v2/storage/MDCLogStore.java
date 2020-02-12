@@ -58,7 +58,8 @@ public class MDCLogStore implements LogStore {
         try {
             MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));
         } catch (LoggingException ex) {
-            LoggingException wrapper = new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
+            LoggingException wrapper =
+                    new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapper);
         }
     }
@@ -77,7 +78,8 @@ public class MDCLogStore implements LogStore {
         try {
             return serialiser.unmarshallAuth(authStr);
         } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
+            LoggingException wrapped =
+                    new LoggingException(format(UNMARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapped);
             return null;
         }

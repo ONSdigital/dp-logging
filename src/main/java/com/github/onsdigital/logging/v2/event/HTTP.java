@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+
 /**
  * POJO containing HTTP details of requests/resopnses required by log events.
  */
@@ -25,8 +28,8 @@ public class HTTP {
     private Long duration;
 
     /**
-     * Construct a new HTTP instance and populate the request fields using the provided {@link HttpServletRequest}.
-     * The response fields will be null.
+     * Construct a new HTTP instance and populate the request fields using the provided {@link
+     * HttpServletRequest}. The response fields will be null.
      *
      * @param req a {@link HttpServletRequest} to extract the request fields from.
      */
@@ -43,11 +46,11 @@ public class HTTP {
      */
     public HTTP(HttpServletRequest req, HttpServletResponse resp) {
         if (req != null) {
-            this.method = req.getMethod();
-            this.path = req.getRequestURI();
-            this.query = req.getQueryString();
-            this.scheme = req.getScheme();
-            this.host = req.getServerName();
+            this.method = defaultIfEmpty(req.getMethod(), "");
+            this.path = defaultIfEmpty(req.getRequestURI(), "");
+            this.query = defaultIfEmpty(req.getQueryString(), "");
+            this.scheme = defaultIfEmpty(req.getScheme(), "");
+            this.host = defaultIfEmpty(req.getServerName(), "");
             this.port = req.getServerPort();
         }
 
@@ -57,8 +60,8 @@ public class HTTP {
     }
 
     /**
-     * Construct a new HTTP instance and populate the request fields using the provided {@link HttpUriRequest}.
-     * The response fields will be null.
+     * Construct a new HTTP instance and populate the request fields using the provided {@link
+     * HttpUriRequest}. The response fields will be null.
      *
      * @param req a {@link HttpUriRequest} to extract the request fields from.
      */
@@ -79,10 +82,10 @@ public class HTTP {
 
             URI uri = req.getURI();
             if (uri != null) {
-                this.path = uri.getPath();
-                this.query = uri.getQuery();
-                this.scheme = uri.getScheme();
-                this.host = uri.getHost();
+                this.path = defaultIfBlank(uri.getPath(), "");
+                this.query = defaultIfBlank(uri.getQuery(), "");
+                this.scheme = defaultIfBlank(uri.getScheme(), "");
+                this.host = defaultIfBlank(uri.getHost(), "");
                 this.port = uri.getPort();
             }
         }

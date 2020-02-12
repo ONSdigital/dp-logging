@@ -71,8 +71,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Set the trace ID for this log event. If a trace ID already exists it will be overwritten, if a null or empty
-     * ID is provided then a new ID will be generated.
+     * Set the trace ID for this log event. If a trace ID already exists it will be overwritten, if a
+     * null or empty ID is provided then a new ID will be generated.
      *
      * @param id the ID to set.
      * @return
@@ -83,8 +83,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Capture the inbound request deatils and store the trace ID if a header exists on the request. If not a new ID
-     * will be generated and stored.
+     * Capture the inbound request deatils and store the trace ID if a header exists on the request.
+     * If not a new ID will be generated and stored.
      *
      * @param req the {@link HttpServletRequest} to extract the request details from.
      * @return this instance of the event with the updated request details.
@@ -96,8 +96,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Capture the request/response details for a completed request. **Note** a completed request can be successful
-     * or unsuccessful.
+     * Capture the request/response details for a completed request. **Note** a completed request can
+     * be successful or unsuccessful.
      *
      * @param req  the {@link HttpServletRequest} to extract the request details from.
      * @param resp the {@link HttpServletResponse} to extract the response details from.
@@ -110,8 +110,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Capture the inbound request deatils and store the trace ID if a header exists on the request. If not a new ID
-     * will be generated and stored.
+     * Capture the inbound request deatils and store the trace ID if a header exists on the request.
+     * If not a new ID will be generated and stored.
      *
      * @param req the {@link HttpUriRequest} to extract the request details from.
      * @return this instance of the event with the updated request details.
@@ -123,8 +123,8 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     /**
-     * Capture the request/response details for a completed request. **Note** a completed request can be successful
-     * or unsuccessful.
+     * Capture the request/response details for a completed request. **Note** a completed request can
+     * be successful or unsuccessful.
      *
      * @param req  the {@link HttpServletRequest} to extract the request details from.
      * @param resp the {@link HttpServletResponse} to extract the response details from.
@@ -145,9 +145,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     }
 
     private T authIdenity(String identity, Auth.IdentityType identityType) {
-        this.auth = this.getAuthSafe()
-                .identity(identity)
-                .typeUser(identityType);
+        this.auth = this.getAuthSafe().identity(identity).typeUser(identityType);
         store.saveAuth(auth);
         return (T) this;
     }
@@ -180,7 +178,6 @@ public abstract class BaseEvent<T extends BaseEvent> {
         log(event);
         throw t;
     }
-
 
     private Auth getAuthSafe() {
         if (this.auth == null) {

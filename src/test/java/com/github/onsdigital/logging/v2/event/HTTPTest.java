@@ -137,7 +137,7 @@ public class HTTPTest {
         assertThat(actual.getDuration(), is(nullValue()));
         assertThat(actual.getMethod(), equalTo(HTTP_METHOD));
         assertThat(actual.getPath(), equalTo(REQUESTED_URI));
-        assertThat(actual.getQuery(), is(nullValue()));
+        assertThat(actual.getQuery(), equalTo(""));
         assertThat(actual.getScheme(), equalTo(SCHEME));
         assertThat(actual.getHost(), equalTo(HOST));
         assertThat(actual.getPort(), equalTo(PORT));
@@ -153,7 +153,7 @@ public class HTTPTest {
         assertThat(actual.getDuration(), is(nullValue()));
         assertThat(actual.getMethod(), equalTo(HTTP_METHOD));
         assertThat(actual.getPath(), equalTo(REQUESTED_URI));
-        assertThat(actual.getQuery(), is(nullValue()));
+        assertThat(actual.getQuery(), equalTo(""));
         assertThat(actual.getScheme(), equalTo(SCHEME));
         assertThat(actual.getHost(), equalTo(HOST));
         assertThat(actual.getPort(), equalTo(PORT));
@@ -171,24 +171,29 @@ public class HTTPTest {
         assertThat(actual.getDuration(), is(nullValue()));
         assertThat(actual.getMethod(), equalTo(HTTP_METHOD));
         assertThat(actual.getPath(), equalTo(REQUESTED_URI));
-        assertThat(actual.getQuery(), is(nullValue()));
+        assertThat(actual.getQuery(), equalTo(""));
         assertThat(actual.getScheme(), equalTo(SCHEME));
         assertThat(actual.getHost(), equalTo(HOST));
         assertThat(actual.getPort(), equalTo(PORT));
     }
 
     void setUpHttpServletRequest() {
-        when(httpServletRequest.getMethod()).thenReturn(HTTP_METHOD);
+        when(httpServletRequest.getMethod())
+                .thenReturn(HTTP_METHOD);
 
         when(httpServletRequest.getRequestURI()).thenReturn(REQUESTED_URI);
 
-        when(httpServletRequest.getQueryString()).thenReturn("");
+        when(httpServletRequest.getQueryString())
+                .thenReturn("");
 
-        when(httpServletRequest.getScheme()).thenReturn(SCHEME);
+        when(httpServletRequest.getScheme())
+                .thenReturn(SCHEME);
 
-        when(httpServletRequest.getServerName()).thenReturn(HOST);
+        when(httpServletRequest.getServerName())
+                .thenReturn(HOST);
 
-        when(httpServletRequest.getServerPort()).thenReturn(PORT);
+        when(httpServletRequest.getServerPort())
+                .thenReturn(PORT);
     }
 
     void setUpHttpServletResponse() {
@@ -206,8 +211,10 @@ public class HTTPTest {
     }
 
     void setUpHttpResponse() {
-        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        when(httpResponse.getStatusLine())
+                .thenReturn(statusLine);
 
-        when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+        when(statusLine.getStatusCode())
+                .thenReturn(HttpStatus.SC_OK);
     }
 }
