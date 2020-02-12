@@ -93,16 +93,16 @@ public class MDCLogStoreTest {
         when(request.getHeader(REQUEST_ID_HEADER))
                 .thenReturn(TRACE_ID);
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        assertThat(MDC.get(TRACE_ID_KEY), equalTo(TRACE_ID));
+        assertThat(actual, equalTo(TRACE_ID));
     }
 
     @Test
     public void testSaveTraceIDEmpty() {
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        assertTrue(StringUtils.isNotEmpty(MDC.get(TRACE_ID_KEY)));
+        assertTrue(StringUtils.isNotEmpty(actual));
     }
 
     @Test
@@ -189,10 +189,9 @@ public class MDCLogStoreTest {
         when(request.getHeader(REQUEST_ID_HEADER))
                 .thenReturn(requestId);
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(requestId));
+        assertThat(actual, equalTo(requestId));
     }
 
     @Test
@@ -200,12 +199,10 @@ public class MDCLogStoreTest {
         when(request.getParameter(TRACE_ID_KEY))
                 .thenReturn("");
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
-
-        UUID.fromString(actualValue);
+        assertTrue(StringUtils.isNotEmpty(actual));
+        UUID.fromString(actual);
     }
 
     @Test
@@ -214,50 +211,45 @@ public class MDCLogStoreTest {
         when(request.getHeader(REQUEST_ID_HEADER))
                 .thenReturn(value);
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(value));
+        assertThat(actual, equalTo(value));
     }
 
     @Test
     public void saveTraceId_emptyValueNoStoredValue_shouldGenerateAndStoreValue() {
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertTrue(StringUtils.isNotEmpty(actual));
     }
 
     @Test
     public void saveTraceId_paramEmptyAndValueStored_shouldOverwriteWithNewValue() {
         MDC.put(TRACE_ID_KEY, TRACE_ID);
 
-        store.saveTraceID("");
+        String actual = store.saveTraceID("");
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
-        assertThat(actualValue, not(equalTo(TRACE_ID)));
+        assertTrue(StringUtils.isNotEmpty(actual));
+        assertThat(actual, not(equalTo(TRACE_ID)));
 
         // if this fails an exception will be thrown.
-        UUID.fromString(actualValue);
+        UUID.fromString(actual);
     }
 
     @Test
     public void saveTraceId_paramNotEmptyAndValueStored_shouldOverwriteStoredValue() {
         MDC.put(TRACE_ID_KEY, TRACE_ID);
 
-        store.saveTraceID("1234567890");
+        String actual = store.saveTraceID("1234567890");
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo("1234567890"));
+        assertThat(actual, equalTo("1234567890"));
     }
 
     @Test
     public void saveTraceId_paramNotEmptyAndStoreEmpty_shouldUseParamValue() {
-        store.saveTraceID("1234567890");
+        String actual = store.saveTraceID("1234567890");
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo("1234567890"));
+        assertThat(actual, equalTo("1234567890"));
     }
 
     @Test
@@ -266,10 +258,9 @@ public class MDCLogStoreTest {
         when(req.getFirstHeader(TRACE_ID_KEY))
                 .thenReturn(null);
 
-        store.saveTraceID(req);
+        String actual = store.saveTraceID(req);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertTrue(StringUtils.isNotEmpty(actual));
     }
 
     @Test
@@ -280,12 +271,10 @@ public class MDCLogStoreTest {
 
         MDC.put(TRACE_ID_KEY, TRACE_ID);
 
-        store.saveTraceID(req);
+        String actual = store.saveTraceID(req);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-
-        assertTrue(StringUtils.isNotEmpty(actualValue));
-        assertTrue(!StringUtils.equals(actualValue, TRACE_ID));
+        assertTrue(StringUtils.isNotEmpty(actual));
+        assertTrue(!StringUtils.equals(actual, TRACE_ID));
     }
 
 
@@ -303,29 +292,26 @@ public class MDCLogStoreTest {
         String existingValue = "098765";
         MDC.put(TRACE_ID_KEY, existingValue);
 
-        store.saveTraceID(req);
+        String actual = store.saveTraceID(req);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertThat(actualValue, equalTo(headerValue));
+        assertThat(actual, equalTo(headerValue));
     }
 
     @Test
     public void saveTraceID_HttpServletRequestIsNull_shouldGenerateNewId() {
         HttpServletRequest request = null;
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertTrue(StringUtils.isNotEmpty(actual));
     }
 
     @Test
     public void saveTraceID_HttpUriRequestIsNull_shouldGenerateNewId() {
         HttpUriRequest request = null;
 
-        store.saveTraceID(request);
+        String actual = store.saveTraceID(request);
 
-        String actualValue = MDC.get(TRACE_ID_KEY);
-        assertTrue(StringUtils.isNotEmpty(actualValue));
+        assertTrue(StringUtils.isNotEmpty(actual));
     }
 }

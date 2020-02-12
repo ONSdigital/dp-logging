@@ -8,6 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+
+/**
+ * POJO containing HTTP details of requests/resopnses required by log events.
+ */
 public class HTTP {
 
     @JsonProperty("status_code")
@@ -21,99 +27,103 @@ public class HTTP {
     private Integer port;
     private Long duration;
 
-    public HTTP request(HttpServletRequest req) {
+    /**
+     * Construct a new HTTP instance and populate the request fields using the provided {@link
+     * HttpServletRequest}. The response fields will be null.
+     *
+     * @param req a {@link HttpServletRequest} to extract the request fields from.
+     */
+    public HTTP(HttpServletRequest req) {
+        this(req, null);
+    }
+
+    /**
+     * Construct a new HTTP instance and populate the request and response fields using the provided
+     * {@link HttpServletRequest} and {@link HttpServletResponse}.
+     *
+     * @param req  the {@link HttpServletRequest} to extract the request fields from.
+     * @param resp the {@link HttpServletResponse} to extract the response fields from.
+     */
+    public HTTP(HttpServletRequest req, HttpServletResponse resp) {
         if (req != null) {
-            this.method = req.getMethod();
-            this.path = req.getRequestURI();
-            this.query = req.getQueryString();
-            this.scheme = req.getScheme();
-            this.host = req.getServerName();
+            this.method = defaultIfEmpty(req.getMethod(), "");
+            this.path = defaultIfEmpty(req.getRequestURI(), "");
+            this.query = defaultIfEmpty(req.getQueryString(), "");
+            this.scheme = defaultIfEmpty(req.getScheme(), "");
+            this.host = defaultIfEmpty(req.getServerName(), "");
             this.port = req.getServerPort();
         }
-        return this;
-    }
 
-    public HTTP request(HTTP details) {
-        if (details != null) {
-            this.method = details.method;
-            this.path = details.path;
-            this.query = details.query;
-            this.scheme = details.scheme;
-            this.host = details.host;
-            this.port = details.port;
-        }
-        return this;
-    }
-
-    public HTTP request(HttpUriRequest req) {
-        if (req != null) {
-            this.method = req.getMethod();
-            extractUriDetails(req.getURI());
-        }
-        return this;
-    }
-
-    private void extractUriDetails(URI uri) {
-        if (uri != null) {
-            this.path = uri.getPath();
-            this.query = uri.getQuery();
-            this.scheme = uri.getScheme();
-            this.host = uri.getHost();
-            this.port = uri.getPort();
-        }
-    }
-
-    public HTTP response(HttpServletResponse resp) {
         if (resp != null) {
             this.statusCode = resp.getStatus();
         }
-        return this;
     }
 
-    public HTTP response(HttpResponse resp) {
+    /**
+     * Construct a new HTTP instance and populate the request fields using the provided {@link
+     * HttpUriRequest}. The response fields will be null.
+     *
+     * @param req a {@link HttpUriRequest} to extract the request fields from.
+     */
+    public HTTP(HttpUriRequest req) {
+        this(req, null);
+    }
+
+    /**
+     * Construct a new HTTP instance and populate the request and response fields using the provided
+     * {@link HttpUriRequest} and {@link HttpResponse}.
+     *
+     * @param req  the {@link HttpUriRequest} to extract the request fields from.
+     * @param resp the {@link HttpResponse} to extract the response fields from.
+     */
+    public HTTP(HttpUriRequest req, HttpResponse resp) {
+        if (req != null) {
+            this.method = req.getMethod();
+
+            URI uri = req.getURI();
+            if (uri != null) {
+                this.path = defaultIfBlank(uri.getPath(), "");
+                this.query = defaultIfBlank(uri.getQuery(), "");
+                this.scheme = defaultIfBlank(uri.getScheme(), "");
+                this.host = defaultIfBlank(uri.getHost(), "");
+                this.port = uri.getPort();
+            }
+        }
+
         if (resp != null) {
             this.statusCode = resp.getStatusLine().getStatusCode();
         }
-        return this;
     }
 
-    public HTTP response(int statusCode) {
-        this.statusCode = statusCode;
-        return this;
+    public Integer getStatusCode() {
+        return this.statusCode;
     }
 
-    public HTTP setStatusCode(Integer statusCode) {
-        this.statusCode = statusCode;
-        return this;
+    public String getMethod() {
+        return this.method;
     }
 
-    public HTTP setMethod(String method) {
-        this.method = method;
-        return this;
+    public String getPath() {
+        return this.path;
     }
 
-    public HTTP setPath(String path) {
-        this.path = path;
-        return this;
+    public String getQuery() {
+        return this.query;
     }
 
-    public HTTP setQuery(String query) {
-        this.query = query;
-        return this;
+    public String getScheme() {
+        return this.scheme;
     }
 
-    public HTTP setScheme(String scheme) {
-        this.scheme = scheme;
-        return this;
+    public String getHost() {
+        return this.host;
     }
 
-    public HTTP setHost(String host) {
-        this.host = host;
-        return this;
+    public Integer getPort() {
+        return this.port;
     }
 
-    public HTTP setPort(Integer port) {
-        this.port = port;
-        return this;
+    public Long getDuration() {
+        return this.duration;
     }
 }

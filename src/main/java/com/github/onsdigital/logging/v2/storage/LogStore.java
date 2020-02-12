@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface LogStore {
 
-    void saveTraceID(HttpServletRequest req);
+    String saveTraceID(HttpServletRequest req);
 
-    void saveTraceID(HttpUriRequest httpUriRequest);
+    String saveTraceID(HttpUriRequest httpUriRequest);
 
-    void saveTraceID(String id);
+    String saveTraceID(String id);
 
     void saveAuth(Auth auth);
 

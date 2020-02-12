@@ -31,25 +31,26 @@ public class MDCLogStore implements LogStore {
     }
 
     @Override
-    public void saveTraceID(HttpServletRequest req) {
+    public String saveTraceID(HttpServletRequest req) {
         String id = req == null ? "" : req.getHeader(REQUEST_ID_HEADER);
-        saveTraceID(id);
+        return saveTraceID(id);
     }
 
     @Override
-    public void saveTraceID(HttpUriRequest httpUriRequest) {
+    public String saveTraceID(HttpUriRequest httpUriRequest) {
         String id = "";
         if (httpUriRequest != null) {
             Header header = httpUriRequest.getFirstHeader(REQUEST_ID_HEADER);
             id = getHeaderValue(header);
         }
-        saveTraceID(id);
+        return saveTraceID(id);
     }
 
     @Override
-    public void saveTraceID(String id) {
+    public String saveTraceID(String id) {
         id = defaultIfBlank(id, newTraceID());
         MDC.put(TRACE_ID_KEY, id);
+        return id;
     }
 
     @Override
@@ -57,7 +58,8 @@ public class MDCLogStore implements LogStore {
         try {
             MDC.put(AUTH_KEY, serialiser.marshallAuth(auth));
         } catch (LoggingException ex) {
-            LoggingException wrapper = new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
+            LoggingException wrapper =
+                    new LoggingException(format(MARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapper);
         }
     }
@@ -76,7 +78,8 @@ public class MDCLogStore implements LogStore {
         try {
             return serialiser.unmarshallAuth(authStr);
         } catch (LoggingException ex) {
-            LoggingException wrapped = new LoggingException(format(UNMARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
+            LoggingException wrapped =
+                    new LoggingException(format(UNMARSHALL_ERR_FMT, AUTH_KEY, getTraceID()), ex);
             System.err.println(wrapped);
             return null;
         }
