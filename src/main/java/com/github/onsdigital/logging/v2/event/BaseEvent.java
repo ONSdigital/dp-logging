@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.storage.LogStore;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpResponse;
@@ -32,6 +33,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private SafeMap data;
     private String namespace;
     private HTTP http;
+    private Kafka Kafka;
     private Auth auth;
     private Errors errors;
 
@@ -114,6 +116,19 @@ public abstract class BaseEvent<T extends BaseEvent> {
     public T endHTTP(HttpUriRequest req, HttpResponse resp) {
         this.http = new HTTP(req, resp);
         this.traceID = store.getTraceID();
+        return (T) this;
+    }
+
+    /**
+     * Capture the kafka message details for a kafka consumer or producer. A new traceID will be generated.
+     *
+     * @param msg the {@link SpecificRecordBase} to extract the kafka message details from.
+     * @param topic the Kafka topic String.
+     * @return this instance of the event with the updated kafka message details.
+     */
+    public T beginKafka(SpecificRecordBase msg, String topic) {
+        this.Kafka = new Kafka(msg, topic);
+        this.traceID = store.saveTraceID((String) null);
         return (T) this;
     }
 
