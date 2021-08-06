@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+
 import static com.github.onsdigital.logging.v2.event.StackTrace.stackTraceArrayFromThrowable;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -33,23 +35,20 @@ public class ThirdPartyEventTest {
     public void shouldAddExceptionIfExists() {
         Throwable bar = new RuntimeException("bar");
         Throwable foo = new RuntimeException("foo", bar);
-
         when(event.getThrowableProxy())
                 .thenReturn(throwableProxy);
         when(throwableProxy.getThrowable())
                 .thenReturn(foo);
 
         ThirdPartyEvent thirdPartyEvent = new ThirdPartyEvent("", Severity.ERROR, event, logStore);
-        Errors actual = thirdPartyEvent.getErrors();
-
+        List<Error> actual = thirdPartyEvent.getErrors();
 
         Errors expected = new Errors(foo);
-
         String expectedMessage = foo.getClass().getName() + ": " + foo.getMessage();
-        assertThat(actual.getErrors().size(), equalTo(2));
-        assertThat(actual.getErrors().get(0).getMessage(), equalTo(expectedMessage));
+        assertThat(actual.size(), equalTo(2));
+        assertThat(actual.get(0).getMessage(), equalTo(expectedMessage));
 
         StackTrace[] expectedStackTrace = stackTraceArrayFromThrowable(foo);
-        assertThat(actual.getErrors().get(0).getStackTraces(), equalTo(expectedStackTrace));
+        assertThat(actual.get(0).getStackTraces(), equalTo(expectedStackTrace));
     }
 }

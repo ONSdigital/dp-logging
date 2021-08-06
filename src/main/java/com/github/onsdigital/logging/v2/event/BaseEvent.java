@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @JsonPropertyOrder({"created_at", "namespace", "severity", "event", "trace_id", "span_id"})
 public abstract class BaseEvent<T extends BaseEvent> {
@@ -33,7 +34,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
     private String namespace;
     private HTTP http;
     private Auth auth;
-    private Errors errors;
+    private List<Error> errors;
 
     protected String event;
     protected transient LogStore store;
@@ -143,7 +144,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
 
     public T exception(Throwable t) {
         if (null != t) {
-            this.errors = new Errors(t);
+            this.errors = new Errors(t).getErrors();
         }
         return (T) this;
     }
@@ -222,7 +223,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
         return this.auth;
     }
 
-    public Errors getErrors() {
+    public List<Error> getErrors() {
         return this.errors;
     }
 
