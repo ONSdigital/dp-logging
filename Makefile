@@ -4,7 +4,6 @@ all: clean build audit test
 .PHONY: clean
 clean:
 	mvn clean
-	rm -rf ./target
 
 .PHONY: build
 build:
@@ -12,9 +11,13 @@ build:
 
 .PHONY: test
 test:
-    mvn -Dossindex.skip=true test
+	mvn -Dmaven.test.skip -Dossindex.skip=true test
 
 .PHONY: audit
 audit:
 	mvn install -Dmaven.test.skip -Dossindex.skip=true
     mvn ossindex:audit
+
+.PHONY: lint
+lint:
+	exit
