@@ -1,0 +1,6 @@
+FROM openjdk:8-jre
+
+WORKDIR /dp-logging/src
+
+ADD classes target/classes
+ADD dependency target/dependency
