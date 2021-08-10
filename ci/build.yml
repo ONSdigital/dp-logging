@@ -1,0 +1,17 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: onsdigital/dp-concourse-tools-java
+
+inputs:
+  - name: dp-logging
+
+outputs:
+  - name: build
+
+run:
+  path: dp-logging/ci/scripts/build.sh

@@ -1,0 +1,13 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: onsdigital/dp-concourse-tools-java
+    tag: latest
+
+inputs:
+  - name: dp-logging
+
+run:
+  path: dp-logging/ci/scripts/lint.sh
