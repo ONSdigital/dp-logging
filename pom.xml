@@ -114,6 +114,69 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.ossindex.maven</groupId>
+                <artifactId>ossindex-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>audit-dependencies-critical</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>audit</goal>
+                        </goals>
+                        <!-- configuration for mvn validate -->
+                        <configuration>
+                            <!-- if CVSS >= 9.0 (critical) then ERROR else WARN -->
+                            <fail>true</fail>
+                            <cvssScoreThreshold>9.0</cvssScoreThreshold>
+                        </configuration>
+                    </execution>
+                </executions>
+                <!-- configuration for mvn ossindex:audit -->
+                <configuration>
+                    <!-- if CVSS >= 7.0 (high or critical) then ERROR else WARN -->
+                    <fail>true</fail>
+                    <cvssScoreThreshold>8.0</cvssScoreThreshold>
+                    <excludeCoordinates>
+                        <!--
+                            Trello card for the following exclusions.
+                            https://trello.com/c/jKsZJby5/1717-ionettynettyjar3105finalcompile-security-vulnerabilities
+                         -->
+                        <exlude>
+                            <groupId>io.netty</groupId>
+                            <artifactId>netty</artifactId>
+                            <version>3.10.5.Final</version>
+                        </exlude>
+                        <exlude>
+                            <groupId>org.elasticsearch</groupId>
+                            <artifactId>elasticsearch</artifactId>
+                            <version>2.1.1</version>
+                        </exlude>
+                        <exlude>
+                            <groupId>org.yaml</groupId>
+                            <artifactId>snakeyaml</artifactId>
+                            <version>1.15</version>
+                        </exlude>
+                        <exlude>
+                            <groupId>org.yaml</groupId>
+                            <artifactId>snakeyaml</artifactId>
+                            <version>1.13</version>
+                        </exlude>
+                        <!-- End Trello #1717 -->
+                        <exlude>
+                            <groupId>org.bouncycastle</groupId>
+                            <artifactId>bcprov-jdk15on</artifactId>
+                            <version>1.65</version>
+                        </exlude>
+                        <exlude>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-compress</artifactId>
+                            <version>1.20</version>
+                        </exlude>
+                    </excludeCoordinates>
+                </configuration>
+            </plugin>
         </plugins>
 
     </build>
