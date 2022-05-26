@@ -13,6 +13,7 @@
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+        <fasterxml.jackson.version>2.13.3</fasterxml.jackson.version>
     </properties>
 
     <dependencies>
@@ -20,13 +21,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.12.1</version>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.12.1</version>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -44,13 +45,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.11</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.6</version>
+            <version>2.8.9</version>
         </dependency>
 
         <dependency>
@@ -63,7 +64,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -137,42 +138,41 @@
                 <configuration>
                     <!-- if CVSS >= 7.0 (high or critical) then ERROR else WARN -->
                     <fail>true</fail>
-                    <cvssScoreThreshold>8.0</cvssScoreThreshold>
+                    <cvssScoreThreshold>7.0</cvssScoreThreshold>
                     <excludeCoordinates>
                         <!--
                             Trello card for the following exclusions.
                             https://trello.com/c/jKsZJby5/1717-ionettynettyjar3105finalcompile-security-vulnerabilities
                          -->
                         <exlude>
-                            <groupId>io.netty</groupId>
-                            <artifactId>netty</artifactId>
-                            <version>3.10.5.Final</version>
-                        </exlude>
-                        <exlude>
                             <groupId>org.elasticsearch</groupId>
                             <artifactId>elasticsearch</artifactId>
                             <version>2.1.1</version>
                         </exlude>
+
                         <exlude>
-                            <groupId>org.yaml</groupId>
-                            <artifactId>snakeyaml</artifactId>
-                            <version>1.15</version>
+                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
+                            <groupId>org.eclipse.jetty</groupId>
+                            <artifactId>jetty-io</artifactId>
+                            <version>9.4.31.v20200723</version>
                         </exlude>
                         <exlude>
-                            <groupId>org.yaml</groupId>
-                            <artifactId>snakeyaml</artifactId>
-                            <version>1.13</version>
-                        </exlude>
-                        <!-- End Trello #1717 -->
-                        <exlude>
-                            <groupId>org.bouncycastle</groupId>
-                            <artifactId>bcprov-jdk15on</artifactId>
-                            <version>1.65</version>
+                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
+                            <groupId>org.eclipse.jetty</groupId>
+                            <artifactId>jetty-webapp</artifactId>
+                            <version>9.4.31.v20200723</version>
                         </exlude>
                         <exlude>
-                            <groupId>org.apache.commons</groupId>
-                            <artifactId>commons-compress</artifactId>
-                            <version>1.20</version>
+                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
+                            <groupId>org.eclipse.jetty</groupId>
+                            <artifactId>jetty-http</artifactId>
+                            <version>9.4.31.v20200723</version>
+                        </exlude>
+                        <exlude>
+                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
+                            <groupId>org.eclipse.jetty</groupId>
+                            <artifactId>jetty-server</artifactId>
+                            <version>9.4.31.v20200723</version>
                         </exlude>
                     </excludeCoordinates>
                 </configuration>
