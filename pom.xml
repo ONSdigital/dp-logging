@@ -73,12 +73,6 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sparkjava</groupId>
-            <artifactId>spark-core</artifactId>
-            <version>2.9.3</version>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 
@@ -148,31 +142,6 @@
                             <groupId>org.elasticsearch</groupId>
                             <artifactId>elasticsearch</artifactId>
                             <version>2.1.1</version>
-                        </exlude>
-
-                        <exlude>
-                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
-                            <groupId>org.eclipse.jetty</groupId>
-                            <artifactId>jetty-io</artifactId>
-                            <version>9.4.31.v20200723</version>
-                        </exlude>
-                        <exlude>
-                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
-                            <groupId>org.eclipse.jetty</groupId>
-                            <artifactId>jetty-webapp</artifactId>
-                            <version>9.4.31.v20200723</version>
-                        </exlude>
-                        <exlude>
-                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
-                            <groupId>org.eclipse.jetty</groupId>
-                            <artifactId>jetty-http</artifactId>
-                            <version>9.4.31.v20200723</version>
-                        </exlude>
-                        <exlude>
-                            <!-- This is a transitive dependency of com.sparkjava:spark-core:2.9.3 which is the latest version and only used in a test (ExampleAPI) -->
-                            <groupId>org.eclipse.jetty</groupId>
-                            <artifactId>jetty-server</artifactId>
-                            <version>9.4.31.v20200723</version>
                         </exlude>
                     </excludeCoordinates>
                 </configuration>
