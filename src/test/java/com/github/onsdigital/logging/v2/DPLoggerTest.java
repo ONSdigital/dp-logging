@@ -2,18 +2,19 @@ package com.github.onsdigital.logging.v2;
 
 import com.github.onsdigital.logging.v2.config.Config;
 import com.github.onsdigital.logging.v2.config.ErrorWriter;
+import com.github.onsdigital.logging.v2.config.LogConfig;
 import com.github.onsdigital.logging.v2.config.ShutdownHook;
 import com.github.onsdigital.logging.v2.event.Severity;
 import com.github.onsdigital.logging.v2.event.SimpleEvent;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.List;
 
 import static com.github.onsdigital.logging.v2.DPLogger.MARSHAL_FAILURE;
 import static com.github.onsdigital.logging.v2.DPLogger.getMarshalFailureMessage;
@@ -46,9 +47,12 @@ public class DPLoggerTest {
 
     @Mock
     private Config config;
+    
+    private LogConfig originalConfig;
 
     @Before
     public void setUp() {
+        originalConfig = DPLogger.logConfig();
         when(config.getNamespace()).thenReturn("com.test");
         when(config.getSerialiser()).thenReturn(serialiser);
         when(config.getLogger()).thenReturn(logger);
@@ -56,6 +60,11 @@ public class DPLoggerTest {
         when(config.getErrorWriter()).thenReturn(errorWriter);
 
         DPLogger.reload(config);
+    }
+
+    @After
+    public void tearDown() {
+        DPLogger.reload(originalConfig);
     }
 
     @Test
@@ -89,7 +98,6 @@ public class DPLoggerTest {
         when(serialiser.marshallEvent(any(SimpleEvent.class))).thenThrow(ex);
 
         ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
-        ArgumentCaptor<String> printStreamCaptor = ArgumentCaptor.forClass(String.class);
 
         DPLogger.log(event);
 
@@ -110,11 +118,8 @@ public class DPLoggerTest {
         when(errorWriter.write(any())).thenReturn(true);
 
         ArgumentCaptor<SimpleEvent> eventCaptor = ArgumentCaptor.forClass(SimpleEvent.class);
-        ArgumentCaptor<String> printStreamCaptor = ArgumentCaptor.forClass(String.class);
 
         DPLogger.log(event);
-
-        List<String> s = printStreamCaptor.getAllValues();
 
         verify(serialiser, times(1)).marshallEvent(eventCaptor.capture());
         verify(errorWriter, times(1)).write(format(MARSHAL_FAILURE, event, ex));
