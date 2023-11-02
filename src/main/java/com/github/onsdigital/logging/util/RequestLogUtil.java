@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.UUID;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.TraceId;
+
 /**
  * Utility class providing common functionality for extracting details required for logging from in coming requests and
  * setting request logging headers for outbound request.
@@ -24,7 +27,9 @@ public class RequestLogUtil {
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
 
-        String requestID = request.getHeader(REQUEST_ID_KEY);
+        String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
+        String requestID = TraceId.isValid(otelTraceID) ? otelTraceID : request.getHeader(REQUEST_ID_KEY);
+
         if (requestID == null) {
             requestID = UUID.randomUUID().toString();
         }

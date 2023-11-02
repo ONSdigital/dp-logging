@@ -14,6 +14,9 @@ import java.util.UUID;
 import static java.text.MessageFormat.format;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.TraceId;
+
 public class MDCLogStore implements LogStore {
 
     static final String HTTP_KEY = "http";
@@ -28,6 +31,12 @@ public class MDCLogStore implements LogStore {
 
     public MDCLogStore(LogSerialiser serialiser) {
         this.serialiser = serialiser;
+    }
+
+    private String overrideRequestIDwithOtelTraceID(String requestID) {
+        String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
+        String id = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
+        return id;
     }
 
     @Override
@@ -48,7 +57,7 @@ public class MDCLogStore implements LogStore {
 
     @Override
     public String saveTraceID(String id) {
-        id = defaultIfBlank(id, newTraceID());
+        id =  overrideRequestIDwithOtelTraceID(defaultIfBlank(id, newTraceID()));
         MDC.put(TRACE_ID_KEY, id);
         return id;
     }
