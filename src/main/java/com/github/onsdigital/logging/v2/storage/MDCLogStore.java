@@ -42,7 +42,7 @@ public class MDCLogStore implements LogStore {
     @Override
     public String saveTraceID(HttpServletRequest req) {
         String id = req == null ? "" : req.getHeader(REQUEST_ID_HEADER);
-        return saveTraceID(id);
+        return saveTraceID(overrideRequestIDwithOtelTraceID(id));
     }
 
     @Override
@@ -52,12 +52,12 @@ public class MDCLogStore implements LogStore {
             Header header = httpUriRequest.getFirstHeader(REQUEST_ID_HEADER);
             id = getHeaderValue(header);
         }
-        return saveTraceID(id);
+        return saveTraceID(overrideRequestIDwithOtelTraceID(id));
     }
 
     @Override
     public String saveTraceID(String id) {
-        id =  overrideRequestIDwithOtelTraceID(defaultIfBlank(id, newTraceID()));
+        id =  defaultIfBlank(id, newTraceID());
         MDC.put(TRACE_ID_KEY, id);
         return id;
     }
