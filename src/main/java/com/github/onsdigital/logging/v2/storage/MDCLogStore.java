@@ -15,6 +15,7 @@ import static java.text.MessageFormat.format;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.TraceId;
 
 public class MDCLogStore implements LogStore {
@@ -34,8 +35,22 @@ public class MDCLogStore implements LogStore {
     }
 
     private String overrideRequestIDwithOtelTraceID(String requestID) {
-        String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
-        String id = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
+ 
+        String id = requestID;
+        try {
+        
+            Span span = Span.current();
+            SpanContext spcxt = span.getSpanContext();
+            byte[] traceidBytes = spcxt.getTraceIdBytes();
+            String otelTraceID = TraceId.fromBytes(traceidBytes);
+            //String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
+
+            id = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
+        } catch (Exception e) {
+            System.out.println("DPLOGGING OTEL DEBUG - ");
+            e.printStackTrace(System.out);            
+        }
+        
         return id;
     }
 
