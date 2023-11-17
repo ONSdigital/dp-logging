@@ -49,7 +49,7 @@ public class MDCLogStore implements LogStore {
             //String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
 
             id = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("DPLOGGING OTEL DEBUG - ");
             e.printStackTrace(System.out);            
         }
