@@ -38,20 +38,10 @@ public class MDCLogStore implements LogStore {
  
         String id = requestID;
         try {
-        
-            Span span = Span.current();
-            System.out.println("DPLOGGING OTEL DEBUG - " + span.toString());
-            SpanContext spcxt = span.getSpanContext();
-            System.out.println("DPLOGGING OTEL DEBUG - " + spcxt.toString());
-            byte[] traceidBytes = spcxt.getTraceIdBytes();
-            String otelTraceID = TraceId.fromBytes(traceidBytes);
-            System.out.println("DPLOGGING OTEL DEBUG - " + otelTraceID);
-            //String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
-
+            String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
             id = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
         } catch (Throwable e) {
-            System.out.println("DPLOGGING OTEL DEBUG - ");
-            e.printStackTrace(System.out);            
+            e.printStackTrace(System.err);            
         }
         
         return id;
