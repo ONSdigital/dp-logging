@@ -27,11 +27,15 @@ public class RequestLogUtil {
 
     public static void extractDiagnosticContext(HttpServletRequest request) {
 
-        String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
-        String requestID = TraceId.isValid(otelTraceID) ? otelTraceID : request.getHeader(REQUEST_ID_KEY);
-
         if (requestID == null) {
             requestID = UUID.randomUUID().toString();
+        }
+
+        try {
+            String otelTraceID = TraceId.fromBytes(Span.current().getSpanContext().getTraceIdBytes());
+            requestID = TraceId.isValid(otelTraceID) ? otelTraceID : requestID;
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);            
         }
 
         MDC.put(REQUEST_ID_KEY, requestID);
