@@ -7,11 +7,12 @@ import com.github.onsdigital.logging.v2.DPLogger;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -98,7 +99,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
      * @param req the {@link HttpUriRequest} to extract the request details from.
      * @return this instance of the event with the updated request details.
      */
-    public T beginHTTP(HttpUriRequest req) {
+    public T beginHTTP(HttpUriRequest req) throws URISyntaxException {
         this.traceID = store.saveTraceID(req);
         this.http = new HTTP(req);
         return (T) this;
@@ -112,7 +113,7 @@ public abstract class BaseEvent<T extends BaseEvent> {
      * @param resp the {@link HttpServletResponse} to extract the response details from.
      * @return this instance of the event with the updated request/response details.
      */
-    public T endHTTP(HttpUriRequest req, HttpResponse resp) {
+    public T endHTTP(HttpUriRequest req, HttpResponse resp) throws URISyntaxException {
         this.http = new HTTP(req, resp);
         this.traceID = store.getTraceID();
         return (T) this;
