@@ -1,7 +1,7 @@
 package com.github.onsdigital.logging.util;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;

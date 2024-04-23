@@ -4,15 +4,15 @@ import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.Header;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +31,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MDCLogStoreTest {
@@ -69,12 +64,6 @@ public class MDCLogStoreTest {
     public void setUp() {
         store = new MDCLogStore(serialiser);
 
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/home");
-        when(request.getQueryString()).thenReturn("");
-        when(request.getScheme()).thenReturn("https");
-        when(request.getServerName()).thenReturn("localhost");
-        when(request.getServerPort()).thenReturn(666);
     }
 
     @After
@@ -196,7 +185,7 @@ public class MDCLogStoreTest {
 
     @Test
     public void saveTraceId_noIDInRequestOrStore_shouldGenerateAndStoreNewID() {
-        when(request.getParameter(TRACE_ID_KEY))
+        lenient().when(request.getParameter(TRACE_ID_KEY))
                 .thenReturn("");
 
         String actual = store.saveTraceID(request);
@@ -255,7 +244,7 @@ public class MDCLogStoreTest {
     @Test
     public void saveTraceID_headerNullStoreNull_shouldGenerateNewID() {
         HttpUriRequest req = mock(HttpUriRequest.class);
-        when(req.getFirstHeader(TRACE_ID_KEY))
+        lenient().when(req.getFirstHeader(TRACE_ID_KEY))
                 .thenReturn(null);
 
         String actual = store.saveTraceID(req);

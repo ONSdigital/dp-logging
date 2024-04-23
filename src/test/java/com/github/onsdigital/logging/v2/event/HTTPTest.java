@@ -1,9 +1,8 @@
 package com.github.onsdigital.logging.v2.event;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,9 +38,6 @@ public class HTTPTest {
 
     @Mock
     private HttpResponse httpResponse;
-
-    @Mock
-    private StatusLine statusLine;
 
     @Before
     public void setUp() throws Exception {
@@ -113,7 +110,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void newHTTP_nullHttpUriRequest_fieldsShouldBeNull() {
+    public void newHTTP_nullHttpUriRequest_fieldsShouldBeNull() throws URISyntaxException {
         HttpUriRequest req = null;
 
         HTTP actual = new HTTP(req);
@@ -128,7 +125,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void newHTTP_ValidHttpUriRequest_shouldPopulateFields() {
+    public void newHTTP_ValidHttpUriRequest_shouldPopulateFields() throws URISyntaxException {
         setUpHttpUriRequest();
 
         HTTP actual = new HTTP(httpUriRequest);
@@ -144,7 +141,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void newHTTP_ValidHttpUriRequestNullResponse_shouldPopulateRequestFields() {
+    public void newHTTP_ValidHttpUriRequestNullResponse_shouldPopulateRequestFields() throws URISyntaxException {
         setUpHttpUriRequest();
 
         HTTP actual = new HTTP(httpUriRequest, null);
@@ -160,7 +157,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void newHTTP_ValidHttpUriRequestAndHttpResponseNullResponse_shouldPopulateFields() {
+    public void newHTTP_ValidHttpUriRequestAndHttpResponseNullResponse_shouldPopulateFields() throws URISyntaxException {
         setUpHttpUriRequest();
 
         setUpHttpResponse();
@@ -200,21 +197,20 @@ public class HTTPTest {
         when(httpServletResponse.getStatus()).thenReturn(HttpStatus.SC_OK);
     }
 
-    void setUpHttpUriRequest() {
+    void setUpHttpUriRequest() throws URISyntaxException {
         URI uri = URI.create("http://localhost:8080/a/b/c");
 
         when(httpUriRequest.getMethod())
                 .thenReturn(HTTP_METHOD);
 
-        when(httpUriRequest.getURI())
+        when(httpUriRequest.getUri())
                 .thenReturn(uri);
     }
 
     void setUpHttpResponse() {
-        when(httpResponse.getStatusLine())
-                .thenReturn(statusLine);
 
-        when(statusLine.getStatusCode())
+
+        when(httpResponse.getCode())
                 .thenReturn(HttpStatus.SC_OK);
     }
 }

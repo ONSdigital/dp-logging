@@ -5,11 +5,11 @@ import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import com.github.onsdigital.logging.v2.storage.LogStore;
 import com.github.onsdigital.logging.v2.storage.MDCLogStore;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -18,12 +18,12 @@ import org.slf4j.MDC;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class SimpleEventTest {
 
@@ -85,7 +85,7 @@ public class SimpleEventTest {
     }
 
     @Test
-    public void beginHTTP_HttpUriRequest_NoIDHeader_ShouldGenerateNewIDAndStoreRequestDetails() {
+    public void beginHTTP_HttpUriRequest_NoIDHeader_ShouldGenerateNewIDAndStoreRequestDetails() throws URISyntaxException {
         HttpUriRequest req = setUpHttpUriRequest("");
 
         SimpleEvent event = new SimpleEvent("test", Severity.INFO, logStore, "");
@@ -96,7 +96,7 @@ public class SimpleEventTest {
     }
 
     @Test
-    public void beginHTTP_HttpUriRequest_IDHeader_ShouldStoreIDAndRequestDetails() {
+    public void beginHTTP_HttpUriRequest_IDHeader_ShouldStoreIDAndRequestDetails() throws URISyntaxException {
         HttpUriRequest req = setUpHttpUriRequest(TRACE_ID_VALUE);
 
         SimpleEvent event = new SimpleEvent("test", Severity.INFO, logStore, "");
@@ -107,7 +107,7 @@ public class SimpleEventTest {
     }
 
     @Test
-    public void endHTTP_HttpUriRequestAndResponse_NoIDHeader_ShouldGenerateNewIDAndStoreDetails() {
+    public void endHTTP_HttpUriRequestAndResponse_NoIDHeader_ShouldGenerateNewIDAndStoreDetails() throws URISyntaxException {
         HttpUriRequest req = setUpHttpUriRequest("");
         HttpResponse resp = setUpHttpResponse();
 
@@ -173,15 +173,15 @@ public class SimpleEventTest {
         return response;
     }
 
-    HttpUriRequest setUpHttpUriRequest(String traceID) {
+    HttpUriRequest setUpHttpUriRequest(String traceID) throws URISyntaxException {
         HttpUriRequest req = mock(HttpUriRequest.class);
 
         when(req.getMethod()).thenReturn(HTTP_METHOD);
 
         URI uri = URI.create("http://localhost:8080/a/b/c");
-        when(req.getURI()).thenReturn(uri);
+        when(req.getUri()).thenReturn(uri);
 
-        if (StringUtils.isNotEmpty(traceID)) {
+        if (StringUtils.isNotBlank(traceID)) {
             Header h = mock(Header.class);
 
             when(h.getValue()).thenReturn(traceID);
@@ -195,10 +195,7 @@ public class SimpleEventTest {
     HttpResponse setUpHttpResponse() {
         HttpResponse resp = mock(HttpResponse.class);
 
-        StatusLine statusLine = mock(StatusLine.class);
-        when(resp.getStatusLine()).thenReturn(statusLine);
-
-        when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+        when(resp.getCode()).thenReturn(HttpStatus.SC_OK);
 
         return resp;
     }

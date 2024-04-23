@@ -1,12 +1,13 @@
 package com.github.onsdigital.logging.v2.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
@@ -65,7 +66,7 @@ public class HTTP {
      *
      * @param req a {@link HttpUriRequest} to extract the request fields from.
      */
-    public HTTP(HttpUriRequest req) {
+    public HTTP(HttpUriRequest req) throws URISyntaxException {
         this(req, null);
     }
 
@@ -76,11 +77,11 @@ public class HTTP {
      * @param req  the {@link HttpUriRequest} to extract the request fields from.
      * @param resp the {@link HttpResponse} to extract the response fields from.
      */
-    public HTTP(HttpUriRequest req, HttpResponse resp) {
+    public HTTP(HttpUriRequest req, HttpResponse resp) throws URISyntaxException {
         if (req != null) {
-            this.method = req.getMethod();
+           this.method = req.getMethod();
 
-            URI uri = req.getURI();
+            URI uri = req.getUri();
             if (uri != null) {
                 this.path = defaultIfBlank(uri.getPath(), "");
                 this.query = defaultIfBlank(uri.getQuery(), "");
@@ -91,7 +92,7 @@ public class HTTP {
         }
 
         if (resp != null) {
-            this.statusCode = resp.getStatusLine().getStatusCode();
+            this.statusCode = resp.getCode();
         }
     }
 

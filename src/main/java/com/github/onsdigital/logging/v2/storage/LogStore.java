@@ -1,7 +1,7 @@
 package com.github.onsdigital.logging.v2.storage;
 
 import com.github.onsdigital.logging.v2.event.Auth;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
 import javax.servlet.http.HttpServletRequest;
 

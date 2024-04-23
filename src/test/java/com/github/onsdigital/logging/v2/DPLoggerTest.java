@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.github.onsdigital.logging.v2.DPLogger.MARSHAL_FAILURE;
 import static com.github.onsdigital.logging.v2.DPLogger.getMarshalFailureMessage;
@@ -22,13 +22,7 @@ import static com.github.onsdigital.logging.v2.DPLogger.handleMarshalEventFailur
 import static java.text.MessageFormat.format;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DPLoggerTest {
@@ -84,7 +78,7 @@ public class DPLoggerTest {
         verify(serialiser, times(1)).marshallEvent(toJsonCaptor.capture());
         verify(logger, times(1)).info(logInfoCaptor.capture());
         verify(config, never()).getShutdownHook();
-        verifyZeroInteractions(errorWriter, shutdownHook);
+        verifyNoInteractions(errorWriter, shutdownHook);
     }
 
     /**
@@ -105,7 +99,7 @@ public class DPLoggerTest {
         verify(errorWriter).write(format(MARSHAL_FAILURE, event, ex));
 
         assertThat(eventCaptor.getValue(), equalTo(event));
-        verifyZeroInteractions(logger, shutdownHook);
+        verifyNoInteractions(logger, shutdownHook);
     }
 
 
@@ -126,7 +120,7 @@ public class DPLoggerTest {
         verify(shutdownHook, times(1)).shutdown();
 
         assertThat(eventCaptor.getValue(), equalTo(event));
-        verifyZeroInteractions(logger);
+        verifyNoInteractions(logger);
     }
 
     @Test
@@ -181,7 +175,7 @@ public class DPLoggerTest {
         handleMarshalEventFailure(event, ex, errorWriter, shutdownHook);
 
         verify(errorWriter, times(1)).write(expectedMessage);
-        verifyZeroInteractions(shutdownHook);
+        verifyNoInteractions(shutdownHook);
     }
 
     @Test

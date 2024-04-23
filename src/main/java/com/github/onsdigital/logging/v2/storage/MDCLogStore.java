@@ -4,8 +4,8 @@ import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.serializer.LogSerialiser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.Header;
 import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
