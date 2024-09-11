@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.onsdigital.logging.v2.LoggingException;
 import com.github.onsdigital.logging.v2.event.Auth;
 import com.github.onsdigital.logging.v2.event.BaseEvent;
@@ -44,6 +45,7 @@ public class JacksonLogSerialiser implements LogSerialiser {
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.mapper.registerModule(module);
+        this.mapper.registerModule(new JavaTimeModule());
         this.mapper.setPropertyNamingStrategy(new NamingStrategy());
         this.mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
