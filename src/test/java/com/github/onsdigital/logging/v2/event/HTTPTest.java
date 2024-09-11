@@ -110,7 +110,7 @@ public class HTTPTest {
     }
 
     @Test
-    public void newHTTP_nullHttpUriRequest_fieldsShouldBeNull() throws URISyntaxException {
+    public void newHTTP_nullHttpUriRequest_fieldsShouldBeNull() {
         HttpUriRequest req = null;
 
         HTTP actual = new HTTP(req);

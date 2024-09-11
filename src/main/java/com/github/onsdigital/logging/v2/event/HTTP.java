@@ -66,7 +66,7 @@ public class HTTP {
      *
      * @param req a {@link HttpUriRequest} to extract the request fields from.
      */
-    public HTTP(HttpUriRequest req) throws URISyntaxException {
+    public HTTP(HttpUriRequest req) {
         this(req, null);
     }
 
@@ -77,17 +77,25 @@ public class HTTP {
      * @param req  the {@link HttpUriRequest} to extract the request fields from.
      * @param resp the {@link HttpResponse} to extract the response fields from.
      */
-    public HTTP(HttpUriRequest req, HttpResponse resp) throws URISyntaxException {
+    public HTTP(HttpUriRequest req, HttpResponse resp) {
         if (req != null) {
            this.method = req.getMethod();
 
-            URI uri = req.getUri();
-            if (uri != null) {
-                this.path = defaultIfBlank(uri.getPath(), "");
-                this.query = defaultIfBlank(uri.getQuery(), "");
-                this.scheme = defaultIfBlank(uri.getScheme(), "");
-                this.host = defaultIfBlank(uri.getHost(), "");
-                this.port = uri.getPort();
+            try {
+                URI uri = req.getUri();
+                if (uri != null) {
+                    this.path = defaultIfBlank(uri.getPath(), "");
+                    this.query = defaultIfBlank(uri.getQuery(), "");
+                    this.scheme = defaultIfBlank(uri.getScheme(), "");
+                    this.host = defaultIfBlank(uri.getHost(), "");
+                    this.port = uri.getPort();
+                }
+            } catch (URISyntaxException e) {
+                // This exception is being caught here to stop consuming
+                // applications having to catch every beginHTTP log message.
+                // If the uri syntax is malformed, it will have a blank HTTP,
+                // much like if uri ends up being null above.
+                // This decision has been made for backwards-compatibility reasons.
             }
         }
 
