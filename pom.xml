@@ -138,6 +138,14 @@
                     <fail>true</fail>
                     <cvssScoreThreshold>7.0</cvssScoreThreshold>
                     <authId>ossindex</authId>
+                    <excludeVulnerabilityIds>
+                        <!-- 
+                            CVE covers logback-classic v1.3.16
+                            Epic to remove this exclusion: DIS-5085
+                        -->
+                        <exclude>CVE-2026-13006</exclude>
+                        <!-- End DIS-5085 -->
+                    </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
         </plugins>
